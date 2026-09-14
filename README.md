@@ -17,7 +17,7 @@ Hệ thống hỗ trợ các chức năng quản lý toàn diện bao gồm:
 - **Báo cáo**: Tích hợp khả năng xuất báo cáo thống kê dưới định dạng PDF và Excel[cite: 1, 2].
 
 ## 4. Phương pháp luận và Quản lý dự án (Methodology)
-- **Quy trình phát triển**: Áp dụng Agile Scrum trong 04 Sprint, mỗi Sprint kéo dài 02 tuần[cite: 2].
+- **Quy trình phát triển**: Áp dụng Agile Scrum trong 07 Sprint, mỗi Sprint kéo dài 01 tuần[cite: 2].
 - **Công cụ quản lý**: Sử dụng Jira để quản lý Epic, backlog, task, bug và tiến độ[cite: 2].
 - **Quản lý mã nguồn**: Sử dụng GitHub để quản lý branch, commit và Pull Request[cite: 2].
 - **Quy trình thực hiện**: Bao gồm khảo sát và phân tích yêu cầu; thiết kế UI, kiến trúc và cơ sở dữ liệu; phát triển Web, Desktop và API; tích hợp; kiểm thử; triển khai demo; hoàn thiện báo cáo và nghiệm thu[cite: 2].
