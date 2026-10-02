@@ -22,14 +22,31 @@ public class AuthStore {
         return db.query("SELECT * FROM public.app_user WHERE username=?" + (lock ? " FOR UPDATE" : ""),this::row,name).stream().findFirst();
     }
     public Optional<User> byId(int id) {
-        return db.query("SELECT * FROM public.app_user WHERE user_id=?",this::row,id).stream().findFirst();
+        return byId(id, false);
+    }
+    public Optional<User> byId(int id, boolean lock) {
+        return db.query("SELECT * FROM public.app_user WHERE user_id=?" + (lock ? " FOR UPDATE" : ""),this::row,id).stream().findFirst();
+    }
+    public List<String> permissions(int id) {
+        return db.queryForList("""
+            SELECT DISTINCT rp.permission_code FROM public.auth_role_permission rp
+            JOIN public.role r USING(role_id) JOIN public.user_role ur USING(role_id)
+            WHERE ur.user_id=? AND r.scope='SYSTEM' ORDER BY rp.permission_code
+            """,String.class,id);
+    }
+    public void changePassword(int uid, String hash) {
+        db.update("UPDATE public.app_user SET password_hash=? WHERE user_id=?",hash,uid);
+        revokeAll(uid);
+    }
+    public void revokeAll(int uid) {
+        db.update("UPDATE public.auth_session SET revoked_at=GREATEST(clock_timestamp(),issued_at) WHERE user_id=? AND revoked_at IS NULL",uid);
     }
     public List<String> roles(int id) {
         return db.queryForList("SELECT r.role_name FROM public.role r JOIN public.user_role ur USING(role_id) WHERE ur.user_id=? AND r.scope='SYSTEM' ORDER BY r.role_name",String.class,id);
     }
     public Map<String,Object> publicUser(User u) {
         return Map.of("id",u.id(),"username",u.username(),"fullName",u.fullName(),"email",u.email(),
-            "status",u.status(),"createdAt",u.createdAt().toString(),"systemRoles",roles(u.id()));
+            "status",u.status(),"createdAt",u.createdAt().toString(),"systemRoles",roles(u.id()),"permissions",permissions(u.id()));
     }
     public List<Map<String,Object>> memberships(int id) {
         return db.query("""

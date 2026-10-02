@@ -1,5 +1,7 @@
 # Contract triển khai Authentication v1 (theo ERD)
 
+> Tài liệu này mô tả nền v1. Hợp đồng mở rộng User/Role Management, quyền và đổi mật khẩu nằm trong [AUTH_USER_ROLE_MANAGEMENT.md](AUTH_USER_ROLE_MANAGEMENT.md). Public User hiện có thêm `permissions`; API quản trị và trang hạn chế đã được mở theo quyền cụ thể.
+
 ## Căn cứ
 SRS v1 đã sửa FR-01–03; NFR-04,05; UC-01,02; ERD/schema v1 đã chạy; API Specification v1 ngày 27/09/2026; User/Role Domain v1.2 (đang review).
 

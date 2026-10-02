@@ -1,0 +1,14 @@
+<div>
+  <h2>Quản lý người dùng</h2>
+  <form id="searchUsers"><label>Tìm theo tên hoặc email<input name="search" maxlength="100"></label><button>Tìm kiếm</button></form>
+  <div id="userList"></div>
+  <div class="actions"><button type="button" id="previousUsers">Trang trước</button><span id="userPage"></span><button type="button" id="nextUsers">Trang sau</button></div>
+  <form id="createUser" data-permission="users:create">
+    <h3>Tạo người dùng</h3>
+    <label>Tên đăng nhập<input name="username" required pattern="[a-z0-9._-]{3,50}" maxlength="50" autocomplete="off"></label>
+    <label>Họ tên<input name="fullName" required maxlength="100" autocomplete="name"></label>
+    <label>Email<input name="email" type="email" required maxlength="254" autocomplete="email"></label>
+    <label>Mật khẩu (12–128 ký tự, có chữ và số)<input name="password" type="password" required minlength="12" maxlength="128" autocomplete="new-password"></label>
+    <button>Tạo tài khoản</button>
+  </form>
+</div>

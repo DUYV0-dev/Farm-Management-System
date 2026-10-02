@@ -1,4 +1,7 @@
 # Farm-Management-System
+
+Backend xác thực, phân quyền và quản lý người dùng/vai trò: xem [hướng dẫn cài đặt, migration và API](docs/AUTH_USER_ROLE_MANAGEMENT.md).
+
 # Hệ Thống Quản Lý Tổng Thể Cho Trang Trại Trồng Trọt
 
 ## 1. Giới thiệu dự án (Project Overview)
