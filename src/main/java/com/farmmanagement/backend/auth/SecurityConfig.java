@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
@@ -19,6 +20,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
     @Bean PasswordEncoder passwordEncoder() { return new Argon2PasswordEncoder(16,32,1,19456,2); }
     @Bean SecretKeySpec jwtKey(@Value("${auth.jwt.secret}") String secret) {
@@ -56,6 +58,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/v1/auth/me").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/logout").authenticated()
+                .requestMatchers(HttpMethod.POST,"/api/v1/auth/password").authenticated()
+                .requestMatchers(HttpMethod.GET,"/admin/users").hasAuthority("users:read")
+                .requestMatchers(HttpMethod.GET,"/admin/roles").hasAuthority("roles:read")
+                .requestMatchers("/api/v1/users", "/api/v1/users/**", "/api/v1/roles", "/api/v1/roles/**", "/api/v1/permissions").authenticated()
                 .anyRequest().denyAll())
             .exceptionHandling(e->e
                 .authenticationEntryPoint((q,s,x)->api.write(q,s,401,"UNAUTHENTICATED","Vui lòng đăng nhập lại."))
@@ -68,7 +74,10 @@ public class SecurityConfig {
                     if(!store.validSession(sid,uid)) throw new OAuth2AuthenticationException("invalid_token");
                     var roles=store.roles(uid);
                     if(roles.isEmpty()) throw new OAuth2AuthenticationException("invalid_token");
-                    return new JwtAuthenticationToken(jwt,roles.stream().map(r->new SimpleGrantedAuthority("ROLE_"+r)).toList());
+                    var authorities=new ArrayList<SimpleGrantedAuthority>();
+                    roles.forEach(r->authorities.add(new SimpleGrantedAuthority("ROLE_"+r)));
+                    store.permissions(uid).forEach(p->authorities.add(new SimpleGrantedAuthority(p)));
+                    return new JwtAuthenticationToken(jwt,authorities);
                 })));
         http.headers(h->h.contentSecurityPolicy(c->c.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")));
         return http.build();

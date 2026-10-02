@@ -1,4 +1,10 @@
-# Authentication/Login v1 — Farm Management N02
+# Authentication & User/Role Management — Farm Management N02
+
+## Bản cập nhật module quản trị
+
+Đã bổ sung đổi/reset mật khẩu, CRUD người dùng (không xóa), kích hoạt/vô hiệu hóa, gán vai trò SYSTEM, quản lý quyền và bảo vệ trang/API. Xem [hướng dẫn hiện hành](docs/AUTH_USER_ROLE_MANAGEMENT.md) để chạy migration 06, cấp quản trị viên đầu tiên và dùng API/giao diện.
+
+**Phần dưới là hướng dẫn nền Authentication v1**, giữ lại cho cấu hình môi trường/seed. Các mô tả giới hạn “chưa có CRUD User/RBAC” chỉ áp dụng bản v1; phạm vi hiện tại được mô tả trong tài liệu module ở trên.
 
 Bản triển khai cho src.zip và pom.xml nhận ngày 28/09/2026. Java 21, Spring Boot 4.1.1; PostgreSQL schema ERD v1 đã triển khai.
 

@@ -34,4 +34,10 @@ public class AuthController {
         noQuery(request); if(body!=null && !body.isBlank()) throw new IllegalArgumentException();
         service.logout(jwt);return ResponseEntity.noContent().build();
     }
+    @PostMapping(value="/password",consumes=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> password(@AuthenticationPrincipal Jwt jwt,@RequestBody JsonNode body,HttpServletRequest request) {
+        noQuery(request); Input.fields(body,"currentPassword","newPassword");
+        service.changePassword(Integer.parseInt(jwt.getSubject()),Input.password(body,"currentPassword"),Input.password(body,"newPassword"));
+        return ResponseEntity.noContent().build();
+    }
 }

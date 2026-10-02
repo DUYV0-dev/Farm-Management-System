@@ -47,4 +47,15 @@ public class AuthService {
     }
     @Transactional
     public void logout(Jwt jwt) { store.revoke(UUID.fromString(jwt.getClaimAsString("sessionId")),Integer.parseInt(jwt.getSubject())); }
+
+    @Transactional
+    public void changePassword(int uid, String currentPassword, String newPassword) {
+        Input.strongPassword(newPassword);
+        var user=store.byId(uid,true).orElseThrow(()->new BadCredentialsException("Invalid user"));
+        if (!user.status().equals("ACTIVE") || !passwords.matches(currentPassword,user.hash()))
+            throw new BadCredentialsException("Invalid credentials");
+        if (passwords.matches(newPassword,user.hash()))
+            throw DomainException.conflict("Mật khẩu mới phải khác mật khẩu hiện tại.");
+        store.changePassword(uid,passwords.encode(newPassword));
+    }
 }
