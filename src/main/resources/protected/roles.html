@@ -1,0 +1,10 @@
+<div>
+  <h2>Vai trò và quyền hệ thống</h2>
+  <div id="roleList"></div>
+  <form id="createRole" data-permission="roles:write">
+    <h3>Tạo vai trò</h3>
+    <label>Tên vai trò<input name="name" required pattern="[A-Z][A-Z0-9_]{1,49}" maxlength="50" placeholder="USER_MANAGER"></label>
+    <label>Mô tả<input name="description" required maxlength="255"></label>
+    <button>Tạo vai trò</button>
+  </form>
+</div>
