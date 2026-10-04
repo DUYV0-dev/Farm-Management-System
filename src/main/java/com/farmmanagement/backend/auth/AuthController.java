@@ -1,5 +1,9 @@
 package com.farmmanagement.backend.auth;
 
+import com.farmmanagement.backend.common.Input;
+import com.farmmanagement.backend.common.Api;
+
+
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 import org.springframework.http.*;
@@ -13,7 +17,7 @@ import tools.jackson.databind.JsonNode;
 public class AuthController {
     private final AuthService service;
     public AuthController(AuthService service) { this.service=service; }
-    static void noQuery(HttpServletRequest request) {
+    public static void noQuery(HttpServletRequest request) {
         if(request.getQueryString()!=null) throw new IllegalArgumentException("Query parameters are not supported");
     }
     @PostMapping(value="/login",consumes=MediaType.APPLICATION_JSON_VALUE)
