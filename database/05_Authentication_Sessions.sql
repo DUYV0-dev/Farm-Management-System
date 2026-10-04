@@ -33,3 +33,4 @@ GRANT SELECT, INSERT, UPDATE ON public.auth_session TO farm_app;
 REVOKE UPDATE, DELETE, TRUNCATE ON public.audit_log FROM farm_app;
 COMMIT;
 -- test
+--cải tiến Authentication
