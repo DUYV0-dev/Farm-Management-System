@@ -1,0 +1,14 @@
+﻿<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Quản lý tài khoản · FARM</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body><main>
+<aside><span class="brand">FARM / N02</span><h1>Chăm sóc hôm nay.<br>Mùa vụ ngày mai.</h1><p>Không gian quản lý trang trại dành cho đội ngũ của bạn.</p><div class="field" aria-hidden="true">🌱</div></aside>
+<section>
+<div id="loginPanel"><p class="eyebrow">CHÀO MỪNG TRỞ LẠI</p><h2>Đăng nhập</h2><p class="muted">Sử dụng tài khoản được quản trị viên cấp.</p>
+<form id="loginForm"><label for="username">Tên đăng nhập</label><input id="username" name="username" autocomplete="username" required minlength="3" maxlength="50"><label for="password">Mật khẩu</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="128"><label class="toggle"><input id="showPassword" type="checkbox"> Hiện mật khẩu</label><button id="loginButton" type="submit">Đăng nhập</button></form></div>
+<div id="accountPanel" hidden><p class="eyebrow">ĐÃ ĐĂNG NHẬP</p><h2 id="welcome"></h2><dl><dt>Tên đăng nhập</dt><dd id="accountName"></dd><dt>Vai trò hệ thống</dt><dd id="accountRoles"></dd></dl>
+<div class="actions"><button id="usersButton" type="button" data-permission="users:read" hidden>Người dùng</button><button id="rolesButton" type="button" data-permission="roles:read" hidden>Vai trò và quyền</button></div>
+<button id="checkButton" type="button">Kiểm tra phiên</button><button id="logoutButton" class="secondary" type="button">Đăng xuất</button>
+<details><summary>Đổi mật khẩu</summary><form id="passwordForm"><label>Mật khẩu hiện tại<input name="currentPassword" type="password" autocomplete="current-password" required maxlength="128"></label><label>Mật khẩu mới (12–128 ký tự, có chữ và số)<input name="newPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="128"></label><button>Đổi mật khẩu và đăng xuất mọi phiên</button></form></details></div>
+<p id="message" role="status" aria-live="polite"></p><div id="managementPanel"></div><footer>Hệ thống quản lý trang trại · Nhóm 02</footer>
+</section></main></body></html>
