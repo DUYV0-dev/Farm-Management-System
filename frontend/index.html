@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriManage - Farming Task Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav shadow-sm">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <span>AgriManage</span>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    <a href="index.html" class="nav-item active"><i class="fa-solid fa-list-check"></i> Tasks</a>
+                    <a href="workers.html" class="nav-item"><i class="fa-solid fa-users"></i> Workers</a>
+                    <a href="farm.html" class="nav-item"><i class="fa-solid fa-tractor"></i> Farms</a>
+                    <a href="material.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Material & Warehouse</a>
+                    <a href="schedule.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
+                    <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reports</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="btn-icon"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
+                    <div class="user-profile">
+                        <img src="https://i.pravatar.cc/150?img=33" alt="User">
+                        <div class="user-info">
+                            <span class="user-name">Farm Manager</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-container">
+                <div class="page-header">
+                    <div class="header-text">
+                        <h1>Farming Activities</h1>
+                        <p class="subtitle">Organize, assign, and track all agricultural tasks across your fields.</p>
+                    </div>
+                    <button class="btn-primary btn-large" id="btnCreateTask">
+                        <i class="fa-solid fa-plus"></i> Create New Task
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-container">
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-green-light text-green">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Total Tasks</h3>
+                                <h2 id="stat-total">0</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-arrow-trend-up"></i> Active</span>
+                    </div>
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-brown-light text-brown">
+                                <i class="fa-solid fa-clipboard-list"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>To Do</h3>
+                                <h2 id="stat-pending">0</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-neutral"><i class="fa-solid fa-clock"></i> Queued</span>
+                    </div>
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-orange-light text-orange">
+                                <i class="fa-solid fa-person-digging"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>In Progress</h3>
+                                <h2 id="stat-progress">0</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-spinner"></i> Working</span>
+                    </div>
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-teal-light text-teal">
+                                <i class="fa-solid fa-check-to-slot"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Completed</h3>
+                                <h2 id="stat-completed">0</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-circle-check"></i> Done</span>
+                    </div>
+                </div>
+
+                <!-- Task Table -->
+                <div class="table-wrapper shadow-sm">
+                    <div class="table-header">
+                        <h2>Task Roster</h2>
+                        <div class="table-controls">
+                            <div class="search-bar">
+                                <i class="fa-solid fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="Search tasks by name or assignee...">
+                            </div>
+                            <button class="btn-secondary" id="btnFilter"><i class="fa-solid fa-filter"></i> Filter</button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="task-table">
+                            <thead>
+                                <tr>
+                                    <th>Task Details</th>
+                                    <th>Assignee</th>
+                                    <th>Priority</th>
+                                    <th>Schedule</th>
+                                    <th>Progress</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="task-table-body">
+                                <!-- Rows generated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal-content shadow-md">
+            <div class="modal-header">
+                <h2 id="modalTitle">Create Farming Task</h2>
+                <button class="btn-close" id="btnCloseModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <input type="hidden" id="taskId">
+                    <div class="form-group">
+                        <label>Task Name</label>
+                        <input type="text" id="taskName" required placeholder="e.g. Harvest Tomato Field A">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Assign To</label>
+                            <select id="taskAssignee" required>
+                                <option value="" disabled selected>Select Worker</option>
+                                <option value="John Doe">John Doe (Harvester)</option>
+                                <option value="Jane Smith">Jane Smith (Agronomist)</option>
+                                <option value="Mike Johnson">Mike Johnson (Technician)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select id="taskPriority" required>
+                                <option value="Low">Low</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="High">High</option>
+                                <option value="Critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" id="taskStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Due Date</label>
+                            <input type="date" id="taskDueDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="taskDescription" rows="4" placeholder="Detailed instructions for the worker..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="btnCancelTask">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal-content shadow-md">
+            <div class="modal-header">
+                <h2>Task History</h2>
+                <button class="btn-close" id="btnCloseHistory"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <ul class="history-timeline" id="historyTimeline">
+                    <!-- History logs generated by JS -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/common.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+</html>

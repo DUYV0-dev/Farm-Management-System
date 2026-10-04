@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriManage - Schedule & Season Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav shadow-sm">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <span>AgriManage</span>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    <a href="index.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Tasks</a>
+                    <a href="workers.html" class="nav-item"><i class="fa-solid fa-users"></i> Workers</a>
+                    <a href="farm.html" class="nav-item"><i class="fa-solid fa-tractor"></i> Farms</a>
+                    <a href="material.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Material & Warehouse</a>
+                    <a href="schedule.html" class="nav-item active"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
+                    <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reports</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="btn-icon"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
+                    <div class="user-profile">
+                        <img src="https://i.pravatar.cc/150?img=33" alt="User">
+                        <div class="user-info">
+                            <span class="user-name">Farm Manager</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-container">
+                <div class="page-header">
+                    <div class="header-text">
+                        <h1>Farm Schedule & Planner</h1>
+                        <p class="subtitle">Plan agricultural operations, seasonal crop cycles, irrigation, and worker shifts.</p>
+                    </div>
+                    <button class="btn-primary btn-large" id="btnAddSchedule">
+                        <i class="fa-solid fa-calendar-plus"></i> Add Event / Shift
+                    </button>
+                </div>
+
+                <!-- Calendar Section -->
+                <div class="calendar-card shadow-sm">
+                    <div class="calendar-header">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <h2 id="currentMonthYear">October 2026</h2>
+                            <div class="calendar-controls">
+                                <button class="btn-icon-sm" id="btnPrevMonth"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button class="btn-secondary" id="btnToday" style="padding: 6px 14px; font-size: 14px;">Today</button>
+                                <button class="btn-icon-sm" id="btnNextMonth"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="table-controls">
+                            <select id="eventCategoryFilter" style="padding: 8px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-weight: 500;">
+                                <option value="">All Categories</option>
+                                <option value="harvest">Harvest</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="planting">Planting & Fertilization</option>
+                                <option value="inspection">Inspection</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Grid -->
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Day Headers -->
+                        <div class="calendar-day-header">Mon</div>
+                        <div class="calendar-day-header">Tue</div>
+                        <div class="calendar-day-header">Wed</div>
+                        <div class="calendar-day-header">Thu</div>
+                        <div class="calendar-day-header">Fri</div>
+                        <div class="calendar-day-header">Sat</div>
+                        <div class="calendar-day-header">Sun</div>
+                        
+                        <!-- Day Cells rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Event Modal -->
+    <div class="modal-overlay" id="eventModal">
+        <div class="modal-content shadow-md">
+            <div class="modal-header">
+                <h2 id="eventModalTitle">Add Scheduled Event</h2>
+                <button class="btn-close" id="btnCloseEventModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <div class="form-group">
+                        <label>Event Title</label>
+                        <input type="text" id="eventTitle" required placeholder="e.g. Corn Harvesting Phase 1">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="eventCategory" required>
+                                <option value="harvest">Harvest</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="planting">Planting & Fertilization</option>
+                                <option value="inspection">Field Inspection</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="eventDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Assigned Sector / Team</label>
+                        <input type="text" id="eventSector" placeholder="e.g. Sector 4 - Team John">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="btnCancelEvent">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Event</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/common.js"></script>
+    <script src="./js/schedule.js"></script>
+</body>
+</html>

@@ -34,3 +34,6 @@ REVOKE UPDATE, DELETE, TRUNCATE ON public.audit_log FROM farm_app;
 COMMIT;
 
 --phuong da sua--
+-- test
+--cải tiến Authentication
+

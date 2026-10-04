@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriManage - Reports & Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+        .chart-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            border: 1px solid var(--border-color);
+        }
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            position: relative;
+            height: 280px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav shadow-sm">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <span>AgriManage</span>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    <a href="index.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Tasks</a>
+                    <a href="workers.html" class="nav-item"><i class="fa-solid fa-users"></i> Workers</a>
+                    <a href="farm.html" class="nav-item"><i class="fa-solid fa-tractor"></i> Farms</a>
+                    <a href="material.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Material & Warehouse</a>
+                    <a href="schedule.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
+                    <a href="reports.html" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> Reports</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="btn-icon"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
+                    <div class="user-profile">
+                        <img src="https://i.pravatar.cc/150?img=33" alt="User">
+                        <div class="user-info">
+                            <span class="user-name">Farm Manager</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-container">
+                <div class="page-header">
+                    <div class="header-text">
+                        <h1>Farm Reports & Analytics</h1>
+                        <p class="subtitle">Generate comprehensive financial, crop yield, inventory, and operational reports.</p>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn-secondary" id="btnExportPDF">
+                            <i class="fa-solid fa-file-pdf"></i> Export PDF
+                        </button>
+                        <button class="btn-primary btn-large" id="btnNewReport">
+                            <i class="fa-solid fa-plus"></i> Generate Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="reports-filter-bar shadow-sm">
+                    <div class="filter-group">
+                        <label style="margin: 0; white-space: nowrap;"><i class="fa-solid fa-calendar" style="color: var(--primary); margin-right: 8px;"></i>Time Range:</label>
+                        <select id="reportTimeRange" style="width: auto; padding: 10px 16px;">
+                            <option value="q3">Q3 2026 (Jul - Sep)</option>
+                            <option value="m9">September 2026</option>
+                            <option value="ytd">Year to Date (2026)</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label style="margin: 0; white-space: nowrap;"><i class="fa-solid fa-tags" style="color: var(--primary); margin-right: 8px;"></i>Category:</label>
+                        <select id="reportCategory" style="width: auto; padding: 10px 16px;">
+                            <option value="all">All Modules</option>
+                            <option value="harvest">Harvest & Crop Yield</option>
+                            <option value="inventory">Inventory & Resources</option>
+                            <option value="labor">Labor & Operations</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Key Performance Indicators -->
+                <div class="stats-container">
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-icon bg-green-light text-green">
+                            <i class="fa-solid fa-boxes-packing"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Harvest Yield</h3>
+                            <h2>405 Tons</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-icon bg-teal-light text-teal">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Operational Cost</h3>
+                            <h2>$42,850</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-icon bg-orange-light text-orange">
+                            <i class="fa-solid fa-warehouse"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Resource Efficiency</h3>
+                            <h2>94.2%</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-icon bg-brown-light text-brown">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Task Execution Rate</h3>
+                            <h2>98.5%</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analytics Charts -->
+                <div class="reports-grid">
+                    <div class="chart-card shadow-sm">
+                        <div class="chart-header">
+                            <h3>Crop Yield Comparison (Tons)</h3>
+                            <button class="btn-icon-sm"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="cropYieldChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card shadow-sm">
+                        <div class="chart-header">
+                            <h3>Expenditure Breakdown</h3>
+                            <button class="btn-icon-sm"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card shadow-sm">
+                        <div class="chart-header">
+                            <h3>Monthly Fertilizer & Water Usage</h3>
+                            <button class="btn-icon-sm"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="resourceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card shadow-sm">
+                        <div class="chart-header">
+                            <h3>Worker Productivity Metrics</h3>
+                            <button class="btn-icon-sm"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="productivityDetailChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Table -->
+                <div class="table-wrapper shadow-sm">
+                    <div class="table-header">
+                        <h2>Generated Reports Archive</h2>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="task-table">
+                            <thead>
+                                <tr>
+                                    <th>Report Title</th>
+                                    <th>Category</th>
+                                    <th>Period</th>
+                                    <th>Created By</th>
+                                    <th>Format</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsArchiveTable">
+                                <tr>
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--text-main);">Q3 Overall Farm Audit</div>
+                                        <div style="font-size: 13px; color: var(--text-muted);">Includes yield metrics and worker logs</div>
+                                    </td>
+                                    <td><span class="badge priority-low">Audit</span></td>
+                                    <td>Jul 01 - Sep 30, 2026</td>
+                                    <td>Farm Manager</td>
+                                    <td><span style="color: var(--primary); font-weight: 600;"><i class="fa-solid fa-file-pdf"></i> PDF</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn-icon-sm" onclick="downloadArchiveReport('Q3 Overall Farm Audit')" title="Download"><i class="fa-solid fa-download"></i></button>
+                                            <button class="btn-icon-sm" onclick="viewArchiveReport('Q3 Overall Farm Audit')" title="View"><i class="fa-solid fa-eye"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--text-main);">Soil & Irrigation Health Report</div>
+                                        <div style="font-size: 13px; color: var(--text-muted);">pH levels, moisture, and fertilizer analysis</div>
+                                    </td>
+                                    <td><span class="badge priority-medium">Agronomy</span></td>
+                                    <td>Sep 15 - Sep 30, 2026</td>
+                                    <td>Jane Smith</td>
+                                    <td><span style="color: var(--accent-teal); font-weight: 600;"><i class="fa-solid fa-file-csv"></i> CSV</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn-icon-sm" onclick="downloadArchiveReport('Soil & Irrigation Health Report')" title="Download"><i class="fa-solid fa-download"></i></button>
+                                            <button class="btn-icon-sm" onclick="viewArchiveReport('Soil & Irrigation Health Report')" title="View"><i class="fa-solid fa-eye"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--text-main);">Equipment Maintenance Log</div>
+                                        <div style="font-size: 13px; color: var(--text-muted);">Tractor repairs and sprinkler replacements</div>
+                                    </td>
+                                    <td><span class="badge priority-high">Maintenance</span></td>
+                                    <td>Sep 01 - Sep 30, 2026</td>
+                                    <td>Mike Johnson</td>
+                                    <td><span style="color: var(--primary); font-weight: 600;"><i class="fa-solid fa-file-pdf"></i> PDF</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn-icon-sm" onclick="downloadArchiveReport('Equipment Maintenance Log')" title="Download"><i class="fa-solid fa-download"></i></button>
+                                            <button class="btn-icon-sm" onclick="viewArchiveReport('Equipment Maintenance Log')" title="View"><i class="fa-solid fa-eye"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Generate Report Modal -->
+    <div class="modal-overlay" id="generateReportModal">
+        <div class="modal-content shadow-md">
+            <div class="modal-header">
+                <h2>Generate Custom Report</h2>
+                <button class="btn-close" id="btnCloseReportModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="generateReportForm">
+                    <div class="form-group">
+                        <label>Report Name</label>
+                        <input type="text" id="newReportName" required placeholder="e.g. October Harvest Estimate">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Module / Type</label>
+                            <select id="newReportType" required>
+                                <option value="Harvest & Crop Yield">Harvest & Crop Yield</option>
+                                <option value="Inventory & Stock">Inventory & Stock</option>
+                                <option value="Labor & Payroll">Labor & Payroll</option>
+                                <option value="Equipment & Maintenance">Equipment & Maintenance</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>File Format</label>
+                            <select id="newReportFormat" required>
+                                <option value="PDF Document">PDF Document</option>
+                                <option value="Excel Spreadsheet (.xlsx)">Excel Spreadsheet (.xlsx)</option>
+                                <option value="CSV Data File">CSV Data File</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" required value="2026-09-01">
+                        </div>
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date" required value="2026-09-30">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="btnCancelReportModal">Cancel</button>
+                        <button type="submit" class="btn-primary">Generate & Download</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/common.js"></script>
+    <script src="./js/reports.js"></script>
+</body>
+</html>
