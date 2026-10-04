@@ -109,6 +109,17 @@
         </dependency>
     </dependencies>
     <build>
+        <resources>
+            <resource><directory>src/main/resources</directory></resource>
+            <resource>
+                <directory>frontend</directory><targetPath>static/ui</targetPath>
+                <includes>
+                    <include>farm.html</include><include>material.html</include>
+                    <include>css/*.css</include><include>js/farm.js</include>
+                    <include>js/material.js</include><include>js/api-client.js</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

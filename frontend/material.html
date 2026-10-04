@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AgriManage — Quản lý danh mục vật tư, kho và tồn kho theo trang trại.">
+    <title>AgriManage - Vật tư & Kho</title>
+    <link rel="stylesheet" href="/ui/css/style.css">
+    <link rel="stylesheet" href="/ui/css/material.css">
+    <script src="/ui/js/api-client.js" defer></script>
+    <script src="/ui/js/material.js" defer></script>
+<link rel="stylesheet" href="/ui/css/connected.css"></head>
+<body class="material-page">
+<div class="app-container">
+    <nav class="top-nav shadow-sm" aria-label="Điều hướng chính">
+        <div class="nav-container">
+            <a class="nav-brand" href="dashboard.html"><div class="logo-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></div><span>AgriManage</span></a>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house" aria-hidden="true"></i> Dashboard</a>
+                <a href="index.html" class="nav-item"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Tasks</a>
+                <a href="workers.html" class="nav-item"><i class="fa-solid fa-users" aria-hidden="true"></i> Workers</a>
+                <a href="farm.html" class="nav-item"><i class="fa-solid fa-tractor" aria-hidden="true"></i> Farms</a>
+                <a href="material.html" class="nav-item active" aria-current="page"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i> Material & Warehouse</a>
+                <a href="schedule.html" class="nav-item"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Schedule</a>
+                <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> Reports</a>
+            </div>
+            <div class="nav-actions"><div class="user-profile"><div class="user-info"><span class="user-name">Farm Manager</span><span class="user-role">Administrator</span></div></div></div>
+        </div>
+    </nav>
+    <main class="main-content">
+        <header class="page-header">
+            <div><p class="inventory-eyebrow">MATERIAL & WAREHOUSE</p><h1>Vật tư & Kho</h1><p class="subtitle">Quản lý nguồn vật tư và theo dõi tồn kho cho từng trang trại.</p></div>
+            <button class="btn-primary btn-large" id="addRecord"><i class="fa-solid fa-plus" aria-hidden="true"></i><span>Thêm vật tư</span></button>
+        </header>
+        <p class="demo-note">Dữ liệu được lưu trên máy chủ. Ngừng hoạt động giữ lại thông tin và lịch sử.</p>
+        <div id="storageError" class="inventory-error" role="alert" hidden></div>
+        <section class="stats-container" aria-label="Tổng quan vật tư và kho">
+            <div class="stat-card shadow-sm"><div class="stat-left"><div class="stat-icon bg-green-light text-green"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i></div><div class="stat-info"><h3>Vật tư hoạt động</h3><h2 id="statMaterials">—</h2></div></div></div>
+            <div class="stat-card shadow-sm"><div class="stat-left"><div class="stat-icon bg-teal-light text-teal"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></div><div class="stat-info"><h3>Nhóm vật tư</h3><h2 id="statCategories">—</h2></div></div></div>
+            <div class="stat-card shadow-sm"><div class="stat-left"><div class="stat-icon bg-blue-light text-blue"><i class="fa-solid fa-warehouse" aria-hidden="true"></i></div><div class="stat-info"><h3>Kho hoạt động</h3><h2 id="statWarehouses">—</h2></div></div></div>
+            <div class="stat-card shadow-sm"><div class="stat-left"><div class="stat-icon bg-orange-light text-orange"><i class="fa-solid fa-box-open" aria-hidden="true"></i></div><div class="stat-info"><h3>Dòng tồn kho bằng 0</h3><h2 id="statEmpty">—</h2></div></div></div>
+        </section>
+        <div class="inventory-tabs" role="tablist" aria-label="Quản lý vật tư và kho">
+            <button id="tab-materials" class="inventory-tab active" role="tab" aria-selected="true" aria-controls="inventoryPanel" data-tab="materials"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i> Vật tư</button>
+            <button id="tab-categories" class="inventory-tab" role="tab" aria-selected="false" aria-controls="inventoryPanel" tabindex="-1" data-tab="categories"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Nhóm vật tư</button>
+            <button id="tab-warehouses" class="inventory-tab" role="tab" aria-selected="false" aria-controls="inventoryPanel" tabindex="-1" data-tab="warehouses"><i class="fa-solid fa-warehouse" aria-hidden="true"></i> Kho lưu trữ</button>
+            <button id="tab-inventory" class="inventory-tab" role="tab" aria-selected="false" aria-controls="inventoryPanel" tabindex="-1" data-tab="inventory"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i> Tồn kho</button>
+        </div>
+        <section class="table-wrapper" id="inventoryPanel" role="tabpanel" aria-labelledby="tab-materials">
+            <div class="table-header"><div><h2 id="listTitle">Danh sách vật tư</h2><p class="subtitle" id="listDescription"></p></div><span class="record-count" id="recordCount" aria-live="polite"></span></div>
+            <div class="inventory-filters">
+                <div class="search-bar"><i class="fa-solid fa-search" aria-hidden="true"></i><input type="search" id="searchRecords" placeholder="Tìm tên vật tư, nhà sản xuất…" aria-label="Tìm kiếm"></div>
+                <select id="relationFilter" aria-label="Lọc theo nhóm vật tư"></select>
+                <select id="statusFilter" aria-label="Lọc trạng thái"></select>
+                <button class="btn-secondary" id="clearFilters" type="button">Xóa bộ lọc</button>
+            </div>
+            <div class="table-responsive" tabindex="0" role="region" aria-label="Bảng dữ liệu vật tư và kho"><table class="task-table"><caption class="sr-only" id="tableCaption">Danh sách vật tư</caption><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table></div>
+            <div class="inventory-empty" id="emptyState" hidden><i class="fa-solid fa-box-open" aria-hidden="true"></i><h3 id="emptyTitle">Chưa có dữ liệu</h3><p id="emptyDescription"></p></div>
+            <div class="inventory-pagination"><span id="pageSummary" aria-live="polite"></span><div><button class="btn-secondary" id="previousPage" aria-label="Trang trước">← Trước</button><span id="pageNumber"></span><button class="btn-secondary" id="nextPage" aria-label="Trang sau">Sau →</button></div></div>
+        </section>
+        <noscript><p class="inventory-error">Vui lòng bật JavaScript để sử dụng chức năng quản lý vật tư và kho.</p></noscript>
+    </main>
+</div>
+<dialog id="recordDialog" class="inventory-dialog" aria-labelledby="dialogTitle">
+    <div class="modal-header"><h2 id="dialogTitle">Thêm vật tư</h2><button type="button" class="btn-close" data-close aria-label="Đóng">×</button></div>
+    <form id="recordForm">
+        <div id="formFields"></div>
+        <p id="formError" class="inventory-error" role="alert" hidden></p>
+        <div class="form-actions"><button type="button" class="btn-cancel" data-close>Hủy</button><button type="submit" class="btn-primary" id="saveRecord">Lưu</button></div>
+    </form>
+</dialog>
+<dialog id="statusDialog" class="inventory-dialog" aria-labelledby="statusTitle">
+    <h2 id="statusTitle">Thay đổi trạng thái</h2><p id="statusMessage"></p><p id="statusError" class="inventory-error" role="alert" hidden></p>
+    <div class="form-actions"><button type="button" class="btn-cancel" data-close>Hủy</button><button type="button" class="btn-primary" id="confirmStatus">Xác nhận</button></div>
+</dialog>
+<div id="inventoryNotice" class="inventory-notice" role="status" hidden></div>
+</body>
+</html>
