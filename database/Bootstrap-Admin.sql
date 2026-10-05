@@ -20,3 +20,5 @@ ON CONFLICT DO NOTHING;
 INSERT INTO public.audit_log(actor_user_id,event_at,entity_type,entity_key,action,request_id)
 SELECT NULL,CURRENT_TIMESTAMP,'USER_ROLE',user_id::text,'ROLE_CHANGE',gen_random_uuid()::text FROM bootstrap_admin;
 COMMIT;
+
+--test 
