@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriManage - Theo dõi Hoạt động Canh tác & Tiến độ Mùa vụ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav shadow-sm">
+            <div class="nav-container">
+                <a href="dashboard.html" class="nav-brand">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <span>AgriManage</span>
+                </a>
+                
+                <div class="nav-links">
+                    <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    <a href="activities.html" class="nav-item active"><i class="fa-solid fa-leaf"></i> Farming Activities</a>
+                    <a href="notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+                    <a href="index.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Task Roster</a>
+                    <a href="workers.html" class="nav-item"><i class="fa-solid fa-users"></i> Workers</a>
+                    <a href="schedule.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
+                    <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reports</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="btn-icon"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
+                    <div class="user-profile">
+                        <img src="https://i.pravatar.cc/150?img=33" alt="User">
+                        <div class="user-info">
+                            <span class="user-name">Farm Manager</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-container">
+                <div class="page-header">
+                    <div class="header-text">
+                        <h1>Theo dõi Hoạt động Canh tác & Tiến độ Mùa vụ</h1>
+                        <p class="subtitle">Giám sát các công việc đồng ruộng, cập nhật tiến độ thực hiện, ghi nhận hoàn thành và nhật ký mùa vụ.</p>
+                    </div>
+                    <button class="btn-primary btn-large" id="btnCreateActivity">
+                        <i class="fa-solid fa-plus-circle"></i> Thêm Hoạt động Canh tác
+                    </button>
+                </div>
+
+                <!-- Crop Season Progress Dashboard Banner -->
+                <div class="season-overview-banner">
+                    <div class="season-header-row">
+                        <div class="season-title-group">
+                            <div class="season-icon-badge">
+                                <i class="fa-solid fa-wheat-awn"></i>
+                            </div>
+                            <div>
+                                <h2 id="currentSeasonTitle">Mùa Đông Xuân 2026</h2>
+                                <p class="subtitle" id="currentSeasonSubtitle" style="font-size:13.5px;">Thời gian: 01/11/2025 - 30/04/2026 | Cây trồng chủ lực: Lúa chất lượng cao & Cà chua màng</p>
+                            </div>
+                        </div>
+
+                        <!-- Season Selector Tabs -->
+                        <div class="season-tab-selector" id="seasonTabSelector">
+                            <button class="season-tab-btn active" data-season="Mùa Đông Xuân 2026">
+                                <i class="fa-solid fa-snowflake"></i> Đông Xuân 2026
+                            </button>
+                            <button class="season-tab-btn" data-season="Mùa Hè Thu 2026">
+                                <i class="fa-solid fa-sun"></i> Hè Thu 2026
+                            </button>
+                            <button class="season-tab-btn" data-season="Mùa Thu Đông 2026">
+                                <i class="fa-solid fa-cloud-sun-rain"></i> Thu Đông 2026
+                            </button>
+                            <button class="season-tab-btn" data-season="ALL">
+                                <i class="fa-solid fa-layer-group"></i> Tất cả
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Season Stats Cards Grid -->
+                    <div class="season-stats-grid">
+                        <div class="season-stat-box">
+                            <div class="season-stat-icon bg-green-light text-green">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <div class="season-stat-content">
+                                <h4>Tiến độ Mùa vụ</h4>
+                                <div class="stat-value" id="seasonProgressPercent">0%</div>
+                                <div class="progress-bar" style="height:6px; margin-top:6px; background:#e2e8f0;">
+                                    <div id="seasonProgressBar" class="progress-fill" style="width: 0%; background: var(--primary);"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="season-stat-box">
+                            <div class="season-stat-icon bg-brown-light text-brown">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                            <div class="season-stat-content">
+                                <h4>Tổng Hoạt động</h4>
+                                <div class="stat-value" id="seasonTotalCount">0</div>
+                            </div>
+                        </div>
+
+                        <div class="season-stat-box">
+                            <div class="season-stat-icon bg-orange-light text-orange">
+                                <i class="fa-solid fa-spinner"></i>
+                            </div>
+                            <div class="season-stat-content">
+                                <h4>Đang Thực hiện</h4>
+                                <div class="stat-value" id="seasonInProgressCount">0</div>
+                            </div>
+                        </div>
+
+                        <div class="season-stat-box">
+                            <div class="season-stat-icon bg-teal-light text-teal">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <div class="season-stat-content">
+                                <h4>Hoàn thành & Thu hoạch</h4>
+                                <div class="stat-value" id="seasonCompletedCount">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Controls & View Switcher -->
+                <div class="table-wrapper shadow-sm">
+                    <div class="table-header">
+                        <h2>Danh sách Hoạt động Canh tác</h2>
+                        <div class="table-controls" style="flex-wrap:wrap; gap:10px;">
+                            <div class="search-bar" style="min-width:260px;">
+                                <i class="fa-solid fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="Tìm theo tên, người thực hiện, lô đất...">
+                            </div>
+
+                            <select id="categoryFilter" style="padding: 9px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); font-weight: 600; font-size:13.5px;">
+                                <option value="">Tất cả Loại hoạt động</option>
+                                <option value="Làm đất">Làm đất</option>
+                                <option value="Gieo trồng">Gieo trồng</option>
+                                <option value="Bón phân">Bón phân</option>
+                                <option value="Tưới nước">Tưới nước</option>
+                                <option value="Phun thuốc">Phun thuốc</option>
+                                <option value="Thu hoạch">Thu hoạch</option>
+                                <option value="Kiểm tra & Bảo trì">Kiểm tra & Bảo trì</option>
+                            </select>
+
+                            <select id="statusFilter" style="padding: 9px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); font-weight: 600; font-size:13.5px;">
+                                <option value="">Tất cả Trạng thái</option>
+                                <option value="todo">Chưa bắt đầu</option>
+                                <option value="in_progress">Đang thực hiện</option>
+                                <option value="on_hold">Tạm dừng</option>
+                                <option value="completed">Hoàn thành</option>
+                            </select>
+
+                            <div style="display:flex; background:var(--bg-body); padding:3px; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+                                <button class="btn-chip active" id="btnViewTable" title="Xem dạng bảng"><i class="fa-solid fa-table-cells"></i> Bảng</button>
+                                <button class="btn-chip" id="btnViewKanban" title="Xem dạng Kanban Tiến độ"><i class="fa-solid fa-columns"></i> Kanban</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table View Container -->
+                    <div id="tableViewContainer" class="table-responsive">
+                        <table class="task-table">
+                            <thead>
+                                <tr>
+                                    <th>Thông tin Hoạt động & Mùa vụ</th>
+                                    <th>Loại hoạt động</th>
+                                    <th>Người thực hiện & Lô đất</th>
+                                    <th>Lịch trình</th>
+                                    <th>Tiến độ (%)</th>
+                                    <th>Trạng thái</th>
+                                    <th style="text-align:center;">Thao tác chuyên sâu</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activity-table-body">
+                                <!-- Generated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Kanban View Container (Hidden by Default) -->
+                    <div id="kanbanViewContainer" class="kanban-view-container" style="display: none; padding: 16px;">
+                        <!-- Columns generated by JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 1. Modal: Create / Edit Activity -->
+    <div class="modal-overlay" id="activityModal">
+        <div class="modal-content shadow-md" style="max-width: 650px;">
+            <div class="modal-header">
+                <h2 id="modalTitle">Thêm Hoạt động Canh tác Mới</h2>
+                <button class="btn-close" id="btnCloseActivityModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="activityForm">
+                    <input type="hidden" id="activityId">
+                    
+                    <div class="form-group">
+                        <label>Tên Hoạt động Canh tác <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="actTitle" required placeholder="Ví dụ: Bón phân đợt 1 cho lúa Đông Xuân Sector 1">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Mùa vụ Canh tác <span style="color:var(--danger)">*</span></label>
+                            <select id="actSeason" required>
+                                <option value="Mùa Đông Xuân 2026">Mùa Đông Xuân 2026</option>
+                                <option value="Mùa Hè Thu 2026">Mùa Hè Thu 2026</option>
+                                <option value="Mùa Thu Đông 2026">Mùa Thu Đông 2026</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Loại hoạt động <span style="color:var(--danger)">*</span></label>
+                            <select id="actCategory" required>
+                                <option value="Làm đất">Làm đất</option>
+                                <option value="Gieo trồng">Gieo trồng</option>
+                                <option value="Bón phân">Bón phân</option>
+                                <option value="Tưới nước">Tưới nước</option>
+                                <option value="Phun thuốc">Phun thuốc</option>
+                                <option value="Thu hoạch">Thu hoạch</option>
+                                <option value="Kiểm tra & Bảo trì">Kiểm tra & Bảo trì</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Người phụ trách thực hiện <span style="color:var(--danger)">*</span></label>
+                            <select id="actAssignee" required>
+                                <option value="Nguyễn Văn Hùng">Nguyễn Văn Hùng (Tổ trưởng)</option>
+                                <option value="Lê Thị Mai">Lê Thị Mai (Kỹ thuật viên)</option>
+                                <option value="Phạm Thanh Sơn">Phạm Thanh Sơn (Nông dân)</option>
+                                <option value="Trần Văn Lượng">Trần Văn Lượng (Quản lý vườn)</option>
+                                <option value="Võ Hà Duy">Võ Hà Duy (Kỹ sư thiết bị)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Vị trí / Lô thửa đất <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="actSector" required placeholder="Ví dụ: Greenhouse A, Sector 2, Lô C4">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ngày bắt đầu dự kiến</label>
+                            <input type="date" id="actStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hạn hoàn thành</label>
+                            <input type="date" id="actDueDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mức độ ưu tiên</label>
+                        <select id="actPriority">
+                            <option value="Low">Thấp (Low)</option>
+                            <option value="Medium" selected>Trung bình (Medium)</option>
+                            <option value="High">Cao (High)</option>
+                            <option value="Critical">Khẩn cấp (Critical)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mô tả chi tiết & Yêu cầu kỹ thuật</label>
+                        <textarea id="actDescription" rows="3" placeholder="Ghi chú quy trình kỹ thuật, liều lượng vật tư hoặc hướng dẫn thực hiện..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="btnCancelActivity">Hủy bỏ</button>
+                        <button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Lưu Hoạt động</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Modal: Update Progress (Track Activity Progress) -->
+    <div class="modal-overlay" id="progressModal">
+        <div class="modal-content shadow-md" style="max-width: 480px;">
+            <div class="modal-header">
+                <h2>Theo dõi & Cập nhật Tiến độ</h2>
+                <button class="btn-close" id="btnCloseProgressModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="progressActId">
+                <div style="text-align:center; margin-bottom: 20px;">
+                    <h3 id="progressActTitle" style="font-size:16px; margin-bottom:4px;">Tên hoạt động</h3>
+                    <p class="subtitle" id="progressActSeason" style="font-size:13px;">Mùa vụ</p>
+                </div>
+
+                <div style="background:var(--bg-body); padding:20px; border-radius:var(--radius-md); border:1px solid var(--border-color); text-align:center;">
+                    <div style="font-size: 36px; font-weight: 800; color: var(--primary); margin-bottom:8px;" id="progressValueDisplay">50%</div>
+                    
+                    <input type="range" id="progressSlider" min="0" max="100" step="5" value="50" style="width:100%; accent-color: var(--primary); cursor:pointer;">
+                    
+                    <div style="display:flex; justify-content:space-between; margin-top:14px; gap:6px;">
+                        <button type="button" class="btn-chip" onclick="setPresetProgress(0)">0%</button>
+                        <button type="button" class="btn-chip" onclick="setPresetProgress(25)">25%</button>
+                        <button type="button" class="btn-chip" onclick="setPresetProgress(50)">50%</button>
+                        <button type="button" class="btn-chip" onclick="setPresetProgress(75)">75%</button>
+                        <button type="button" class="btn-chip chip-success" onclick="setPresetProgress(100)">100% (Hoàn thành)</button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top:16px;">
+                    <label>Ghi chú tiến độ thực tế</label>
+                    <input type="text" id="progressNoteInput" placeholder="Ví dụ: Đã hoàn thành cày 1.5 ha, đất đạt độ ẩm 70%...">
+                </div>
+
+                <div class="form-actions" style="margin-top:20px;">
+                    <button type="button" class="btn-cancel" id="btnCancelProgress">Hủy</button>
+                    <button type="button" class="btn-primary" id="btnSaveProgress"><i class="fa-solid fa-check"></i> Cập nhật Tiến độ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Modal: Record Activity Completion -->
+    <div class="modal-overlay" id="completionModal">
+        <div class="modal-content shadow-md" style="max-width: 540px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-award" style="color:var(--accent-orange);"></i> Ghi nhận Hoàn thành Hoạt động</h2>
+                <button class="btn-close" id="btnCloseCompletionModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="completionForm">
+                    <input type="hidden" id="completionActId">
+                    
+                    <div style="background:var(--primary-light); border:1px solid rgba(16,185,129,0.3); border-radius:var(--radius-md); padding:14px; margin-bottom:18px;">
+                        <strong id="completionActTitle" style="color:var(--text-main); font-size:15px; display:block;">Tên hoạt động</strong>
+                        <span id="completionActSub" style="font-size:13px; color:var(--text-muted);">Mùa vụ & Lô đất</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Thời gian hoàn thành thực tế <span style="color:var(--danger)">*</span></label>
+                            <input type="datetime-local" id="completionDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Người nghiệm thu / Xác nhận <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="completionInspector" required placeholder="Tên cán bộ nghiệm thu">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Số lượng / Kết quả thực hiện <span style="color:var(--danger)">*</span></label>
+                            <input type="number" id="completionOutputQty" step="0.1" required placeholder="Ví dụ: 1500">
+                        </div>
+                        <div class="form-group">
+                            <label>Đơn vị tính <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="completionOutputUnit" required placeholder="kg, lít, ha, sào, bình...">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Đánh giá Chất lượng Hoàn thành</label>
+                        <select id="completionQuality">
+                            <option value="Xuất sắc (5★)">Xuất sắc (5★) - Vượt chỉ tiêu</option>
+                            <option value="Đạt yêu cầu (4★)" selected>Đạt yêu cầu (4★) - Chuẩn quy trình</option>
+                            <option value="Khá (3★)">Khá (3★) - Đạt cơ bản</option>
+                            <option value="Cần cải thiện (2★)">Cần cải thiện (2★)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nhận xét nghiệm thu & Ghi chú thu hoạch/kết quả</label>
+                        <textarea id="completionNotes" rows="3" placeholder="Nhập ghi chú thu hoạch, chất lượng sản phẩm, điều kiện lưu kho hoặc khuyến nghị..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="btnCancelCompletion">Hủy bỏ</button>
+                        <button type="submit" class="btn-primary" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border:none;"><i class="fa-solid fa-circle-check"></i> Xác nhận Hoàn thành (100%)</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Modal: Record Activity Notes & Materials -->
+    <div class="modal-overlay" id="notesModal">
+        <div class="modal-content shadow-md" style="max-width: 580px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-book-open text-primary"></i> Ghi chú & Nhật ký Đồng ruộng</h2>
+                <button class="btn-close" id="btnCloseNotesModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="noteActId">
+                <div style="margin-bottom:14px;">
+                    <strong id="noteActTitle" style="font-size:15px; color:var(--text-main);">Tên hoạt động</strong>
+                </div>
+
+                <form id="noteForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phân loại Ghi chú <span style="color:var(--danger)">*</span></label>
+                            <select id="noteCategory" required>
+                                <option value="Nhật ký đồng ruộng">Nhật ký đồng ruộng</option>
+                                <option value="Theo dõi thời tiết & Độ ẩm">Theo dõi thời tiết & Độ ẩm</option>
+                                <option value="Sức khỏe cây & Sâu bệnh">Sức khỏe cây & Sâu bệnh</option>
+                                <option value="Sử dụng Vật tư & Thiết bị">Sử dụng Vật tư & Thiết bị</option>
+                                <option value="Ghi chú chung">Ghi chú chung</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Người ghi nhận <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="noteAuthor" required placeholder="Tên người ghi nhận">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nội dung Ghi chú Nhật ký <span style="color:var(--danger)">*</span></label>
+                        <textarea id="noteContent" rows="3" required placeholder="Mô tả chi tiết diễn biến công việc, tình trạng cây trồng, nhiệt độ, liều lượng..."></textarea>
+                    </div>
+
+                    <!-- Material Usage Section -->
+                    <div style="background:var(--bg-body); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:14px; margin-bottom:16px;">
+                        <strong style="font-size:13.5px; color:var(--text-main); display:block; margin-bottom:8px;"><i class="fa-solid fa-flask text-teal"></i> Vật tư / Hóa chất / Hạt giống đã sử dụng (Nếu có):</strong>
+                        <div class="form-row">
+                            <div class="form-group" style="flex:2;">
+                                <input type="text" id="matName" placeholder="Tên vật tư (VD: NPK 16-16-8)">
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <input type="number" id="matQty" step="0.1" placeholder="Số lượng">
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <input type="text" id="matUnit" placeholder="Đơn vị (kg, l)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="btnCancelNote">Đóng</button>
+                        <button type="submit" class="btn-primary"><i class="fa-solid fa-plus"></i> Thêm Ghi chú Nhật ký</button>
+                    </div>
+                </form>
+
+                <!-- Existing Notes List -->
+                <div style="margin-top:20px; border-top:1px solid var(--border-color); padding-top:14px;">
+                    <h4>Lịch sử Ghi chú đã lưu:</h4>
+                    <div class="activity-notes-container" id="notesListContainer">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Modal: View Activity History Timeline -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal-content shadow-md" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-clock-rotate-left text-primary"></i> Lịch sử Thay đổi & Nhật ký Hoạt động</h2>
+                <button class="btn-close" id="btnCloseHistoryModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="background:var(--bg-body); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border-color); margin-bottom:16px;">
+                    <h3 id="historyActTitle" style="font-size:15.5px; color:var(--text-main);">Tên hoạt động</h3>
+                    <p class="subtitle" id="historyActSub" style="font-size:13px;">Mùa vụ & Người phụ trách</p>
+                </div>
+
+                <div class="history-timeline" id="historyTimelineContainer">
+                    <!-- Dynamic timeline items rendered by JS -->
+                </div>
+
+                <div class="form-actions" style="margin-top:20px;">
+                    <button type="button" class="btn-primary" id="btnCloseHistory">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/common.js"></script>
+    <script src="./js/activities.js"></script>
+</body>
+</html>
