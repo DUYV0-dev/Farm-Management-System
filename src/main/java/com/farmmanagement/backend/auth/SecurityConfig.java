@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/admin/users").hasAuthority("users:read")
                 .requestMatchers(HttpMethod.GET,"/admin/roles").hasAuthority("roles:read")
                 .requestMatchers("/api/v1/users", "/api/v1/users/**", "/api/v1/roles", "/api/v1/roles/**", "/api/v1/permissions").authenticated()
+                .requestMatchers("/api/v1/productions", "/api/v1/productions/**", "/api/v1/products", "/api/v1/products/**").authenticated()
                 .anyRequest().denyAll())
             .exceptionHandling(e->e
                 .authenticationEntryPoint((q,s,x)->api.write(q,s,401,"UNAUTHENTICATED","Vui lòng đăng nhập lại."))
