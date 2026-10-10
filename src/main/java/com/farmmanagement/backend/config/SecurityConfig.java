@@ -68,6 +68,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/admin/roles").hasAuthority("roles:read")
                 .requestMatchers(HttpMethod.GET,"/admin/farms").hasAuthority("farms:read")
                 .requestMatchers("/api/v1/users", "/api/v1/users/**", "/api/v1/roles", "/api/v1/roles/**", "/api/v1/permissions").authenticated()
+                .requestMatchers("/api/v1/productions", "/api/v1/productions/**", "/api/v1/products", "/api/v1/products/**").authenticated()
                 .requestMatchers("/api/v1/farms", "/api/v1/farms/**", "/api/v1/plots", "/api/v1/plots/**", 
                                  "/api/v1/crops", "/api/v1/crops/**", "/api/v1/seasons", "/api/v1/seasons/**").authenticated()
                 .requestMatchers("/api/v1/material-categories", "/api/v1/material-categories/**",
