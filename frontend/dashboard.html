@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriManage - Dashboard & Reports</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+        .chart-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            border: 1px solid var(--border-color);
+        }
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+        .report-table-wrapper {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            padding: 32px;
+            margin-bottom: 48px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav shadow-sm">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <span>AgriManage</span>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="dashboard.html" class="nav-item active"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    <a href="activities.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Farming Activities</a>
+                    <a href="notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+                    <a href="index.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Tasks</a>
+                    <a href="workers.html" class="nav-item"><i class="fa-solid fa-users"></i> Workers</a>
+                    <a href="farm.html" class="nav-item"><i class="fa-solid fa-tractor"></i> Farms</a>
+                    <a href="material.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Material & Warehouse</a>
+                    <a href="schedule.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
+                    <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reports</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="btn-icon"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
+                    <div class="user-profile">
+                        <img src="https://i.pravatar.cc/150?img=33" alt="User">
+                        <div class="user-info">
+                            <span class="user-name">Farm Manager</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-container">
+                <div class="page-header">
+                    <div class="header-text">
+                        <h1>Farm Overview</h1>
+                        <p class="subtitle">Monitor your farm's performance, tasks, and inventory at a glance.</p>
+                    </div>
+                    <button class="btn-secondary" id="btnExportReport">
+                        <i class="fa-solid fa-download"></i> Export Summary
+                    </button>
+                </div>
+
+                <!-- Farm Overview Stats -->
+                <div class="stats-container">
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-green-light text-green">
+                                <i class="fa-solid fa-map"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Total Area (ha)</h3>
+                                <h2>125.5</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-arrow-trend-up"></i> 100% Cultivated</span>
+                    </div>
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-orange-light text-orange">
+                                <i class="fa-solid fa-seedling"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Active Crops</h3>
+                                <h2>8</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-wheat-awn"></i> Healthy</span>
+                    </div>
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-teal-light text-teal">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Active Workers</h3>
+                                <h2>24</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-neutral"><i class="fa-solid fa-user-check"></i> 95% On Duty</span>
+                    </div>
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-brown-light text-brown">
+                                <i class="fa-solid fa-tractor"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Equipment In Use</h3>
+                                <h2>12</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-gear"></i> Optimal</span>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid for Summaries -->
+                <div class="dashboard-grid">
+                    <!-- Crop Season Summary -->
+                    <div class="chart-card shadow-sm">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Crop Season Yield Estimate</h3>
+                            <button class="btn-icon" style="width:36px;height:36px;font-size:14px;"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="cropSeasonChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Farming Task Summary -->
+                    <div class="chart-card shadow-sm">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Farming Task Summary</h3>
+                            <button class="btn-icon" style="width:36px;height:36px;font-size:14px;"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="taskSummaryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Inventory Summary -->
+                    <div class="chart-card shadow-sm">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Inventory Status</h3>
+                            <button class="btn-icon" style="width:36px;height:36px;font-size:14px;"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="inventoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Basic Statistics -->
+                    <div class="chart-card shadow-sm">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Weekly Productivity Stats</h3>
+                            <button class="btn-icon" style="width:36px;height:36px;font-size:14px;"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="productivityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basic Reports Table -->
+                <div class="report-table-wrapper shadow-sm">
+                    <div class="table-header">
+                        <h2>Recent Reports</h2>
+                        <div class="table-controls">
+                            <button class="btn-primary" id="btnGenerateReport"><i class="fa-solid fa-plus"></i> Generate Report</button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="task-table">
+                            <thead>
+                                <tr>
+                                    <th>Report Name</th>
+                                    <th>Type</th>
+                                    <th>Generated Date</th>
+                                    <th>Generated By</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-table-body">
+                                <tr>
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--text-main);">Q3 Harvest Summary</div>
+                                        <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Comprehensive harvest data for Q3</div>
+                                    </td>
+                                    <td><span style="background: var(--accent-blue-light); color: var(--accent-blue); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Harvest</span></td>
+                                    <td>Sep 25, 2026</td>
+                                    <td>Farm Manager</td>
+                                    <td><span style="color: var(--primary); font-weight: 500;"><i class="fa-solid fa-check-circle"></i> Ready</span></td>
+                                    <td>
+                                        <button class="btn-icon" style="width: 32px; height: 32px; font-size: 14px;" onclick="downloadReport('Q3 Harvest Summary')"><i class="fa-solid fa-download"></i></button>
+                                        <button class="btn-icon" style="width: 32px; height: 32px; font-size: 14px;" onclick="viewReport('Q3 Harvest Summary')"><i class="fa-solid fa-eye"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--text-main);">September Fertilizer Usage</div>
+                                        <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Monthly inventory deduction</div>
+                                    </td>
+                                    <td><span style="background: var(--accent-orange-light); color: var(--accent-orange); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Inventory</span></td>
+                                    <td>Sep 22, 2026</td>
+                                    <td>Jane Smith</td>
+                                    <td><span style="color: var(--primary); font-weight: 500;"><i class="fa-solid fa-check-circle"></i> Ready</span></td>
+                                    <td>
+                                        <button class="btn-icon" style="width: 32px; height: 32px; font-size: 14px;" onclick="downloadReport('September Fertilizer Usage')"><i class="fa-solid fa-download"></i></button>
+                                        <button class="btn-icon" style="width: 32px; height: 32px; font-size: 14px;" onclick="viewReport('September Fertilizer Usage')"><i class="fa-solid fa-eye"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--text-main);">Weekly Task Audit</div>
+                                        <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Task completion rates</div>
+                                    </td>
+                                    <td><span style="background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Tasks</span></td>
+                                    <td>Sep 20, 2026</td>
+                                    <td>System</td>
+                                    <td><span style="color: var(--primary); font-weight: 500;"><i class="fa-solid fa-check-circle"></i> Ready</span></td>
+                                    <td>
+                                        <button class="btn-icon" style="width: 32px; height: 32px; font-size: 14px;" onclick="downloadReport('Weekly Task Audit')"><i class="fa-solid fa-download"></i></button>
+                                        <button class="btn-icon" style="width: 32px; height: 32px; font-size: 14px;" onclick="viewReport('Weekly Task Audit')"><i class="fa-solid fa-eye"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./js/common.js"></script>
+    <script src="./js/dashboard.js"></script>
+</body>
+</html>

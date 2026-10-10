@@ -1,4 +1,4 @@
-package com.farmmanagement.backend.auth;
+package com.farmmanagement.backend.common;
 
 public class DomainException extends RuntimeException {
     private final int status;
