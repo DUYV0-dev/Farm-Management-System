@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriManage - Trung Tâm Thông Báo & Nhắc Nhở Trang Trại</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav shadow-sm">
+            <div class="nav-container">
+                <a href="dashboard.html" class="nav-brand">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <span>AgriManage</span>
+                </a>
+                
+                <div class="nav-links">
+                    <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    <a href="activities.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Farming Activities</a>
+                    <a href="notifications.html" class="nav-item active"><i class="fa-solid fa-bell"></i> Notifications</a>
+                    <a href="index.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Task Roster</a>
+                    <a href="workers.html" class="nav-item"><i class="fa-solid fa-users"></i> Workers</a>
+                    <a href="schedule.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
+                    <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reports</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="btn-icon" id="btnBellNotification"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
+                    <div class="user-profile">
+                        <img src="https://i.pravatar.cc/150?img=33" alt="User">
+                        <div class="user-info">
+                            <span class="user-name">Farm Manager</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-container">
+                <div class="page-header">
+                    <div class="header-text">
+                        <h1>Trung Tâm Thông Báo & Nhắc Nhở Trang Trại</h1>
+                        <p class="subtitle">Giám sát cảnh báo vật tư kho, nhắc nhở hạn chót công việc, sự kiện mùa vụ và lịch trình sắp diễn ra.</p>
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn-secondary" id="btnMarkAllReadCenter">
+                            <i class="fa-solid fa-check-double"></i> Đánh dấu tất cả là đã đọc
+                        </button>
+                        <button class="btn-primary" id="btnCreateReminder">
+                            <i class="fa-solid fa-plus-circle"></i> Thêm Nhắc Nhở Mới
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Banner Analytics Grid -->
+                <div class="notification-center-banner">
+                    <div class="season-stats-grid">
+                        <div class="season-stat-box">
+                            <div class="season-stat-icon bg-red-light text-danger" style="background:#fef2f2; color:#dc2626;">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <div class="season-stat-content">
+                                <h4>Khẩn cấp & Chưa đọc</h4>
+                                <div class="stat-value" id="statUnreadCount">0</div>
+                            </div>
+                        </div>
+
+                        <div class="season-stat-box">
+                            <div class="season-stat-icon bg-orange-light text-orange">
+                                <i class="fa-solid fa-boxes-stacked"></i>
+                            </div>
+                            <div class="season-stat-content">
+                                <h4>Cảnh báo Vật tư & Thiết bị</h4>
+                                <div class="stat-value" id="statInventoryCount">0</div>
+                            </div>
+                        </div>
+
+                        <div class="season-stat-box">
+                            <div class="season-stat-icon bg-blue-light text-blue" style="background:#eff6ff; color:#1d4ed8;">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div class="season-stat-content">
+                                <h4>Nhắc nhở Công việc</h4>
+                                <div class="stat-value" id="statTaskRemindersCount">0</div>
+                            </div>
+                        </div>
+
+                        <div class="season-stat-box">
+                            <div class="season-stat-icon bg-green-light text-green">
+                                <i class="fa-solid fa-wheat-awn"></i>
+                            </div>
+                            <div class="season-stat-content">
+                                <h4>Sự kiện Mùa vụ & Lịch trình</h4>
+                                <div class="stat-value" id="statSeasonRemindersCount">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs: Active vs History Archive vs Settings -->
+                <div class="table-wrapper shadow-sm">
+                    <div class="table-header">
+                        <!-- Main Section Tabs -->
+                        <div class="season-tab-selector" id="notifSectionTabs">
+                            <button class="season-tab-btn active" data-tab="active">
+                                <i class="fa-solid fa-bell"></i> Thông Báo Hiện Tại (<span id="tabActiveCount">0</span>)
+                            </button>
+                            <button class="season-tab-btn" data-tab="history">
+                                <i class="fa-solid fa-clock-rotate-left"></i> Lịch Sử Thông Báo Archive
+                            </button>
+                            <button class="season-tab-btn" data-tab="settings">
+                                <i class="fa-solid fa-sliders"></i> Cấu Hình Nhắc Nhở
+                            </button>
+                        </div>
+
+                        <!-- Filter Controls for Notifications -->
+                        <div class="table-controls" id="notifFilterControls" style="flex-wrap:wrap; gap:10px;">
+                            <div class="search-bar" style="min-width:240px;">
+                                <i class="fa-solid fa-search"></i>
+                                <input type="text" id="notifSearchInput" placeholder="Tìm theo tiêu đề, nội dung...">
+                            </div>
+
+                            <select id="notifCategoryFilter" style="padding: 8px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); font-weight: 600; font-size:13px;">
+                                <option value="">Tất cả Loại thông báo</option>
+                                <option value="Task Reminder">Task Reminder (Nhắc nhở công việc)</option>
+                                <option value="Crop Season">Crop Season (Nhắc nhở mùa vụ)</option>
+                                <option value="Inventory Alert">Inventory Alert (Cảnh báo vật tư kho)</option>
+                                <option value="Upcoming Activity">Upcoming Activity (Hoạt động sắp tới)</option>
+                            </select>
+
+                            <select id="notifStatusFilter" style="padding: 8px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); font-weight: 600; font-size:13px;">
+                                <option value="">Tất cả Trạng thái</option>
+                                <option value="unread">Chưa đọc (Unread)</option>
+                                <option value="read">Đã đọc (Read)</option>
+                                <option value="resolved">Đã xử lý (Resolved)</option>
+                            </select>
+
+                            <select id="notifPriorityFilter" style="padding: 8px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); font-weight: 600; font-size:13px;">
+                                <option value="">Tất cả Mức độ</option>
+                                <option value="critical">🔴 Khẩn cấp (Critical)</option>
+                                <option value="warning">🟡 Cảnh báo (Warning)</option>
+                                <option value="info">🔵 Thông tin (Info)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 1. Active Notifications List View -->
+                    <div id="activeNotifView" style="padding: 20px;">
+                        <div class="notification-cards-list" id="notifCardsContainer">
+                            <!-- Dynamic cards rendered by JS -->
+                        </div>
+                    </div>
+
+                    <!-- 2. Notification History Archive View -->
+                    <div id="historyNotifView" style="display: none; padding: 20px;">
+                        <div style="background:var(--bg-body); padding:16px 20px; border-radius:var(--radius-md); border:1px solid var(--border-color); margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                            <div>
+                                <strong style="font-size:15px; color:var(--text-main);">Lịch sử Lưu trữ Thông báo (Audit Log Archive)</strong>
+                                <p class="subtitle" style="font-size:13px;">Toàn bộ các thông báo đã đọc, cảnh báo đã xử lý và nhật ký tự động.</p>
+                            </div>
+                            <button class="btn-chip chip-success" id="btnClearHistoryNotifs"><i class="fa-solid fa-broom"></i> Dọn dẹp thông báo cũ (>30 ngày)</button>
+                        </div>
+
+                        <div class="notification-cards-list" id="historyCardsContainer">
+                            <!-- Dynamic history cards rendered by JS -->
+                        </div>
+                    </div>
+
+                    <!-- 3. Notification Settings View -->
+                    <div id="settingsNotifView" style="display: none; padding: 20px;">
+                        <div class="settings-card shadow-sm">
+                            <h3 style="font-size:17px; margin-bottom:16px; color:var(--text-main);"><i class="fa-solid fa-gear text-primary"></i> Cấu hình Tự động Nhắc nhở & Cảnh báo Trang trại</h3>
+                            
+                            <div class="setting-row">
+                                <div>
+                                    <strong style="font-size:14.5px; display:block;">Cảnh báo Tồn kho Vật tư Tối thiểu</strong>
+                                    <span style="font-size:13px; color:var(--text-muted);">Tự động phát cảnh báo đỏ khi phân bón, hạt giống hoặc thuốc BVTV xuống dưới 100kg/lít.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="cfgInventoryAlert" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-row">
+                                <div>
+                                    <strong style="font-size:14.5px; display:block;">Nhắc nhở Hạn chót Công việc & Mùa vụ (24 giờ trước)</strong>
+                                    <span style="font-size:13px; color:var(--text-muted);">Gửi thông báo nhắc nhở trước 24 giờ khi đến hạn hoàn thành công việc hoặc đợt chăm sóc mùa vụ.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="cfgTaskReminder" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-row">
+                                <div>
+                                    <strong style="font-size:14.5px; display:block;">Cảnh báo Thiết bị & Bảo trì Định kỳ</strong>
+                                    <span style="font-size:13px; color:var(--text-muted);">Tạo thông báo nhắc nhở khi hệ thống tưới hoặc máy móc trang trại đạt giờ vận hành bảo trì.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="cfgEquipmentAlert" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-row">
+                                <div>
+                                    <strong style="font-size:14.5px; display:block;">Thông báo Nổi (Toast Popup) & Âm thanh Cảnh báo</strong>
+                                    <span style="font-size:13px; color:var(--text-muted);">Hiển thị khung thông báo nổi ở góc phải màn hình khi có sự kiện mới.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="cfgToastPopup" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div style="margin-top:20px; text-align:right;">
+                                <button type="button" class="btn-primary" id="btnSaveNotifSettings"><i class="fa-solid fa-floppy-disk"></i> Lưu Cấu Hình</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Create Custom Reminder -->
+    <div class="modal-overlay" id="reminderModal">
+        <div class="modal-content shadow-md" style="max-width: 580px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-bell-plus text-primary"></i> Tạo Thông Báo & Nhắc Nhở Mới</h2>
+                <button class="btn-close" id="btnCloseReminderModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="reminderForm">
+                    <div class="form-group">
+                        <label>Tiêu đề Thông báo / Nhắc nhở <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="remTitle" required placeholder="Ví dụ: Kiểm tra lượng nước hồ tưới Sector 4 trước mùa khô">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phân loại Thông báo <span style="color:var(--danger)">*</span></label>
+                            <select id="remCategory" required>
+                                <option value="Task Reminder">Task Reminder (Nhắc nhở công việc)</option>
+                                <option value="Crop Season">Crop Season (Nhắc nhở mùa vụ)</option>
+                                <option value="Inventory Alert">Inventory Alert (Cảnh báo vật tư kho)</option>
+                                <option value="Upcoming Activity">Upcoming Activity (Hoạt động sắp diễn ra)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mức độ Ưu tiên <span style="color:var(--danger)">*</span></label>
+                            <select id="remPriority" required>
+                                <option value="critical">🔴 Khẩn cấp (Critical)</option>
+                                <option value="warning" selected>🟡 Cảnh báo (Warning)</option>
+                                <option value="info">🔵 Thông tin (Info)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nội dung chi tiết Nhắc nhở <span style="color:var(--danger)">*</span></label>
+                        <textarea id="remDesc" rows="3" required placeholder="Nhập nội dung mô tả chi tiết, vị trí hoặc hành động cần thực hiện..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="btnCancelReminder">Hủy bỏ</button>
+                        <button type="submit" class="btn-primary"><i class="fa-solid fa-paper-plane"></i> Phát Thông Báo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/common.js"></script>
+    <script src="./js/notifications.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package com.farmmanagement.backend.auth;
+package com.farmmanagement.backend.management;
 
 import java.util.*;
 import org.springframework.jdbc.core.JdbcTemplate;

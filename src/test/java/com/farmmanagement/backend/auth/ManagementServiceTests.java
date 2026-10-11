@@ -1,5 +1,9 @@
 package com.farmmanagement.backend.auth;
 
+import com.farmmanagement.backend.common.*;
+import com.farmmanagement.backend.config.SecurityConfig;
+import com.farmmanagement.backend.management.*;
+
 import java.time.Instant;
 import java.util.*;
 import org.junit.jupiter.api.*;
@@ -22,6 +26,8 @@ class ManagementServiceTests {
         when(users.byId(1)).thenReturn(Optional.of(user(1)));
         when(users.byId(2)).thenReturn(Optional.of(user(2)));
         when(users.roles(1)).thenReturn(List.of("SYSTEM_ADMIN"));
+        when(users.permissions(1)).thenReturn(List.of("users:read","users:create","users:update","users:status",
+            "users:assign","users:password","roles:read","roles:write","roles:permissions"));
         when(users.roles(2)).thenReturn(List.of("USER"));
         when(users.publicUser(any())).thenReturn(Map.of("id",2));
     }

@@ -1,5 +1,9 @@
 # Authentication & User/Role Management — Farm Management N02
 
+## Quản lý trang trại, cây trồng, vật tư và kho
+
+Các module đã nối giao diện với API và PostgreSQL. Xem [hướng dẫn cài đặt, chức năng và kiểm thử](docs/MANAGEMENT.md). Chạy migration **07 → 08 → 09**, build JAR rồi đăng nhập tại `http://127.0.0.1:8080/`; chọn **Trang trại & Cây trồng** hoặc **Vật tư & Kho**. Kiểm thử đầy đủ trên database riêng: `scripts/Test-Management.ps1 -Browser`.
+
 ## Bản cập nhật module quản trị
 
 Đã bổ sung đổi/reset mật khẩu, CRUD người dùng (không xóa), kích hoạt/vô hiệu hóa, gán vai trò SYSTEM, quản lý quyền và bảo vệ trang/API. Xem [hướng dẫn hiện hành](docs/AUTH_USER_ROLE_MANAGEMENT.md) để chạy migration 06, cấp quản trị viên đầu tiên và dùng API/giao diện.
