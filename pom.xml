@@ -30,6 +30,8 @@
         <java.version>21</java.version>
     </properties>
     <dependencies>
+        <dependency><groupId>org.apache.poi</groupId><artifactId>poi-ooxml</artifactId><version>5.4.1</version></dependency>
+        <dependency><groupId>org.apache.pdfbox</groupId><artifactId>pdfbox</artifactId><version>3.0.5</version></dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -114,7 +116,7 @@
             <resource>
                 <directory>frontend</directory><targetPath>static/ui</targetPath>
                 <includes>
-                    <include>farm.html</include><include>material.html</include>
+                    <include>advanced-dashboard.html</include><include>js/advanced-dashboard.js</include><include>harvest.html</include><include>js/harvest.js</include><include>farm.html</include><include>material.html</include>
                     <include>css/*.css</include><include>js/farm.js</include>
                     <include>js/material.js</include><include>js/api-client.js</include>
                 </includes>

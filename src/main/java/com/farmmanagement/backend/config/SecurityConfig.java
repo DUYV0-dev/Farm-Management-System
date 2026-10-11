@@ -59,7 +59,7 @@ public class SecurityConfig {
             .requestCache(c->c.disable())
             .authorizeHttpRequests(a->a
                 .requestMatchers(HttpMethod.GET,"/","/index.html","/app.js","/style.css").permitAll()
-                .requestMatchers(HttpMethod.GET,"/ui/farm.html","/ui/material.html","/ui/js/**","/ui/css/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/ui/advanced-dashboard.html","/ui/harvest.html","/ui/farm.html","/ui/material.html","/ui/js/**","/ui/css/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/v1/auth/me").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/logout").authenticated()
@@ -68,6 +68,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/admin/roles").hasAuthority("roles:read")
                 .requestMatchers(HttpMethod.GET,"/admin/farms").hasAuthority("farms:read")
                 .requestMatchers("/api/v1/users", "/api/v1/users/**", "/api/v1/roles", "/api/v1/roles/**", "/api/v1/permissions").authenticated()
+                .requestMatchers("/api/v1/dashboard-farms", "/api/v1/harvest-farms", "/api/v1/harvest-units").authenticated()
                 .requestMatchers("/api/v1/productions", "/api/v1/productions/**", "/api/v1/products", "/api/v1/products/**").authenticated()
                 .requestMatchers("/api/v1/farms", "/api/v1/farms/**", "/api/v1/plots", "/api/v1/plots/**", 
                                  "/api/v1/crops", "/api/v1/crops/**", "/api/v1/seasons", "/api/v1/seasons/**").authenticated()
