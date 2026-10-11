@@ -77,6 +77,14 @@ Remove-Item Env:RUN_DB_CONTEXT_TEST, Env:DB_PASSWORD, Env:JWT_SECRET
 
 Đọc docs/CONTRACT_AND_DECISIONS.md: ID số/systemRoles/membership bám ERD đã chạy, khác API Specification v1 dùng UUID/systemRole. Không tự tuyên bố đã khớp toàn bộ contract hoặc Gate đã được duyệt.
 
+## Dashboard và báo cáo nâng cao
+
+Đã bổ sung dashboard sản lượng, thống kê mùa vụ, tồn kho hiện tại và báo cáo sản xuất xuất PDF/Excel. Các nguồn công việc, sổ kho lịch sử và đơn mua chưa vận hành sẽ hiển thị chưa khả dụng. Xem [hướng dẫn và kết quả kiểm thử](docs/ADVANCED_DASHBOARD_REPORTS.md). Cần chạy migration 11 sau migration 10 và cấp quyền trước khi sử dụng.
+
+## Quản lý thu hoạch
+
+Đã bổ sung màn hình **Thu hoạch** để ghi ngày, sản lượng, chất lượng theo mùa vụ và xem lịch sử. Xem [hướng dẫn cài đặt, quyền và sử dụng](docs/HARVEST_MANAGEMENT.md). Cần chạy `database/10_Harvest_Management.sql` sau migration 09 trước khi sử dụng.
+
 ## 7. Vận hành
 
 Flyway giữ disabled vì V1 đã chạy thủ công. Script 05 là migration thủ công có transaction. Chưa tự baseline Flyway; khi nhóm chuyển sang Flyway, đăng ký lịch sử theo quy trình riêng. Không bật Hibernate ddl-auto=create/update.
