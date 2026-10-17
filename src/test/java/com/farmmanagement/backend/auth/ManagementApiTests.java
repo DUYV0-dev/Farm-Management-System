@@ -1,5 +1,9 @@
 package com.farmmanagement.backend.auth;
 
+import com.farmmanagement.backend.common.*;
+import com.farmmanagement.backend.config.SecurityConfig;
+import com.farmmanagement.backend.management.*;
+
 import java.time.Instant;
 import java.util.*;
 import org.junit.jupiter.api.*;
@@ -35,6 +39,7 @@ class ManagementApiTests {
             .subject("1").id(sid.toString()).claim("sessionId",sid.toString()).issuedAt(now).expiresAt(now.plusSeconds(86400)).build();
         token=encoder.encode(JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(),claims)).getTokenValue();
         when(users.validSession(any(),eq(1))).thenReturn(true);
+        when(users.byId(1)).thenReturn(Optional.of(new AuthStore.User(1,"actor","hash","Actor","actor@test.vn","ACTIVE",Instant.now())));
         when(users.roles(1)).thenReturn(List.of("USER"));
         when(users.permissions(1)).thenReturn(List.of());
     }
@@ -155,5 +160,34 @@ class ManagementApiTests {
             .content("{\"roleIds\":[99]}"))
             .andExpect(status().isNotFound());
         verify(store,never()).assignRoles(anyInt(),anyList());
+    }
+
+    @Test void permissionRevokedWhileWaitingForAdministrationLockIsDenied() throws Exception {
+        when(users.roles(1)).thenReturn(List.of("SYSTEM_ADMIN"));
+        when(users.permissions(1)).thenReturn(List.of("roles:write"));
+        when(store.createRole("REVIEWER","Reviewer")).thenReturn(9);
+        when(store.role(9)).thenReturn(Optional.of(new ManagementStore.Role(9,"REVIEWER","Reviewer",List.of())));
+        doAnswer(invocation -> {
+            when(users.permissions(1)).thenReturn(List.of());
+            return null;
+        }).when(store).lockAdministration();
+        mvc.perform(post("/api/v1/roles").header("Authorization","Bearer "+token)
+            .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"REVIEWER\",\"description\":\"Reviewer\"}"))
+            .andExpect(status().isForbidden());
+        verify(store,never()).createRole(anyString(),anyString());
+        verify(store,never()).audit(anyInt(),anyString(),anyInt(),anyString(),anyString());
+    }
+    @Test void accountDisabledWhileWaitingForAdministrationLockIsDenied() throws Exception {
+        when(users.permissions(1)).thenReturn(List.of("roles:write"));
+        when(store.createRole("REVIEWER","Reviewer")).thenReturn(9);
+        when(store.role(9)).thenReturn(Optional.of(new ManagementStore.Role(9,"REVIEWER","Reviewer",List.of())));
+        doAnswer(invocation -> {
+            when(users.byId(1)).thenReturn(Optional.of(new AuthStore.User(1,"actor","hash","Actor","actor@test.vn","INACTIVE",Instant.now())));
+            return null;
+        }).when(store).lockAdministration();
+        mvc.perform(post("/api/v1/roles").header("Authorization","Bearer "+token)
+            .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"REVIEWER\",\"description\":\"Reviewer\"}"))
+            .andExpect(status().isForbidden());
+        verify(store,never()).createRole(anyString(),anyString());
     }
 }

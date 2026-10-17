@@ -1,4 +1,4 @@
-package com.farmmanagement.backend.auth;
+package com.farmmanagement.backend.management;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -15,4 +15,9 @@ public class ManagementPages {
     @GetMapping(value="/admin/roles",produces=MediaType.TEXT_HTML_VALUE)
     @PreAuthorize("hasAuthority('roles:read')")
     public Resource roles() { return new ClassPathResource("protected/roles.html"); }
+
+    @GetMapping(value="/admin/farms",produces=MediaType.TEXT_HTML_VALUE)
+    @PreAuthorize("hasAuthority('farms:read')")
+    public Resource farms() { return new ClassPathResource("static/ui/farm.html"); }
 }
+

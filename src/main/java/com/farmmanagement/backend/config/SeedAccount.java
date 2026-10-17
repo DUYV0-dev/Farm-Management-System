@@ -1,4 +1,4 @@
-package com.farmmanagement.backend.auth;
+package com.farmmanagement.backend.config;
 
 import java.util.UUID;
 import org.springframework.boot.CommandLineRunner;

@@ -1,4 +1,4 @@
-package com.farmmanagement.backend.auth;
+package com.farmmanagement.backend.common;
 
 import jakarta.servlet.http.*;
 import java.io.IOException;

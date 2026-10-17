@@ -1,3 +1,5 @@
+Farm, Plot, Crop, Material and Warehouse management: [installation and verification](docs/MANAGEMENT.md).
+
 # Farm-Management-System
 
 Backend xác thực, phân quyền và quản lý người dùng/vai trò: xem [hướng dẫn cài đặt, migration và API](docs/AUTH_USER_ROLE_MANAGEMENT.md).

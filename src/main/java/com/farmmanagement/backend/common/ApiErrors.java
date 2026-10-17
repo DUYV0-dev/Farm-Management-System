@@ -1,4 +1,4 @@
-package com.farmmanagement.backend.auth;
+package com.farmmanagement.backend.common;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -33,7 +33,28 @@ public class ApiErrors {
     @ExceptionHandler(AccessDeniedException.class)
     ResponseEntity<?> forbidden(HttpServletRequest r) { return err(r,403,"FORBIDDEN","Bạn không có quyền thực hiện thao tác này."); }
     @ExceptionHandler(DataIntegrityViolationException.class)
-    ResponseEntity<?> conflict(HttpServletRequest r) { return err(r,409,"CONFLICT","Dữ liệu bị trùng hoặc vi phạm ràng buộc."); }
+    ResponseEntity<?> conflict(HttpServletRequest r, DataIntegrityViolationException ex) {
+        // Translate only known database guard messages; never expose raw SQL or exception details.
+        String detail = String.valueOf(ex.getMostSpecificCause().getMessage());
+        var messages = Map.ofEntries(
+            Map.entry("Farm area is smaller than its plots", "Diện tích trang trại không được nhỏ hơn tổng diện tích các khu đất."),
+            Map.entry("Plot areas exceed farm area", "Tổng diện tích khu đất vượt quá diện tích trang trại."),
+            Map.entry("Deactivate active plots and warehouses first", "Hãy ngừng hoạt động các khu đất và kho trước khi ngừng trang trại."),
+            Map.entry("Plot has open seasons", "Khu đất đang có mùa vụ chưa hoàn tất."),
+            Map.entry("Crop has open seasons", "Cây trồng đang được sử dụng trong mùa vụ chưa hoàn tất."),
+            Map.entry("Category has active materials", "Nhóm còn vật tư đang hoạt động. Hãy ngừng các vật tư trước."),
+            Map.entry("Warehouse has stock", "Kho còn tồn vật tư. Hãy xử lý tồn kho trước khi ngừng hoạt động."),
+            Map.entry("Clear stock before deactivating material or changing its unit", "Vật tư còn tồn kho. Không thể ngừng hoạt động hoặc đổi đơn vị."),
+            Map.entry("Category is missing or inactive", "Nhóm vật tư không tồn tại hoặc đã ngừng hoạt động."),
+            Map.entry("Farm is missing or inactive", "Trang trại không tồn tại hoặc đã ngừng hoạt động."),
+            Map.entry("Farm is inactive", "Trang trại đã ngừng hoạt động."),
+            Map.entry("Season requires active farm, plot and crop", "Mùa vụ cần trang trại, khu đất và cây trồng đang hoạt động."),
+            Map.entry("Inventory requires active warehouse, farm, material and category", "Chỉ cập nhật tồn kho khi kho, trang trại, vật tư và nhóm vật tư đang hoạt động.")
+        );
+        String message = messages.entrySet().stream().filter(e -> detail.contains(e.getKey()))
+            .map(Map.Entry::getValue).findFirst().orElse("Dữ liệu bị trùng hoặc vi phạm ràng buộc. Kiểm tra tên và bản ghi liên quan.");
+        return err(r,409,"CONFLICT",message);
+    }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     ResponseEntity<?> method(HttpServletRequest r) { return err(r,405,"METHOD_NOT_ALLOWED","Phương thức không được hỗ trợ."); }
     @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)

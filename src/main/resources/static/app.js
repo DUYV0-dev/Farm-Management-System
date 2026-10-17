@@ -8,6 +8,7 @@ function signedOut() {
   accessToken = null; currentUser = null;
   el("loginPanel").hidden = false; el("accountPanel").hidden = true;
   el("managementPanel").replaceChildren(); el("passwordForm").reset();
+  document.body.classList.remove("signed-in");
 }
 function renderAccount(user) {
   currentUser = user;
@@ -15,6 +16,9 @@ function renderAccount(user) {
   el("accountName").textContent = user.username;
   el("accountRoles").textContent = user.systemRoles.join(", ");
   el("loginPanel").hidden = true; el("accountPanel").hidden = false;
+  document.body.classList.add("signed-in");
+  el("farmButton").hidden = !["farms:read", "plots:read", "crops:read"].some(has);
+  el("materialButton").hidden = !["materials:read", "warehouses:read"].some(has);
   document.querySelectorAll("[data-permission]").forEach(node => { node.hidden = !has(node.dataset.permission); });
 }
 async function request(path, options = {}) {
@@ -30,6 +34,7 @@ async function request(path, options = {}) {
     throw new Error((data?.error?.message || "Không thể xử lý yêu cầu.") + " Mã: " + (data?.requestId || "—"));
   }
   if (res.status === 204) return null;
+  if (["application/pdf", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"].some(type => res.headers.get("Content-Type")?.includes(type))) return res.blob();
   return res.headers.get("Content-Type")?.includes("text/html") ? res.text() : (await res.json()).data;
 }
 const json = (path, method, body) => request(path, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -155,6 +160,8 @@ formHandler(el("loginForm"), async data => {
   const result = await json("/api/v1/auth/login", "POST", { username: data.username.trim(), password: data.password });
   accessToken = result.accessToken; el("loginForm").reset(); el("password").type = "password";
   renderAccount(result.user); message("Đăng nhập thành công.");
+  const module = location.hash.slice(1);
+  if (["farm", "material", "harvest", "dashboard"].includes(module)) await openModule(module);
 });
 formHandler(el("passwordForm"), async data => {
   await json("/api/v1/auth/password", "POST", data); signedOut(); message("Đã đổi mật khẩu. Vui lòng đăng nhập lại.");
@@ -163,3 +170,28 @@ el("checkButton").onclick = () => run(async () => { await refreshMe(); el("manag
 el("logoutButton").onclick = () => run(async () => { await request("/api/v1/auth/logout", { method: "POST" }); signedOut(); message("Đã đăng xuất."); }, el("logoutButton"));
 el("usersButton").onclick = () => run(() => openPage("users"), el("usersButton"));
 el("rolesButton").onclick = () => run(() => openPage("roles"), el("rolesButton"));
+async function openModule(name) {
+  if (!["farm", "material", "harvest", "dashboard"].includes(name)) return;
+  await refreshMe();
+  const required = name === "dashboard" ? ["dashboard:read"] : name === "harvest" ? ["harvests:read"] : name === "farm" ? ["farms:read", "plots:read", "crops:read"] : ["materials:read", "warehouses:read"];
+  if (!required.some(has)) throw new Error("Bạn không có quyền xem mục này.");
+  const frame = node("iframe"); frame.src = name === "dashboard" ? "/ui/advanced-dashboard.html" : `/ui/${name}.html`;
+  frame.title = name === "dashboard" ? "Dashboard và báo cáo" : name === "harvest" ? "Quản lý thu hoạch" : name === "farm" ? "Trang trại, khu đất và cây trồng" : "Vật tư và kho";
+  frame.className = "module-frame";
+  el("managementPanel").replaceChildren(frame);
+  history.replaceState(null, "", "#" + name);
+}
+async function download(path, filename) {
+  const blob = await request(path), url = URL.createObjectURL(blob), link = document.createElement("a");
+  link.href = url; link.download = filename; document.body.append(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+window.ManagementApi = Object.freeze({ has, request, json, download });
+el("farmButton").onclick = () => run(() => openModule("farm"), el("farmButton"));
+el("materialButton").onclick = () => run(() => openModule("material"), el("materialButton"));
+
+el("loginButton").disabled = false;
+
+el("harvestButton").onclick = () => run(() => openModule("harvest"), el("harvestButton"));
+
+el("dashboardButton").onclick = () => run(() => openModule("dashboard"), el("dashboardButton"));

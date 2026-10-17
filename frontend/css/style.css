@@ -149,6 +149,13 @@ h3 { font-size: 17px; font-weight: 600; color: var(--text-main); }
     border: 1px solid rgba(16, 185, 129, 0.1);
 }
 
+/* Keep all module links reachable as the navigation grows. */
+@media (max-width: 1500px) {
+    .nav-container { height: auto; min-height: 76px; flex-wrap: wrap; gap: 12px; padding-top: 12px; padding-bottom: 12px; }
+    .nav-links { order: 3; flex-basis: 100%; min-width: 0; overflow-x: auto; }
+    .nav-item { flex-shrink: 0; white-space: nowrap; }
+}
+
 .nav-item {
     padding: 9px 18px;
     text-decoration: none;

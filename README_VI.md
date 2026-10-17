@@ -1,5 +1,9 @@
 # Authentication & User/Role Management — Farm Management N02
 
+## Quản lý trang trại, cây trồng, vật tư và kho
+
+Các module đã nối giao diện với API và PostgreSQL. Xem [hướng dẫn cài đặt, chức năng và kiểm thử](docs/MANAGEMENT.md). Chạy migration **07 → 08 → 09**, build JAR rồi đăng nhập tại `http://127.0.0.1:8080/`; chọn **Trang trại & Cây trồng** hoặc **Vật tư & Kho**. Kiểm thử đầy đủ trên database riêng: `scripts/Test-Management.ps1 -Browser`.
+
 ## Bản cập nhật module quản trị
 
 Đã bổ sung đổi/reset mật khẩu, CRUD người dùng (không xóa), kích hoạt/vô hiệu hóa, gán vai trò SYSTEM, quản lý quyền và bảo vệ trang/API. Xem [hướng dẫn hiện hành](docs/AUTH_USER_ROLE_MANAGEMENT.md) để chạy migration 06, cấp quản trị viên đầu tiên và dùng API/giao diện.
@@ -72,6 +76,14 @@ Remove-Item Env:RUN_DB_CONTEXT_TEST, Env:DB_PASSWORD, Env:JWT_SECRET
 ## 6. Khác biệt cần nhóm review
 
 Đọc docs/CONTRACT_AND_DECISIONS.md: ID số/systemRoles/membership bám ERD đã chạy, khác API Specification v1 dùng UUID/systemRole. Không tự tuyên bố đã khớp toàn bộ contract hoặc Gate đã được duyệt.
+
+## Dashboard và báo cáo nâng cao
+
+Đã bổ sung dashboard sản lượng, thống kê mùa vụ, tồn kho hiện tại và báo cáo sản xuất xuất PDF/Excel. Các nguồn công việc, sổ kho lịch sử và đơn mua chưa vận hành sẽ hiển thị chưa khả dụng. Xem [hướng dẫn và kết quả kiểm thử](docs/ADVANCED_DASHBOARD_REPORTS.md). Cần chạy migration 11 sau migration 10 và cấp quyền trước khi sử dụng.
+
+## Quản lý thu hoạch
+
+Đã bổ sung màn hình **Thu hoạch** để ghi ngày, sản lượng, chất lượng theo mùa vụ và xem lịch sử. Xem [hướng dẫn cài đặt, quyền và sử dụng](docs/HARVEST_MANAGEMENT.md). Cần chạy `database/10_Harvest_Management.sql` sau migration 09 trước khi sử dụng.
 
 ## 7. Vận hành
 

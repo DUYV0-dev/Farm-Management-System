@@ -1,4 +1,8 @@
-package com.farmmanagement.backend.auth;
+package com.farmmanagement.backend.config;
+
+import com.farmmanagement.backend.auth.AuthStore;
+import com.farmmanagement.backend.common.Api;
+
 
 import java.time.*;
 import java.util.*;
@@ -22,16 +26,16 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Bean PasswordEncoder passwordEncoder() { return new Argon2PasswordEncoder(16,32,1,19456,2); }
-    @Bean SecretKeySpec jwtKey(@Value("${auth.jwt.secret}") String secret) {
+    @Bean public PasswordEncoder passwordEncoder() { return new Argon2PasswordEncoder(16,32,1,19456,2); }
+    @Bean public SecretKeySpec jwtKey(@Value("${auth.jwt.secret}") String secret) {
         byte[] decoded;
         try { decoded=Base64.getDecoder().decode(secret); }
         catch (IllegalArgumentException e) { throw new IllegalStateException("JWT_SECRET must be Base64"); }
         if(decoded.length<32) throw new IllegalStateException("JWT_SECRET must contain at least 32 random bytes");
         return new SecretKeySpec(decoded,"HmacSHA256");
     }
-    @Bean JwtEncoder jwtEncoder(SecretKeySpec key) { return new NimbusJwtEncoder(new ImmutableSecret<>(key)); }
-    @Bean JwtDecoder jwtDecoder(SecretKeySpec key,@Value("${auth.jwt.issuer}") String issuer,
+    @Bean public JwtEncoder jwtEncoder(SecretKeySpec key) { return new NimbusJwtEncoder(new ImmutableSecret<>(key)); }
+    @Bean public JwtDecoder jwtDecoder(SecretKeySpec key,@Value("${auth.jwt.issuer}") String issuer,
                                @Value("${auth.jwt.audience}") String audience) {
         var decoder=NimbusJwtDecoder.withSecretKey(key).macAlgorithm(MacAlgorithm.HS256).build();
         OAuth2TokenValidator<Jwt> contract=jwt->{
@@ -55,6 +59,7 @@ public class SecurityConfig {
             .requestCache(c->c.disable())
             .authorizeHttpRequests(a->a
                 .requestMatchers(HttpMethod.GET,"/","/index.html","/traceability.html","/activities.html","/dashboard.html","/notifications.html","/workers.html","/schedule.html","/reports.html","/app.js","/style.css","/js/**","/css/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/ui/advanced-dashboard.html","/ui/harvest.html","/ui/farm.html","/ui/material.html","/ui/js/**","/ui/css/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/v1/traceability/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/traceability/**").authenticated()
@@ -64,7 +69,15 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/password").authenticated()
                 .requestMatchers(HttpMethod.GET,"/admin/users").hasAuthority("users:read")
                 .requestMatchers(HttpMethod.GET,"/admin/roles").hasAuthority("roles:read")
+                .requestMatchers(HttpMethod.GET,"/admin/farms").hasAuthority("farms:read")
                 .requestMatchers("/api/v1/users", "/api/v1/users/**", "/api/v1/roles", "/api/v1/roles/**", "/api/v1/permissions").authenticated()
+                .requestMatchers("/api/v1/dashboard-farms", "/api/v1/harvest-farms", "/api/v1/harvest-units").authenticated()
+                .requestMatchers("/api/v1/productions", "/api/v1/productions/**", "/api/v1/products", "/api/v1/products/**").authenticated()
+                .requestMatchers("/api/v1/farms", "/api/v1/farms/**", "/api/v1/plots", "/api/v1/plots/**", 
+                                 "/api/v1/crops", "/api/v1/crops/**", "/api/v1/seasons", "/api/v1/seasons/**").authenticated()
+                .requestMatchers("/api/v1/material-categories", "/api/v1/material-categories/**",
+                    "/api/v1/materials", "/api/v1/materials/**", "/api/v1/warehouses", "/api/v1/warehouses/**",
+                    "/api/v1/inventory", "/api/v1/inventory/**").authenticated()
                 .anyRequest().denyAll())
             .exceptionHandling(e->e
                 .authenticationEntryPoint((q,s,x)->api.write(q,s,401,"UNAUTHENTICATED","Vui lòng đăng nhập lại."))
@@ -82,7 +95,7 @@ public class SecurityConfig {
                     store.permissions(uid).forEach(p->authorities.add(new SimpleGrantedAuthority(p)));
                     return new JwtAuthenticationToken(jwt,authorities);
                 })));
-        http.headers(h->h.contentSecurityPolicy(c->c.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")));
+        http.headers(h->h.frameOptions(f->f.sameOrigin()).contentSecurityPolicy(c->c.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'self'; base-uri 'none'; form-action 'self'")));
         return http.build();
     }
 }
