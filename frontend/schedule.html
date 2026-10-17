@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgriManage - Schedule & Season Planner</title>
+    <title>AgriManage - Lịch Canh Tác & Kế Hoạch Mùa Vụ (Farm Activity Calendar)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./css/style.css">
 </head>
@@ -15,16 +15,17 @@
         <!-- Top Navigation -->
         <nav class="top-nav shadow-sm">
             <div class="nav-container">
-                <div class="nav-brand">
+                <a href="dashboard.html" class="nav-brand">
                     <div class="logo-icon">
                         <i class="fa-solid fa-seedling"></i>
                     </div>
                     <span>AgriManage</span>
-                </div>
+                </a>
                 
                 <div class="nav-links">
                     <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
                     <a href="activities.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Farming Activities</a>
+                    <a href="traceability.html" class="nav-item"><i class="fa-solid fa-qrcode"></i> Traceability</a>
                     <a href="notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
                     <a href="index.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Tasks</a>
                     <a href="workers.html" class="nav-item"><i class="fa-solid fa-users"></i> Workers</a>
@@ -33,7 +34,7 @@
                 </div>
                 
                 <div class="nav-actions">
-                    <button class="btn-icon"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
+                    <button class="btn-icon" id="btnBellNotification"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
                     <div class="user-profile">
                         <img src="https://i.pravatar.cc/150?img=33" alt="User">
                         <div class="user-info">
@@ -48,98 +49,433 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="content-container">
+                <!-- Page Header -->
                 <div class="page-header">
                     <div class="header-text">
-                        <h1>Farm Schedule & Planner</h1>
-                        <p class="subtitle">Plan agricultural operations, seasonal crop cycles, irrigation, and worker shifts.</p>
+                        <h1>Lịch Canh Tác & Kế Hoạch Mùa Vụ</h1>
+                        <p class="subtitle">Theo dõi, điều phối và giám sát các hoạt động canh tác theo thời gian, đón đầu các mốc mùa vụ sắp tới và xử lý kịp thời các công việc quá hạn.</p>
                     </div>
-                    <button class="btn-primary btn-large" id="btnAddSchedule">
-                        <i class="fa-solid fa-calendar-plus"></i> Add Event / Shift
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn-primary btn-large" id="btnAddSchedule">
+                            <i class="fa-solid fa-calendar-plus"></i> Thêm Lịch Canh Tác Mới
+                        </button>
+                        <button class="btn-secondary" id="btnExportSchedule">
+                            <i class="fa-solid fa-file-arrow-down"></i> Xuất Lịch Trình
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Overdue Task Alert Banner -->
+                <div class="overdue-alert-banner" id="overdueAlertBanner" style="display: none;">
+                    <div class="overdue-alert-left">
+                        <div class="overdue-alert-icon">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-size:16px; font-weight:800; color:#dc2626; margin-bottom:2px;" id="overdueAlertTitle">
+                                Phát hiện 3 Công việc Quá hạn Chưa hoàn thành!
+                            </h3>
+                            <p style="font-size:13.5px; color:#991b1b; margin:0;" id="overdueAlertDesc">
+                                Các công việc đã vượt quá hạn chót (Due date). Cần ưu tiên phân công và xử lý ngay để không ảnh hưởng đến chu kỳ sinh trưởng của cây trồng.
+                            </p>
+                        </div>
+                    </div>
+                    <button class="btn-chip" id="btnFilterOverdueOnly" style="background:#dc2626; color:#ffffff; border:none; padding:8px 16px; font-size:13px; font-weight:700;">
+                        <i class="fa-solid fa-filter"></i> Lọc Việc Quá Hạn Ngay
                     </button>
                 </div>
 
-                <!-- Calendar Section -->
-                <div class="calendar-card shadow-sm">
-                    <div class="calendar-header">
-                        <div style="display: flex; align-items: center; gap: 16px;">
-                            <h2 id="currentMonthYear">October 2026</h2>
-                            <div class="calendar-controls">
-                                <button class="btn-icon-sm" id="btnPrevMonth"><i class="fa-solid fa-chevron-left"></i></button>
-                                <button class="btn-secondary" id="btnToday" style="padding: 6px 14px; font-size: 14px;">Today</button>
-                                <button class="btn-icon-sm" id="btnNextMonth"><i class="fa-solid fa-chevron-right"></i></button>
+                <!-- Schedule Summary KPI Cards -->
+                <div class="stats-container" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-green-light text-green">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Tổng Việc Trong Tháng</h3>
+                                <h2 id="kpiMonthTotal">0</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-neutral" id="kpiMonthName">Tháng 10/2026</span>
+                    </div>
+
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-orange-light text-orange">
+                                <i class="fa-solid fa-spinner"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Đang Thực Hiện</h3>
+                                <h2 id="kpiInProgressCount">0</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-person-digging"></i> Đang triển khai</span>
+                    </div>
+
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-teal-light text-teal">
+                                <i class="fa-solid fa-wheat-awn"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Mùa Vụ Sắp Tới</h3>
+                                <h2 id="kpiUpcomingCount">0</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-clock"></i> 7 - 14 ngày tới</span>
+                    </div>
+
+                    <div class="stat-card shadow-sm" id="cardOverdueStat" style="border-left: 4px solid var(--danger);">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-red-light text-danger" style="background:#fef2f2; color:#dc2626;">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Quá Hạn (Overdue)</h3>
+                                <h2 id="kpiOverdueCount" style="color:var(--danger);">0</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend" style="color:#dc2626; font-weight:700;"><i class="fa-solid fa-bolt"></i> Cần xử lý gấp</span>
+                    </div>
+                </div>
+
+                <!-- Main 2-Column Calendar Layout -->
+                <div class="calendar-layout-grid">
+                    <!-- Column 1: Main Calendar & Filters -->
+                    <div class="calendar-card">
+                        <!-- Calendar Top Bar: Month Title & Navigation -->
+                        <div class="calendar-header">
+                            <div class="calendar-title-group">
+                                <h2 class="calendar-month-heading" id="currentMonthYear">Tháng 10, 2026</h2>
+                                <div class="calendar-nav-buttons">
+                                    <button class="btn-cal-nav" id="btnPrevMonth" title="Tháng trước">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </button>
+                                    <button class="btn-cal-nav" id="btnToday">
+                                        <i class="fa-solid fa-calendar-day text-primary"></i> Hôm nay (16/10)
+                                    </button>
+                                    <button class="btn-cal-nav" id="btnNextMonth" title="Tháng sau">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- View Mode Switcher -->
+                            <div class="calendar-view-switcher">
+                                <button class="cal-view-btn active" id="btnViewMonthGrid" data-view="grid">
+                                    <i class="fa-solid fa-table-cells"></i> Lưới Lịch (Month)
+                                </button>
+                                <button class="cal-view-btn" id="btnViewAgenda" data-view="agenda">
+                                    <i class="fa-solid fa-list-ul"></i> Lịch Trình (Agenda)
+                                </button>
                             </div>
                         </div>
 
-                        <div class="table-controls">
-                            <select id="eventCategoryFilter" style="padding: 8px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-weight: 500;">
-                                <option value="">All Categories</option>
-                                <option value="harvest">Harvest</option>
-                                <option value="maintenance">Maintenance</option>
-                                <option value="planting">Planting & Fertilization</option>
-                                <option value="inspection">Inspection</option>
-                            </select>
+                        <!-- Filter Toolbar: Status, Season, Category, Search -->
+                        <div class="calendar-filter-toolbar">
+                            <!-- Filter by Season -->
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <label style="font-size:12px; font-weight:700; color:var(--text-muted);"><i class="fa-solid fa-cloud-sun"></i> Mùa vụ:</label>
+                                <select class="cal-select-filter" id="filterSeason">
+                                    <option value="">Tất cả Mùa vụ</option>
+                                    <option value="Mùa Đông Xuân 2026">Mùa Đông Xuân 2026</option>
+                                    <option value="Mùa Hè Thu 2026">Mùa Hè Thu 2026</option>
+                                    <option value="Mùa Thu Đông 2026">Mùa Thu Đông 2026</option>
+                                </select>
+                            </div>
+
+                            <!-- Filter by Status -->
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <label style="font-size:12px; font-weight:700; color:var(--text-muted);"><i class="fa-solid fa-bars-progress"></i> Trạng thái:</label>
+                                <select class="cal-select-filter" id="filterStatus">
+                                    <option value="">Tất cả Trạng thái</option>
+                                    <option value="overdue" style="color:var(--danger); font-weight:700;">🔴 Quá hạn (Overdue)</option>
+                                    <option value="in_progress">⏳ Đang thực hiện</option>
+                                    <option value="todo">📋 Chưa bắt đầu</option>
+                                    <option value="completed">✅ Đã hoàn thành</option>
+                                </select>
+                            </div>
+
+                            <!-- Filter by Category -->
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <label style="font-size:12px; font-weight:700; color:var(--text-muted);"><i class="fa-solid fa-tags"></i> Phân loại:</label>
+                                <select class="cal-select-filter" id="filterCategory">
+                                    <option value="">Tất cả Loại việc</option>
+                                    <option value="Làm đất">Làm đất & Cày ải</option>
+                                    <option value="Gieo trồng">Gieo giống & Cấy mạ</option>
+                                    <option value="Bón phân">Bón phân</option>
+                                    <option value="Tưới nước">Tưới tiêu & Thoát nước</option>
+                                    <option value="Phun thuốc">Phun thuốc & Bảo vệ thực vật</option>
+                                    <option value="Thu hoạch">Thu hoạch nông sản</option>
+                                    <option value="Kiểm tra & Bảo trì">Kiểm tra & Bảo trì thiết bị</option>
+                                </select>
+                            </div>
+
+                            <!-- Keyword Search -->
+                            <div style="flex:1; min-width:180px; position:relative;">
+                                <input type="text" id="filterSearch" placeholder="Tìm tên việc, người phụ trách, lô..." 
+                                       style="width:100%; padding:8px 30px 8px 12px; border-radius:var(--radius-sm); border:1px solid var(--border-color); font-size:13px; background:#fff; outline:none;">
+                                <i class="fa-solid fa-search" style="position:absolute; right:10px; top:11px; font-size:12px; color:var(--text-muted);"></i>
+                            </div>
+
+                            <button class="btn-chip" id="btnResetFilters" title="Đặt lại bộ lọc">
+                                <i class="fa-solid fa-rotate-left"></i> Đặt lại
+                            </button>
+                        </div>
+
+                        <!-- 1. Grid View Container -->
+                        <div id="calendarGridViewContainer">
+                            <div class="calendar-grid" id="calendarGrid">
+                                <!-- Day Headers -->
+                                <div class="calendar-day-header">Thứ 2</div>
+                                <div class="calendar-day-header">Thứ 3</div>
+                                <div class="calendar-day-header">Thứ 4</div>
+                                <div class="calendar-day-header">Thứ 5</div>
+                                <div class="calendar-day-header">Thứ 6</div>
+                                <div class="calendar-day-header" style="color:var(--primary);">Thứ 7</div>
+                                <div class="calendar-day-header" style="color:var(--danger);">Chủ Nhật</div>
+                                
+                                <!-- Day Cells rendered dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <!-- 2. Agenda View Container (Hidden by default) -->
+                        <div id="calendarAgendaViewContainer" style="display: none;">
+                            <div class="agenda-list-view" id="agendaList">
+                                <!-- Grouped Agenda Tasks rendered by JS -->
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Calendar Grid -->
-                    <div class="calendar-grid" id="calendarGrid">
-                        <!-- Day Headers -->
-                        <div class="calendar-day-header">Mon</div>
-                        <div class="calendar-day-header">Tue</div>
-                        <div class="calendar-day-header">Wed</div>
-                        <div class="calendar-day-header">Thu</div>
-                        <div class="calendar-day-header">Fri</div>
-                        <div class="calendar-day-header">Sat</div>
-                        <div class="calendar-day-header">Sun</div>
-                        
-                        <!-- Day Cells rendered by JS -->
+                    <!-- Column 2: Right Sidebar (Upcoming Season Activities & Overdue Watchlist) -->
+                    <div class="calendar-sidebar">
+                        <!-- Panel 1: Upcoming Crop Season Activities -->
+                        <div class="sidebar-panel-card">
+                            <div class="sidebar-panel-header">
+                                <div class="sidebar-panel-title">
+                                    <i class="fa-solid fa-wheat-awn text-primary"></i> Hoạt Động Mùa Vụ Sắp Tới
+                                </div>
+                                <span class="badge" id="upcomingBadgeCount" style="background:var(--primary-light); color:var(--primary-hover); font-weight:800; font-size:11px;">0 việc</span>
+                            </div>
+                            <p class="subtitle" style="font-size:12.5px; margin-bottom:14px;">
+                                Các mốc quan trọng và hoạt động chuẩn bị diễn ra trong chu kỳ mùa vụ:
+                            </p>
+                            <div id="upcomingActivitiesContainer">
+                                <!-- Rendered dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Panel 2: Overdue Watchlist -->
+                        <div class="sidebar-panel-card" style="border-top: 4px solid var(--danger);">
+                            <div class="sidebar-panel-header">
+                                <div class="sidebar-panel-title" style="color:var(--danger);">
+                                    <i class="fa-solid fa-bell-concierge"></i> Cần Xử Lý Quá Hạn
+                                </div>
+                                <span class="badge" id="overdueBadgeCount" style="background:#fef2f2; color:#dc2626; font-weight:800; font-size:11px;">0 việc</span>
+                            </div>
+                            <div id="overdueTasksContainer">
+                                <!-- Rendered dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Panel 3: Color Legend -->
+                        <div class="sidebar-panel-card">
+                            <div class="sidebar-panel-header" style="margin-bottom:12px; padding-bottom:8px;">
+                                <div class="sidebar-panel-title" style="font-size:13.5px;">
+                                    <i class="fa-solid fa-palette text-teal"></i> Chú Giải Màu Sắc
+                                </div>
+                            </div>
+                            <div class="category-legend-grid">
+                                <div class="legend-item"><span class="legend-dot" style="background:#f59e0b;"></span> Làm đất</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:#10b981;"></span> Gieo trồng</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:#16a34a;"></span> Bón phân</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:#0284c7;"></span> Tưới nước</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:#8b5cf6;"></span> Phun thuốc</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:#ea580c;"></span> Thu hoạch</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:#64748b;"></span> Bảo trì</div>
+                                <div class="legend-item" style="color:var(--danger); font-weight:800;"><span class="legend-dot" style="background:#dc2626;"></span> Quá hạn (Overdue)</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Event Modal -->
-    <div class="modal-overlay" id="eventModal">
-        <div class="modal-content shadow-md">
+    <!-- MODAL 1: VIEW TASK DETAILS FROM CALENDAR -->
+    <div class="modal-overlay" id="taskDetailModal">
+        <div class="modal-content shadow-md" style="max-width: 620px;">
             <div class="modal-header">
-                <h2 id="eventModalTitle">Add Scheduled Event</h2>
+                <div>
+                    <span class="badge" id="modalTaskId" style="font-family:monospace; font-size:12px; margin-bottom:4px; display:inline-block; background:var(--primary-light); color:var(--primary-hover);">ACT-101</span>
+                    <h2 id="modalTaskTitle" style="font-size:18px;">Chi Tiết Công Việc Canh Tác</h2>
+                </div>
+                <button class="btn-close" id="btnCloseDetailModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- Overdue Warning inside Modal -->
+                <div id="modalOverdueAlert" style="display:none; background:#fef2f2; border:1px solid #f87171; border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:16px; color:#dc2626; font-size:13px; font-weight:700;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> CẢNH BÁO: Công việc này đã QUÁ HẠN hoàn thành! Hạn chót là <span id="modalOverdueDate"></span>.
+                </div>
+
+                <!-- Status & Progress Bar -->
+                <div style="background:var(--bg-body); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:16px; margin-bottom:18px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span id="modalTaskStatusBadge" class="badge" style="font-size:12px; font-weight:700;">Đang thực hiện</span>
+                        <span style="font-size:14px; font-weight:800; color:var(--primary);" id="modalTaskProgressPercent">65%</span>
+                    </div>
+                    <div class="progress-bar" style="height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden;">
+                        <div id="modalTaskProgressBar" style="height:100%; width:65%; background:var(--primary); transition:width 0.3s ease;"></div>
+                    </div>
+                </div>
+
+                <!-- Info Grid -->
+                <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:16px;">
+                    <div>
+                        <span style="font-size:12px; color:var(--text-muted); font-weight:600; display:block;"><i class="fa-solid fa-cloud-sun text-teal"></i> Mùa vụ canh tác:</span>
+                        <strong style="font-size:13.5px; color:var(--text-main);" id="modalTaskSeason">Mùa Đông Xuân 2026</strong>
+                    </div>
+                    <div>
+                        <span style="font-size:12px; color:var(--text-muted); font-weight:600; display:block;"><i class="fa-solid fa-layer-group text-primary"></i> Phân loại hoạt động:</span>
+                        <strong style="font-size:13.5px; color:var(--text-main);" id="modalTaskCategory">Phun thuốc</strong>
+                    </div>
+                    <div>
+                        <span style="font-size:12px; color:var(--text-muted); font-weight:600; display:block;"><i class="fa-solid fa-user-gear text-orange"></i> Người phụ trách:</span>
+                        <strong style="font-size:13.5px; color:var(--text-main);" id="modalTaskAssignee">Lê Thị Mai</strong>
+                    </div>
+                    <div>
+                        <span style="font-size:12px; color:var(--text-muted); font-weight:600; display:block;"><i class="fa-solid fa-map-location-dot text-green"></i> Vị trí / Lô đất:</span>
+                        <strong style="font-size:13.5px; color:var(--text-main);" id="modalTaskSector">Nhà màng Greenhouse A2</strong>
+                    </div>
+                    <div>
+                        <span style="font-size:12px; color:var(--text-muted); font-weight:600; display:block;"><i class="fa-regular fa-calendar-plus text-blue"></i> Ngày bắt đầu:</span>
+                        <strong style="font-size:13.5px; color:var(--text-main);" id="modalTaskStartDate">2026-10-04</strong>
+                    </div>
+                    <div>
+                        <span style="font-size:12px; color:var(--text-muted); font-weight:600; display:block;"><i class="fa-regular fa-calendar-check text-purple"></i> Hạn hoàn thành:</span>
+                        <strong style="font-size:13.5px;" id="modalTaskDueDate">2026-10-07</strong>
+                    </div>
+                    <div>
+                        <span style="font-size:12px; color:var(--text-muted); font-weight:600; display:block;"><i class="fa-solid fa-flag text-danger"></i> Mức độ ưu tiên:</span>
+                        <span id="modalTaskPriority" class="badge" style="font-size:11.5px; font-weight:700;">Critical</span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div style="background:var(--bg-body); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:14px; margin-bottom:18px;">
+                    <strong style="font-size:13px; color:var(--text-main); display:block; margin-bottom:4px;"><i class="fa-solid fa-align-left text-primary"></i> Mô tả & Yêu cầu kỹ thuật:</strong>
+                    <p style="font-size:13px; color:var(--text-main); line-height:1.5; margin:0;" id="modalTaskDesc">
+                        Ghi chú hướng dẫn thực hiện công việc.
+                    </p>
+                </div>
+
+                <!-- Modal Actions -->
+                <div class="form-actions" style="justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" class="btn-chip chip-success" id="btnModalCompleteTask">
+                            <i class="fa-solid fa-circle-check"></i> Đánh dấu Hoàn thành (100%)
+                        </button>
+                        <a href="activities.html" class="btn-chip" id="btnModalGoActivities" style="text-decoration:none;">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Mở Trang Quản Lý
+                        </a>
+                    </div>
+                    <button type="button" class="btn-primary" id="btnModalClose">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ADD NEW SCHEDULE / TASK EVENT -->
+    <div class="modal-overlay" id="eventModal">
+        <div class="modal-content shadow-md" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-calendar-plus text-primary"></i> Thêm Hoạt Động Vào Lịch Canh Tác</h2>
                 <button class="btn-close" id="btnCloseEventModal"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <form id="eventForm">
                     <div class="form-group">
-                        <label>Event Title</label>
-                        <input type="text" id="eventTitle" required placeholder="e.g. Corn Harvesting Phase 1">
+                        <label>Tên Hoạt Động Canh Tác <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="eventTitle" required placeholder="VD: Bón thúc đợt 2 phân vi sinh cho Lô D3">
                     </div>
+
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Category</label>
-                            <select id="eventCategory" required>
-                                <option value="harvest">Harvest</option>
-                                <option value="maintenance">Maintenance</option>
-                                <option value="planting">Planting & Fertilization</option>
-                                <option value="inspection">Field Inspection</option>
+                            <label>Mùa vụ Canh tác <span style="color:var(--danger)">*</span></label>
+                            <select id="eventSeason" required>
+                                <option value="Mùa Đông Xuân 2026">Mùa Đông Xuân 2026</option>
+                                <option value="Mùa Hè Thu 2026">Mùa Hè Thu 2026</option>
+                                <option value="Mùa Thu Đông 2026">Mùa Thu Đông 2026</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Date</label>
-                            <input type="date" id="eventDate" required>
+                            <label>Phân loại Hoạt động <span style="color:var(--danger)">*</span></label>
+                            <select id="eventCategory" required>
+                                <option value="Làm đất">Làm đất & Cày ải</option>
+                                <option value="Gieo trồng">Gieo giống & Xuống giống</option>
+                                <option value="Bón phân">Bón phân</option>
+                                <option value="Tưới nước">Tưới tiêu</option>
+                                <option value="Phun thuốc">Phun thuốc & Bảo vệ thực vật</option>
+                                <option value="Thu hoạch">Thu hoạch</option>
+                                <option value="Kiểm tra & Bảo trì">Kiểm tra & Bảo trì</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Assigned Sector / Team</label>
-                        <input type="text" id="eventSector" placeholder="e.g. Sector 4 - Team John">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Người phụ trách <span style="color:var(--danger)">*</span></label>
+                            <select id="eventAssignee" required>
+                                <option value="Nguyễn Văn Hùng">Nguyễn Văn Hùng (Tổ trưởng)</option>
+                                <option value="Lê Thị Mai">Lê Thị Mai (Kỹ thuật viên)</option>
+                                <option value="Phạm Thanh Sơn">Phạm Thanh Sơn (Nông dân)</option>
+                                <option value="Trần Văn Lượng">Trần Văn Lượng (Quản lý vườn)</option>
+                                <option value="Võ Hà Duy">Võ Hà Duy (Kỹ sư thiết bị)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Vị trí / Lô thửa đất <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="eventSector" required placeholder="VD: Sector 1, Greenhouse B, Lô D3">
+                        </div>
                     </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ngày bắt đầu <span style="color:var(--danger)">*</span></label>
+                            <input type="date" id="eventStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hạn hoàn thành (Due date) <span style="color:var(--danger)">*</span></label>
+                            <input type="date" id="eventDueDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mức độ ưu tiên</label>
+                        <select id="eventPriority">
+                            <option value="Low">Thấp (Low)</option>
+                            <option value="Medium" selected>Trung bình (Medium)</option>
+                            <option value="High">Cao (High)</option>
+                            <option value="Critical">Khẩn cấp (Critical)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mô tả chi tiết & Yêu cầu kỹ thuật</label>
+                        <textarea id="eventDescription" rows="3" placeholder="Ghi chú quy trình thực hiện, liều lượng vật tư..."></textarea>
+                    </div>
+
                     <div class="form-actions">
-                        <button type="button" class="btn-cancel" id="btnCancelEvent">Cancel</button>
-                        <button type="submit" class="btn-primary">Save Event</button>
+                        <button type="button" class="btn-cancel" id="btnCancelEvent">Hủy bỏ</button>
+                        <button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Lưu Vào Lịch Canh Tác</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="./js/common.js"></script>
     <script src="./js/schedule.js"></script>
 </body>
