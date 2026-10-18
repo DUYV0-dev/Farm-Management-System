@@ -117,6 +117,7 @@
                 <directory>frontend</directory><targetPath>static/ui</targetPath>
                 <includes>
                     <include>advanced-dashboard.html</include><include>js/advanced-dashboard.js</include><include>harvest.html</include><include>js/harvest.js</include><include>farm.html</include><include>material.html</include>
+                    <include>purchase.html</include><include>js/purchase.js</include><include>sales.html</include><include>js/sales.js</include>
                     <include>css/*.css</include><include>js/farm.js</include>
                     <include>js/material.js</include><include>js/api-client.js</include>
                 </includes>
