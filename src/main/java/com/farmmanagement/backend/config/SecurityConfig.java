@@ -58,8 +58,8 @@ public class SecurityConfig {
             .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .requestCache(c->c.disable())
             .authorizeHttpRequests(a->a
-                .requestMatchers(HttpMethod.GET,"/","/index.html","/traceability.html","/activities.html","/dashboard.html","/notifications.html","/workers.html","/schedule.html","/reports.html","/app.js","/style.css","/js/**","/css/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/ui/advanced-dashboard.html","/ui/harvest.html","/ui/farm.html","/ui/material.html","/ui/js/**","/ui/css/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/","/index.html","/traceability.html","/activities.html","/dashboard.html","/notifications.html","/workers.html","/schedule.html","/reports.html","/purchase.html","/sales.html","/app.js","/style.css","/js/**","/css/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/ui/advanced-dashboard.html","/ui/harvest.html","/ui/farm.html","/ui/material.html","/ui/purchase.html","/ui/sales.html","/ui/js/**","/ui/css/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/v1/traceability/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/traceability/**").authenticated()
@@ -78,6 +78,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/material-categories", "/api/v1/material-categories/**",
                     "/api/v1/materials", "/api/v1/materials/**", "/api/v1/warehouses", "/api/v1/warehouses/**",
                     "/api/v1/inventory", "/api/v1/inventory/**").authenticated()
+                .requestMatchers("/api/v1/suppliers", "/api/v1/suppliers/**",
+                    "/api/v1/purchase-orders", "/api/v1/purchase-orders/**",
+                    "/api/v1/customers", "/api/v1/customers/**",
+                    "/api/v1/sales-orders", "/api/v1/sales-orders/**").authenticated()
                 .anyRequest().denyAll())
             .exceptionHandling(e->e
                 .authenticationEntryPoint((q,s,x)->api.write(q,s,401,"UNAUTHENTICATED","Vui lòng đăng nhập lại."))
