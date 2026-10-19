@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
+@org.springframework.context.annotation.Profile("demo & !production")
 public class NotificationStore {
     private final Map<String, Notification> notifications = new ConcurrentHashMap<>();
 

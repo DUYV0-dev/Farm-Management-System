@@ -1,7 +1,8 @@
 ﻿$ErrorActionPreference = "Stop"
 Add-Type -AssemblyName System.Net.Http
 $client = [System.Net.Http.HttpClient]::new()
-$base = "http://127.0.0.1:8080/api/v1/auth"
+$port = if ($env:SERVER_PORT) { $env:SERVER_PORT } else { '5500' }
+$base = "http://127.0.0.1:$port/api/v1/auth"
 $rows = [System.Collections.Generic.List[object]]::new()
 function Send-Api($method, $path, $body = $null, $token = $null) {
     $request = [System.Net.Http.HttpRequestMessage]::new([System.Net.Http.HttpMethod]::new($method), "$base/$path")

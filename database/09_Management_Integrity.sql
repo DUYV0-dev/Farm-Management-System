@@ -68,7 +68,9 @@ BEGIN
      OR NOT EXISTS(SELECT 1 FROM public.crop WHERE crop_id=NEW.crop_id AND status='ACTIVE') THEN
     RAISE EXCEPTION 'Season requires active farm, plot and crop' USING ERRCODE='23514'; END IF;
   END IF;
- END IF;
+  IF NEW.start_date IS NOT NULL AND NEW.end_date IS NOT NULL AND NEW.start_date > NEW.end_date THEN
+   RAISE EXCEPTION 'Start date cannot be after end date' USING ERRCODE='23514'; END IF;
+ 	END IF;
  RETURN NEW;
 END $$;
 

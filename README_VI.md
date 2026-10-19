@@ -1,10 +1,24 @@
 # Authentication & User/Role Management — Farm Management N02
 
+## Chạy dashboard bằng nút Run
+
+Hướng dẫn hiện hành: [luồng và phân quyền](docs/WORKSPACE.md),
+[cài mới và triển khai production](docs/DEPLOYMENT.md), [giao diện chính và các phần giao nhau](docs/PROTOTYPES_MAIN_UI.md).
+Các hướng dẫn migration v1 bên dưới được giữ để tham khảo lịch sử; schema mới dùng 11a và 12,
+không chạy migration 11 cho ERD v1 đè lên schema warehouse.
+
+Run `FarmManagementSystemN02Application` trong IntelliJ: ứng dụng tự mở `http://127.0.0.1:5500/`. Luồng hiện hành: **đăng ký tài khoản chủ và trang trại → đăng nhập → thêm nhân viên, chọn vị trí → bắt đầu thiết lập trang trại**. Quản trị hệ thống quản lý người dùng trong khu vực riêng. Xem [hướng dẫn luồng thật, nâng cấp database và cấu trúc thư mục](docs/WORKSPACE.md). Cần chạy migration **11a → 12** trên schema warehouse trước khi Run. Không dùng Live Server trên cổng 5500. Phần hướng dẫn v1 bên dưới là tài liệu lịch sử.
+
 ## Quản lý trang trại, cây trồng, vật tư và kho
 
 Các module đã nối giao diện với API và PostgreSQL. Xem [hướng dẫn cài đặt, chức năng và kiểm thử](docs/MANAGEMENT.md). Chạy migration **07 → 08 → 09**, build JAR rồi đăng nhập tại `http://127.0.0.1:8080/`; chọn **Trang trại & Cây trồng** hoặc **Vật tư & Kho**. Kiểm thử đầy đủ trên database riêng: `scripts/Test-Management.ps1 -Browser`.
 
 ## Bản cập nhật module quản trị
+
+Chức năng **Phân bón & Thuốc BVTV** hỗ trợ ghi nhận số lượng, ngày sử dụng,
+liên kết mùa vụ và tra cứu lịch sử/tổng lượng theo vật tư. Chạy thêm
+`database/11_Material_Usage_Management.sql` trên ERD v1 sau migration 05/06; xem
+[hướng dẫn quản lý sử dụng](docs/MATERIAL_USAGE_MANAGEMENT.md).
 
 Đã bổ sung đổi/reset mật khẩu, CRUD người dùng (không xóa), kích hoạt/vô hiệu hóa, gán vai trò SYSTEM, quản lý quyền và bảo vệ trang/API. Xem [hướng dẫn hiện hành](docs/AUTH_USER_ROLE_MANAGEMENT.md) để chạy migration 06, cấp quản trị viên đầu tiên và dùng API/giao diện.
 
@@ -16,7 +30,7 @@ Bản triển khai cho src.zip và pom.xml nhận ngày 28/09/2026. Java 21, Spr
 
 Có POST /api/v1/auth/login, GET /api/v1/auth/me, POST /api/v1/auth/logout; Login UI tiếng Việt; Argon2id; JWT HS256 hết hạn đúng 86400 giây; phiên lưu PostgreSQL; logout thu hồi phiên hiện tại; khóa tài khoản hoặc đổi password_hash thu hồi tất cả phiên kể cả sau khi mở khóa lại. Không có refresh token, đăng ký, quên mật khẩu, CRUD User/Farm hoặc RBAC Farm trong gói này. Mọi URL khác bị từ chối mặc định.
 
-Trang Login được phục vụ từ Spring Boot để kiểm thử cùng origin. Đây là UI demo tích hợp, chưa phải module React/JavaFX theo kiến trúc tổng thể; có thể dùng các API này từ các client đó ở bước tích hợp tiếp theo. Không bật CORS rộng.
+Trang Login được phục vụ từ Spring Boot trên cùng origin. Giao diện chính sử dụng bố cục prototypes, đăng nhập và đăng ký bằng API thật; các trang features bổ sung nghiệp vụ. Xem [trạng thái chức năng](docs/PROTOTYPES_MAIN_UI.md). Không bật CORS rộng.
 
 ## 2. Cài vào project trên Windows
 

@@ -1,0 +1,19 @@
+{
+  "action": "restore",
+  "started_at": "2026-10-19T02:03:14.673443+00:00",
+  "status": "PASS",
+  "database": "recovery_restored",
+  "checked_at": "2026-10-19T02:03:17.943158+00:00",
+  "tables_checked": 21,
+  "sequences_checked": 14,
+  "differences": [],
+  "duration_seconds": 3.269,
+  "rto_minutes": 60,
+  "rto_met": true,
+  "backup_age_seconds": 6.063,
+  "rpo_hours": 24,
+  "rpo_met": true,
+  "data_consistent": true,
+  "rpo_measurement": "Age of the backup snapshot at recovery completion; excludes transactions after that snapshot",
+  "completed_at": "2026-10-19T02:03:17.943738+00:00"
+}
