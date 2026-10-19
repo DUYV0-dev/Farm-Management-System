@@ -49,6 +49,9 @@ public class ApiErrors {
             Map.entry("Farm is missing or inactive", "Trang trại không tồn tại hoặc đã ngừng hoạt động."),
             Map.entry("Farm is inactive", "Trang trại đã ngừng hoạt động."),
             Map.entry("Season requires active farm, plot and crop", "Mùa vụ cần trang trại, khu đất và cây trồng đang hoạt động."),
+            Map.entry("Start date cannot be after end date", "Ngày bắt đầu không thể sau ngày kết thúc."),
+            Map.entry("ck_season_dates", "Ngày bắt đầu không thể sau ngày kết thúc."),
+            Map.entry("crop_season", "Không thể xóa mùa vụ đã phát sinh dữ liệu liên quan."),
             Map.entry("Inventory requires active warehouse, farm, material and category", "Chỉ cập nhật tồn kho khi kho, trang trại, vật tư và nhóm vật tư đang hoạt động.")
         );
         String message = messages.entrySet().stream().filter(e -> detail.contains(e.getKey()))

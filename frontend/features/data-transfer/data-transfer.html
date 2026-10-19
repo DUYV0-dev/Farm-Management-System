@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Nhập / Xuất dữ liệu — FARM / N02</title>
+    <link rel="stylesheet" href="/ui/shared/style.css">
+    <link rel="stylesheet" href="/ui/shared/design.css">
+    <link rel="stylesheet" href="/ui/features/data-transfer/data-transfer.css">
+    <script src="/ui/features/data-transfer/data-transfer.js" defer></script>
+</head>
+<body>
+<main class="transfer-page">
+    <header><p class="eyebrow">DỮ LIỆU TRANG TRẠI</p><h1>Nhập / Xuất dữ liệu</h1>
+        <p>Nhập dữ liệu theo tệp mẫu, kiểm tra lỗi trước khi lưu và xuất dữ liệu của trang trại đang chọn.</p></header>
+    <p id="transferMessage" role="status" aria-live="polite">Đang tải danh mục dữ liệu…</p>
+    <section class="transfer-card" aria-label="Chọn dữ liệu">
+        <div class="transfer-controls">
+            <label>Loại dữ liệu<select id="dataset" disabled></select></label>
+            <label>Định dạng<select id="format"><option value="csv">CSV UTF-8</option><option value="json">JSON</option></select></label>
+        </div>
+        <p id="modeDescription"></p>
+        <div class="transfer-actions"><button type="button" id="downloadTemplate" disabled>Tải tệp mẫu</button>
+            <button type="button" id="exportData" disabled>Xuất dữ liệu</button></div>
+    </section>
+    <section class="transfer-card" aria-labelledby="importHeading">
+        <h2 id="importHeading">Nhập dữ liệu</h2>
+        <p>Mỗi tệp tối đa 1 MiB và 1.000 bản ghi. Các mã liên kết phải có sẵn trong hệ thống và truy cập được từ trang trại này.</p>
+        <label>Tệp dữ liệu<input type="file" id="importFile" accept=".csv,.json" disabled></label>
+        <div class="transfer-actions"><button type="button" id="validateFile" disabled>1. Kiểm tra dữ liệu</button>
+            <button type="button" id="applyFile" disabled>2. Nhập dữ liệu đã kiểm tra</button></div>
+        <p id="importSummary" aria-live="polite"></p>
+        <div id="validationErrors" class="transfer-table" hidden>
+            <table><caption>Các lỗi cần sửa — dòng 1 là bản ghi đầu tiên, không tính tiêu đề CSV; dòng 0 là lỗi toàn tệp.</caption>
+                <thead><tr><th>Dòng</th><th>Trường</th><th>Lỗi</th></tr></thead><tbody id="errorRows"></tbody></table>
+        </div>
+    </section>
+    <section class="transfer-card" aria-labelledby="schemaHeading">
+        <h2 id="schemaHeading">Các trường được hỗ trợ</h2>
+        <p><code>sourceId</code> là mã nguồn để tham khảo; nhập dữ liệu không dùng mã này để sửa bản ghi cũ.</p>
+        <div class="transfer-table"><table><thead><tr><th>Trường</th><th>Bắt buộc</th><th>Quy tắc</th></tr></thead><tbody id="schemaRows"></tbody></table></div>
+        <details><summary>Lưu ý khi chỉnh sửa tệp CSV</summary><p>CSV xuất từ hệ thống có cột <code>_textEncoding</code> và tiền tố dấu nháy đơn ở ô văn bản để bảo vệ khi mở bằng bảng tính. Giữ nguyên cột này để nhập lại chính xác. Với CSV tự tạo, bỏ cột này và dùng tên cột trong tệp mẫu.</p></details>
+    </section>
+</main>
+</body>
+</html>

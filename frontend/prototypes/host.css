@@ -1,0 +1,5 @@
+/* The restored prototype pages supply the visible UI. Session stays in the parent. */
+#prototypeFrame{display:block;width:100%;height:100vh;border:0;background:var(--bg-body)}
+body{overflow:hidden}#authScreen,#accountPanel,#managementPanel,body>footer,#message{display:none!important}
+body.supplemental{overflow:auto}body.supplemental #prototypeFrame{display:none}
+body.supplemental #accountPanel,body.supplemental #managementPanel,body.supplemental #message,body.supplemental>footer{display:block!important}

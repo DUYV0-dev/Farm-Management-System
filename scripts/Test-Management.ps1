@@ -39,11 +39,11 @@ try {
     Run-Sql @('src/test/resources/management-bootstrap.sql','database/05_Authentication_Sessions.sql','database/06_User_Role_Management.sql','database/07_Farm_Plot_Crop.sql','database/08_Material_Warehouse.sql','database/09_Management_Integrity.sql')
     # Prove the module migrations are repeatable on an already installed schema.
     Run-Sql @('database/07_Farm_Plot_Crop.sql','database/08_Material_Warehouse.sql','database/09_Management_Integrity.sql')
-    & .\mvnw.cmd -o package '-Dmanagement.test.db=true'
+    & .\mvnw.cmd -o package '-Dmanagement.test.db=true' '-Dapp.jar.name=management-check'
     if ($LASTEXITCODE -ne 0) { throw 'Backend tests or packaging failed.' }
     if ($Browser) {
         if (-not (Test-Path -LiteralPath $Chrome)) { throw 'Chrome not found. Pass -Chrome.' }
-        $username = & $psql -h 127.0.0.1 -p 55432 -U postgres -d management_test -w -t -A -c 'SELECT username FROM app_user ORDER BY user_id DESC LIMIT 1'
+        $username = & $psql -h 127.0.0.1 -p 55432 -U postgres -d management_test -w -t -A -c "SELECT u.username FROM app_user u WHERE u.status='ACTIVE' AND EXISTS (SELECT 1 FROM user_role ur JOIN role r ON r.role_id=ur.role_id WHERE ur.user_id=u.user_id AND r.role_name='SYSTEM_ADMIN' AND r.scope='SYSTEM') ORDER BY u.user_id DESC LIMIT 1"
         $username.Trim() | Set-Content -Encoding UTF8 target/browser-username.txt
         $random = New-Object byte[] 32
         $generator = [System.Security.Cryptography.RandomNumberGenerator]::Create()
@@ -51,10 +51,10 @@ try {
         $generator.Dispose()
         $testJwt = [Convert]::ToBase64String($random)
         $argumentFile = Join-Path $testDirectory 'app.args'
-        @('-jar', 'target/backend-0.0.1-SNAPSHOT.jar', '--server.port=18080',
+        @('-jar', 'target/management-check.jar', '--server.port=18080',
           '--spring.datasource.url=jdbc:postgresql://127.0.0.1:55432/management_test',
           '--spring.datasource.username=farm_app', '--spring.datasource.password=',
-          ('--auth.jwt.secret='+$testJwt), '--logging.file.name=target/browser-app.log') |
+          ('--auth.jwt.secret='+$testJwt), '--app.open-browser=false', '--logging.file.name=target/browser-app.log') |
           Set-Content -Encoding ASCII -LiteralPath $argumentFile
         $appProcess = Start-Process -FilePath 'java' -ArgumentList ('@"'+$argumentFile+'"') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $testDirectory 'app.stdout.log') -RedirectStandardError (Join-Path $testDirectory 'app.stderr.log')
         $ready = $false
@@ -70,7 +70,7 @@ try {
         & node frontend/tests/management-browser.cjs
         if ($LASTEXITCODE -ne 0) { throw 'Browser verification failed.' }
     }
-    Write-Host 'Management verification PASSED. Reports: target/surefire-reports; JAR: target/backend-0.0.1-SNAPSHOT.jar'
+    Write-Host 'Management verification PASSED. Reports: target/surefire-reports; test JAR: target/management-check.jar'
 } finally {
     if ($browserProcess -and -not $browserProcess.HasExited) { Stop-Process -Id $browserProcess.Id }
     if ($appProcess -and -not $appProcess.HasExited) { Stop-Process -Id $appProcess.Id }

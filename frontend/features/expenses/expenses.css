@@ -1,0 +1,8 @@
+.expense-overview { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; margin-bottom:24px; }
+.expense-card { display:flex; flex-direction:column; gap:8px; padding:24px; background:var(--bg-surface,#fff); border:1px solid var(--border-color,#e2e8f0); border-radius:var(--radius-lg,16px); }
+.expense-card span,.expense-card small { color:var(--text-muted,#64748b); }
+.expense-card strong { color:var(--text-main,#153d30); font-size:clamp(20px,3vw,30px); overflow-wrap:anywhere; }
+#expenseNotice { color:#166534; padding:12px; background:#f0fdf4; border-radius:8px; }
+#expenseRows td:nth-child(3),#summaryRows td:last-child { white-space:nowrap; font-weight:600; }
+#expenseForm .usage-fields label:first-child { grid-column:auto; }
+@media (max-width:650px) { .expense-overview { grid-template-columns:1fr; gap:16px; } }

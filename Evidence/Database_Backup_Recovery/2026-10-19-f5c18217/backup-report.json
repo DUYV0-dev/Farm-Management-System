@@ -1,0 +1,10 @@
+{
+  "action": "backup",
+  "started_at": "2026-10-19T02:03:11.838905+00:00",
+  "status": "PASS",
+  "backup_dir": "D:\\Project\\Do an quan ly du an\\Farm Management System N02\\Farm-Management-System\\.test-data\\database-recovery-f5c1821796314411b8f9532d863b8a80\\backup",
+  "archive_sha256": "4c55963df901beddb51463b1ed9db2359cbe5389379627fecf7631b3aae52d79",
+  "tables": 21,
+  "duration_seconds": 2.584,
+  "completed_at": "2026-10-19T02:03:14.466533+00:00"
+}

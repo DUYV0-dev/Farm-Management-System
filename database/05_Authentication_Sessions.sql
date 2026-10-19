@@ -1,4 +1,4 @@
--- Run ONCE as postgres in farm_management_erd_v1, after schema v1.
+-- Run ONCE as  in farm_management_erd_v1, after schema v1.
 -- Additive migration. 26 business tables become 27 including auth_session.
 BEGIN;
 CREATE TABLE public.auth_session (
