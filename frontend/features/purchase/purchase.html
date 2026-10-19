@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AgriManage — Quản lý nhà cung cấp và đơn mua vật tư nông nghiệp.">
+    <title>AgriManage - Nhà cung cấp & Mua vật tư</title>
+    <link rel="stylesheet" href="/ui/shared/style.css">
+    <link rel="stylesheet" href="/ui/shared/records.css">
+    <link rel="stylesheet" href="/ui/shared/connected.css">
+    <link rel="stylesheet" href="/ui/shared/icons.css">
+    <script src="/ui/shared/api-client.js" defer></script>
+    <script src="/ui/features/purchase/purchase.js" defer></script>
+    <style>
+        .badge-draft { background: #e2e8f0; color: #475569; }
+        .badge-ordered { background: #dbeafe; color: #1e40af; }
+        .badge-received { background: #dcfce7; color: #166534; }
+        .badge-cancelled { background: #fee2e2; color: #991b1b; }
+        .po-items-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+        .po-items-table th, .po-items-table td { padding: 8px; border: 1px solid #e2e8f0; text-align: left; }
+        .po-items-table th { background: #f8fafc; font-weight: 600; }
+        .item-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+        .item-row select, .item-row input { flex: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .btn-sm-action { padding: 4px 8px; font-size: 0.8rem; border-radius: 4px; border: none; cursor: pointer; margin-right: 4px; }
+        .btn-receive { background: #16a34a; color: white; }
+        .btn-receive:hover { background: #15803d; }
+        .btn-order { background: #2563eb; color: white; }
+        .btn-cancel-po { background: #dc2626; color: white; }
+    </style>
+</head>
+<body class="material-page">
+<div class="app-container">
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <p class="inventory-eyebrow">SUPPLIER & PURCHASE MANAGEMENT</p>
+                <h1>Nhà cung cấp & Mua vật tư</h1>
+                <p class="subtitle">Quản lý nhà cung ứng, theo dõi đơn mua hàng và tự động cập nhật tồn kho khi nhập vật tư.</p>
+            </div>
+            <button class="btn-primary btn-large" id="addRecord">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <span id="addButtonText">Thêm nhà cung cấp</span>
+            </button>
+        </header>
+
+        <section class="stats-container" aria-label="Tổng quan cung ứng và mua hàng">
+            <div class="stat-card shadow-sm">
+                <div class="stat-left">
+                    <div class="stat-icon bg-green-light text-green"><i class="fa-solid fa-truck-field" aria-hidden="true"></i></div>
+                    <div class="stat-info"><h3>Nhà cung cấp</h3><h2 id="statSuppliers">—</h2></div>
+                </div>
+            </div>
+            <div class="stat-card shadow-sm">
+                <div class="stat-left">
+                    <div class="stat-icon bg-blue-light text-blue"><i class="fa-solid fa-file-invoice" aria-hidden="true"></i></div>
+                    <div class="stat-info"><h3>Đơn đang xử lý</h3><h2 id="statOpenPOs">—</h2></div>
+                </div>
+            </div>
+            <div class="stat-card shadow-sm">
+                <div class="stat-left">
+                    <div class="stat-icon bg-teal-light text-teal"><i class="fa-solid fa-boxes-packing" aria-hidden="true"></i></div>
+                    <div class="stat-info"><h3>Đơn đã nhập kho</h3><h2 id="statReceivedPOs">—</h2></div>
+                </div>
+            </div>
+            <div class="stat-card shadow-sm">
+                <div class="stat-left">
+                    <div class="stat-icon bg-orange-light text-orange"><i class="fa-solid fa-money-bill-wave" aria-hidden="true"></i></div>
+                    <div class="stat-info"><h3>Tổng giá trị mua</h3><h2 id="statTotalSpend">—</h2></div>
+                </div>
+            </div>
+        </section>
+
+        <div class="inventory-tabs" role="tablist" aria-label="Quản lý nhà cung cấp và đơn mua">
+            <button id="tab-suppliers" class="inventory-tab active" role="tab" aria-selected="true" data-tab="suppliers">
+                <i class="fa-solid fa-truck" aria-hidden="true"></i> Nhà cung cấp
+            </button>
+            <button id="tab-purchases" class="inventory-tab" role="tab" aria-selected="false" data-tab="purchases">
+                <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i> Đơn mua vật tư (PO)
+            </button>
+        </div>
+
+        <section class="table-wrapper" id="contentPanel">
+            <div class="table-header">
+                <div>
+                    <h2 id="listTitle">Danh sách nhà cung cấp</h2>
+                    <p class="subtitle" id="listDescription">Thông tin đối tác cung cấp hạt giống, phân bón, thuốc và thiết bị nông nghiệp.</p>
+                </div>
+                <span class="record-count" id="recordCount" aria-live="polite"></span>
+            </div>
+
+            <div class="inventory-filters">
+                <div class="search-bar">
+                    <i class="fa-solid fa-search" aria-hidden="true"></i>
+                    <input type="search" id="searchRecords" placeholder="Tìm kiếm…" aria-label="Tìm kiếm">
+                </div>
+                <select id="statusFilter" aria-label="Lọc trạng thái"></select>
+                <button class="btn-secondary" id="clearFilters" type="button">Xóa bộ lọc</button>
+            </div>
+
+            <div class="table-responsive" tabindex="0">
+                <table class="task-table">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="inventory-empty" id="emptyState" hidden>
+                <i class="fa-solid fa-box-open" aria-hidden="true"></i>
+                <h3 id="emptyTitle">Chưa có dữ liệu</h3>
+                <p id="emptyDescription">Hãy bấm thêm để tạo mới bản ghi.</p>
+            </div>
+
+            <div class="inventory-pagination">
+                <span id="pageSummary" aria-live="polite"></span>
+                <div>
+                    <button class="btn-secondary" id="previousPage">← Trước</button>
+                    <span id="pageNumber"></span>
+                    <button class="btn-secondary" id="nextPage">Sau →</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Modal Thêm/Sửa Nhà Cung Cấp -->
+<dialog id="supplierDialog" class="inventory-dialog">
+    <div class="modal-header">
+        <h2 id="supplierDialogTitle">Thêm nhà cung cấp</h2>
+        <button type="button" class="btn-close" data-close>×</button>
+    </div>
+    <form id="supplierForm">
+        <div class="form-group">
+            <label for="supName">Tên nhà cung cấp *</label>
+            <input type="text" id="supName" required maxlength="150" placeholder="VD: Công ty TNHH Phân Bón Việt Nhật">
+        </div>
+        <div class="form-group">
+            <label for="supContact">Người liên hệ</label>
+            <input type="text" id="supContact" maxlength="100" placeholder="VD: Nguyễn Văn A">
+        </div>
+        <div class="form-row" style="display:flex;gap:12px;">
+            <div class="form-group" style="flex:1;">
+                <label for="supPhone">Số điện thoại</label>
+                <input type="tel" id="supPhone" maxlength="20" placeholder="VD: 0901234567">
+            </div>
+            <div class="form-group" style="flex:1;">
+                <label for="supEmail">Email</label>
+                <input type="email" id="supEmail" maxlength="254" placeholder="VD: lienhe@vietnhat.vn">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="supAddress">Địa chỉ</label>
+            <input type="text" id="supAddress" maxlength="255" placeholder="Địa chỉ văn phòng hoặc kho">
+        </div>
+        <div class="form-group">
+            <label for="supTax">Mã số thuế</label>
+            <input type="text" id="supTax" maxlength="50" placeholder="Mã số thuế doanh nghiệp">
+        </div>
+        <div class="form-group">
+            <label for="supNotes">Ghi chú</label>
+            <textarea id="supNotes" maxlength="1000" rows="2" placeholder="Ghi chú đánh giá chất lượng, điều khoản thanh toán..."></textarea>
+        </div>
+        <p id="supplierError" class="inventory-error" role="alert" hidden></p>
+        <div class="form-actions">
+            <button type="button" class="btn-cancel" data-close>Hủy</button>
+            <button type="submit" class="btn-primary" id="saveSupplierBtn">Lưu nhà cung cấp</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- Modal Tạo Đơn Mua Hàng (PO) -->
+<dialog id="poDialog" class="inventory-dialog" style="max-width: 650px;">
+    <div class="modal-header">
+        <h2>Tạo đơn mua vật tư mới</h2>
+        <button type="button" class="btn-close" data-close>×</button>
+    </div>
+    <form id="poForm">
+        <div class="form-row" style="display:flex;gap:12px;">
+            <div class="form-group" style="flex:1;">
+                <label for="poSupplier">Nhà cung cấp *</label>
+                <select id="poSupplier" required></select>
+            </div>
+            <div class="form-group" style="flex:1;">
+                <label for="poFarm">Trang trại tiếp nhận *</label>
+                <select id="poFarm" required></select>
+            </div>
+        </div>
+        <div class="form-row" style="display:flex;gap:12px;">
+            <div class="form-group" style="flex:1;">
+                <label for="poWarehouse">Kho nhập hàng *</label>
+                <select id="poWarehouse" required></select>
+            </div>
+            <div class="form-group" style="flex:1;">
+                <label for="poExpectedDate">Ngày dự kiến giao</label>
+                <input type="date" id="poExpectedDate">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label style="font-weight:600;display:flex;justify-content:space-between;align-items:center;">
+                <span>Vật tư cần mua *</span>
+                <button type="button" class="btn-secondary" id="addItemRowBtn" style="padding:2px 8px;font-size:0.8rem;">+ Thêm dòng</button>
+            </label>
+            <div id="itemsContainer" style="margin-top:8px;"></div>
+            <div style="text-align:right;font-weight:600;margin-top:8px;">
+                Tổng tiền: <span id="poTotalDisplay" class="text-green" style="font-size:1.1rem;">0 đ</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="poNotes">Ghi chú đơn hàng</label>
+            <textarea id="poNotes" rows="2" placeholder="Ghi chú vận chuyển, hạn sử dụng yêu cầu..."></textarea>
+        </div>
+
+        <p id="poError" class="inventory-error" role="alert" hidden></p>
+        <div class="form-actions">
+            <button type="button" class="btn-cancel" data-close>Hủy</button>
+            <button type="submit" class="btn-primary" id="savePoBtn">Tạo đơn mua hàng</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- Modal Chi Tiết Đơn Hàng & Nhập Kho -->
+<dialog id="poDetailDialog" class="inventory-dialog" style="max-width: 700px;">
+    <div class="modal-header">
+        <h2 id="poDetailTitle">Chi tiết đơn mua vật tư</h2>
+        <button type="button" class="btn-close" data-close>×</button>
+    </div>
+    <div id="poDetailContent"></div>
+    <p id="poDetailError" class="inventory-error" role="alert" hidden></p>
+    <div class="form-actions" id="poDetailActions"></div>
+</dialog>
+
+<div id="inventoryNotice" class="inventory-notice" role="status" hidden></div>
+</body>
+</html>

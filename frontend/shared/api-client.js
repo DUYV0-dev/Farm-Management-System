@@ -4,7 +4,7 @@ window.FarmApi = (() => {
     const parentApi = (window.parent !== window ? window.parent.ManagementApi : null) || window.ManagementApi;
     if (!parentApi) {
         const name=location.pathname.split('/').pop()?.replace('.html','');
-        location.replace('/#'+(['farm','material','expenses','material-usage','data-transfer'].includes(name)?name:'home'));
+        location.replace('/#'+(['farm','material','expenses','material-usage','data-transfer','purchase','sales','harvest','traceability'].includes(name)?name:'home'));
         const unavailable = async () => { throw new Error('Chưa tải được phiên đăng nhập. Vui lòng tải lại trang.'); };
         return { has: () => false, ready: unavailable, all: unavailable, read: unavailable, write: unavailable };
     }

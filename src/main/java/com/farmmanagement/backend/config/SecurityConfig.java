@@ -64,11 +64,14 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/","/index.html","/index-shell.html","/app.js","/overview-charts.js","/style.css","/features/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/farm.html","/material.html","/expenses.html","/material-usage.html","/workers.html","/dashboard.html","/login.html","/actuator/health").permitAll()
                 .requestMatchers(HttpMethod.GET,"/ui/farm.html","/ui/material.html","/ui/material-usage.html","/ui/expenses.html","/ui/js/**","/ui/css/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/ui/advanced-dashboard.html","/ui/harvest.html","/ui/purchase.html","/ui/sales.html","/ui/traceability.html",
+                    "/harvest.html","/advanced-dashboard.html","/purchase.html","/sales.html","/traceability.html").permitAll()
                 .requestMatchers(HttpMethod.GET,"/ui/features/**","/ui/shared/**","/ui/prototypes/*.html","/ui/prototypes/application.css","/ui/prototypes/entry.js","/ui/prototypes/bridge.js","/ui/prototypes/host.css","/ui/prototypes/charts.js","/ui/prototypes/js/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/frontend/*.html","/frontend/js/**","/frontend/css/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/login","/api/v1/auth/register").permitAll()
                 .requestMatchers("/api/v1/workspace", "/api/v1/workspace/**").authenticated()
                 .requestMatchers("/api/v1/data-transfer", "/api/v1/data-transfer/**").authenticated()
+                .requestMatchers("/api/v1/traceability", "/api/v1/traceability/**", "/api/v1/activities", "/api/v1/activities/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/v1/auth/me").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/logout").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/password").authenticated()
@@ -76,6 +79,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/admin/roles").hasAuthority("roles:read")
                 .requestMatchers(HttpMethod.GET,"/admin/farms").hasAuthority("farms:read")
                 .requestMatchers("/api/v1/users", "/api/v1/users/**", "/api/v1/roles", "/api/v1/roles/**", "/api/v1/permissions").authenticated()
+                .requestMatchers("/api/v1/dashboard-farms", "/api/v1/harvest-farms", "/api/v1/harvest-units").authenticated()
                 .requestMatchers("/api/v1/productions", "/api/v1/productions/**", "/api/v1/products", "/api/v1/products/**").authenticated()
                 .requestMatchers("/api/v1/expenses", "/api/v1/expenses/**").authenticated()
                 .requestMatchers("/api/v1/material-usages", "/api/v1/material-usages/**").authenticated()
@@ -84,6 +88,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/material-categories", "/api/v1/material-categories/**",
                     "/api/v1/materials", "/api/v1/materials/**", "/api/v1/warehouses", "/api/v1/warehouses/**",
                     "/api/v1/inventory", "/api/v1/inventory/**").authenticated()
+                .requestMatchers("/api/v1/suppliers", "/api/v1/suppliers/**",
+                    "/api/v1/purchase-orders", "/api/v1/purchase-orders/**",
+                    "/api/v1/customers", "/api/v1/customers/**",
+                    "/api/v1/sales-orders", "/api/v1/sales-orders/**").authenticated()
                 .anyRequest().denyAll())
             .exceptionHandling(e->e
                 .authenticationEntryPoint((q,s,x)->api.write(q,s,401,"UNAUTHENTICATED","Vui lòng đăng nhập lại."))

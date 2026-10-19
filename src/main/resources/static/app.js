@@ -5,6 +5,12 @@ let selectedFarm = null, memberships = [];
 const el = id => document.getElementById(id);
 const has = permission => currentUser?.permissions.includes(permission);
 const transferPermissions=['plots:read','plots:create','crops:read','crops:create','materials:read','materials:create','warehouses:read','warehouses:create','inventory:manage','expenses:read','expenses:create','usage:read','usage:create'];
+const modulePermissions={
+  farm:['farms:read','plots:read','crops:read'],material:['materials:read','warehouses:read'],
+  expenses:['expenses:read','expenses:create'],'material-usage':['usage:read','usage:create'],'data-transfer':transferPermissions,
+  harvest:['harvests:read'],dashboard:['dashboard:read'],purchase:['suppliers:read','purchases:read'],
+  sales:['customers:read','sales:read'],traceability:['farms:read']
+};
 const message = text => {
   el("message").textContent = text;
   if(text && !document.body.classList.contains('supplemental')) el('prototypeFrame')?.contentWindow?.showToast?.('AgriManage',text,'info');
@@ -58,7 +64,7 @@ function renderAccount(user) {
   el('transferButton').hidden = !transferPermissions.some(has) || !selectedFarm || selectedFarm.onboardingStatus!=='READY';
   document.querySelectorAll("[data-permission]").forEach(node => { node.hidden = !has(node.dataset.permission); });
   if(selectedFarm && selectedFarm.onboardingStatus!=="READY") {
-    for(const id of ["farmButton","materialButton","expensesButton","usageButton","transferButton"]) el(id).hidden=true;
+    for(const id of ["farmButton","materialButton","expensesButton","usageButton","transferButton","harvestButton","dashboardButton","purchaseButton","salesButton","traceabilityButton"]) el(id).hidden=true;
   }
 }
 async function request(path, options = {}) {
@@ -77,7 +83,15 @@ async function request(path, options = {}) {
   }
   if (res.status === 204) return null;
   if (options.responseType==='blob') return {blob:await res.blob(),checksum:res.headers.get('X-Data-SHA256'),rows:res.headers.get('X-Row-Count')};
-  return res.headers.get("Content-Type")?.includes("text/html") ? res.text() : (await res.json()).data;
+  if (["application/pdf", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"].some(type => res.headers.get("Content-Type")?.includes(type))) return res.blob();
+  if(res.headers.get("Content-Type")?.includes("text/html")) return res.text();
+  const payload=await res.json();
+  return payload && Object.hasOwn(payload,'data')?payload.data:payload;
+}
+async function download(path,filename) {
+  const result=await request(path,{responseType:'blob'}),url=URL.createObjectURL(result.blob),link=document.createElement('a');
+  link.href=url;link.download=filename;document.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
 }
 const json = (path, method, body) => request(path, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 async function run(action, button) {
@@ -192,7 +206,7 @@ async function authenticate(data) {
   renderAccount(result.user); message("Đăng nhập thành công.");
   await loadWorkspace();
   const module = location.hash.slice(1);
-  if (selectedFarm?.onboardingStatus==='READY' && ["farm", "material", "expenses", "material-usage", "data-transfer"].includes(module)) await openModule(module);
+  if (selectedFarm?.onboardingStatus==='READY' && Object.hasOwn(modulePermissions,module)) await openModule(module);
   else if(module==='staff' && selectedFarm?.roles.includes('OWNER')) await openStaff();
   else if(['users','roles'].includes(module) && has(module+':read')) await openPage(module);
   else if(['activities','tasks','schedule','reports','notifications','workers'].includes(module)) await openPrototype(module);
@@ -207,11 +221,11 @@ el("logoutButton").onclick = () => run(async () => { await request("/api/v1/auth
 el("usersButton").onclick = () => run(() => openPage("users"), el("usersButton"));
 el("rolesButton").onclick = () => run(() => openPage("roles"), el("rolesButton"));
 async function openModule(name) {
-  if (!["farm", "material", "expenses", "material-usage", "data-transfer"].includes(name)) return;
+  if (!Object.hasOwn(modulePermissions,name)) return;
   if(!selectedFarm || selectedFarm.onboardingStatus!=='READY') throw new Error('Thêm nhân viên và phân công vị trí trước khi thiết lập trang trại.');
   const version=++navigationVersion;
   await refreshMe();if(version!==navigationVersion) return;
-  const required = name==='data-transfer'?transferPermissions:name === "farm" ? ["farms:read", "plots:read", "crops:read"] : name==='expenses'?['expenses:read','expenses:create']:name==='material-usage'?['usage:read','usage:create']:["materials:read", "warehouses:read"];
+  const required = modulePermissions[name];
   if (!required.some(has)) throw new Error("Bạn không có quyền xem mục này.");
   await showOriginalPrototype('dashboard',name);
 }
@@ -226,7 +240,7 @@ function navigate(name) {
     return name==='staff'?openStaff():name==='home'?openHome():['users','roles'].includes(name)?openPage(name):['activities','tasks','schedule','reports','notifications','workers'].includes(name)?openPrototype(name):openModule(name);
   });
 }
-window.ManagementApi = Object.freeze({ has, request, json, navigate,authenticate,
+window.ManagementApi = Object.freeze({ has, request, json, download, navigate,authenticate,
   profile:()=>({user:currentUser,farm:selectedFarm,farms:memberships}),
   register:data=>json('/api/v1/auth/register','POST',data),
   logout:async()=>{await request('/api/v1/auth/logout',{method:'POST'});signedOut();},
@@ -240,6 +254,7 @@ el("materialButton").onclick = () => run(() => openModule("material"), el("mater
 el('expensesButton').onclick=()=>run(()=>openModule('expenses'));
 el('usageButton').onclick=()=>run(()=>openModule('material-usage'));
 el('transferButton').onclick=()=>run(()=>openModule('data-transfer'));
+for(const name of ['purchase','sales','traceability']) el(name+'Button').onclick=()=>run(()=>openModule(name));
 formHandler(el('registerForm'),async data=>{
   await json('/api/v1/auth/register','POST',data);el('registerForm').reset();el('registerPanel').open=false;
   el('username').value=data.username;el('password').focus();message('Đăng ký thành công. Đăng nhập để thêm nhân viên và phân quyền.');
@@ -257,3 +272,7 @@ el('completeButton').onclick=()=>run(async()=>{
 });
 
 el("loginButton").disabled = false;
+
+el("harvestButton").onclick = () => run(() => openModule("harvest"), el("harvestButton"));
+
+el("dashboardButton").onclick = () => run(() => openModule("dashboard"), el("dashboardButton"));

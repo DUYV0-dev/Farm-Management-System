@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriManage - Truy xuất Nguồn gốc Nông sản (Product Traceability)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/shared/icons.css">
+    <link rel="stylesheet" href="/ui/shared/style.css">
+<script src="/ui/prototypes/bridge.js"></script></head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav shadow-sm">
+            <div class="nav-container">
+                <a href="dashboard.html" class="nav-brand">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <span>AgriManage</span>
+                </a>
+                
+                <div class="nav-links">
+                    <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    <a href="activities.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Farming Activities</a>
+                    <a href="traceability.html" class="nav-item active"><i class="fa-solid fa-qrcode"></i> Traceability</a>
+                    <a href="notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+                    <a href="index.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Task Roster</a>
+                    <a href="workers.html" class="nav-item"><i class="fa-solid fa-users"></i> Workers</a>
+                    <a href="schedule.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
+                    <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reports</a>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="btn-icon" id="btnBellNotification"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
+                    <div class="user-profile">
+                        <img src="https://i.pravatar.cc/150?img=33" alt="User">
+                        <div class="user-info">
+                            <span class="user-name">Farm Manager</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-container">
+                <!-- Header & Quick Actions -->
+                <div class="page-header">
+                    <div class="header-text">
+                        <h1>Truy xuất Nguồn gốc Nông sản</h1>
+                        <p class="subtitle">Hệ thống minh bạch chuỗi cung ứng nông nghiệp Farm-to-Fork: Theo dõi thông tin từ mùa vụ canh tác, nhật ký chăm sóc, bón phân & thuốc BVTV đến hồ sơ thu hoạch và xác thực mã QR.</p>
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn-primary" id="btnOpenScanModal">
+                            <i class="fa-solid fa-qrcode"></i> Quét mã QR / Tra cứu Lô
+                        </button>
+                        <button class="btn-secondary" id="btnNewBatchModal">
+                            <i class="fa-solid fa-plus-circle"></i> Đăng ký Lô Nông sản Mới
+                        </button>
+                        <button class="btn-secondary" id="btnPrintCertBtn">
+                            <i class="fa-solid fa-certificate"></i> In Chứng thư Xuất xứ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Traceability Overview Banner -->
+                <div class="traceability-banner shadow-sm">
+                    <div class="traceability-header-row">
+                        <div class="trace-title-group">
+                            <div class="trace-icon-badge">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <div>
+                                <h2>Hồ sơ Nông sản Minh bạch & Đạt chuẩn Quốc gia</h2>
+                                <p class="subtitle" style="font-size:13.5px; margin-top:2px;">
+                                    Tất cả lô sản phẩm được mã hóa định danh độc bản (Unique Batch ID) kết nối chuỗi dữ liệu canh tác thời gian thực.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="verified-seal">
+                            <i class="fa-solid fa-circle-check"></i> 100% Đạt Chuẩn VietGAP & GlobalGAP
+                        </div>
+                    </div>
+
+                    <!-- Quick Batch Selector Chips -->
+                    <div style="margin-top: 14px;">
+                        <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">
+                            <i class="fa-solid fa-layer-group"></i> Chọn nhanh Lô nông sản tiêu biểu để kiểm tra truy xuất:
+                        </div>
+                        <div class="quick-lot-chips" id="quickLotChipsContainer">
+                            <!-- Populated dynamically by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search & Filter Card -->
+                <div class="trace-search-card">
+                    <div class="trace-search-bar">
+                        <i class="fa-solid fa-magnifying-glass text-primary" style="font-size: 17px;"></i>
+                        <input type="text" id="traceSearchInput" placeholder="Nhập Mã lô (VD: LOT-2026-ST25-01), Tên nông sản, Mã số vùng trồng PUC...">
+                        <button class="btn-chip" id="btnClearSearch" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                        <select id="seasonFilterSelect" style="padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); font-weight: 600; font-size:13.5px;">
+                            <option value="">Tất cả Mùa vụ</option>
+                            <option value="Mùa Đông Xuân 2026">Mùa Đông Xuân 2026</option>
+                            <option value="Mùa Hè Thu 2026">Mùa Hè Thu 2026</option>
+                            <option value="Mùa Thu Đông 2026">Mùa Thu Đông 2026</option>
+                        </select>
+
+                        <select id="certFilterSelect" style="padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); font-weight: 600; font-size:13.5px;">
+                            <option value="">Tất cả Chứng nhận</option>
+                            <option value="VietGAP">Chuẩn VietGAP</option>
+                            <option value="GlobalGAP">Chuẩn GlobalGAP</option>
+                            <option value="Organic">Hữu cơ Organic</option>
+                            <option value="OCOP">OCOP 4-5 Sao</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Traceability Summary KPI Cards -->
+                <div class="stats-container" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 28px;">
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-green-light text-green">
+                                <i class="fa-solid fa-boxes-stacked"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Tổng Lô Đã Cấp Mã</h3>
+                                <h2 id="kpiTotalLots">5</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-shield-check"></i> 100% Khả dụng</span>
+                    </div>
+
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-teal-light text-teal">
+                                <i class="fa-solid fa-wheat-awn"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Sản lượng Thu hoạch</h3>
+                                <h2 id="kpiTotalYield">25.8 Tấn</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-award"></i> Loại 1: 96.4%</span>
+                    </div>
+
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-orange-light text-orange">
+                                <i class="fa-solid fa-flask-vial"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>An toàn Cách ly (PHI)</h3>
+                                <h2 id="kpiPhiStatus">100% Đạt</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-check"></i> 0 Dư lượng</span>
+                    </div>
+
+                    <div class="stat-card shadow-sm">
+                        <div class="stat-left">
+                            <div class="stat-icon bg-brown-light text-brown">
+                                <i class="fa-solid fa-barcode"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Lượt Quét Tra Cứu</h3>
+                                <h2 id="kpiScanCount">1,482</h2>
+                            </div>
+                        </div>
+                        <span class="stat-trend trend-up"><i class="fa-solid fa-users"></i> Người tiêu dùng</span>
+                    </div>
+                </div>
+
+                <!-- Traceability Navigation Tabs -->
+                <div class="trace-tabs-nav" id="traceTabsNav">
+                    <button class="trace-tab-item active" data-tab="tab-all">
+                        <i class="fa-solid fa-border-all"></i> Tổng quan Hồ sơ Toàn diện
+                    </button>
+                    <button class="trace-tab-item" data-tab="tab-season">
+                        <i class="fa-solid fa-cloud-sun"></i> 1. Thông tin Mùa vụ & Nguồn gốc
+                    </button>
+                    <button class="trace-tab-item" data-tab="tab-activities">
+                        <i class="fa-solid fa-person-digging"></i> 2. Lịch sử Canh tác
+                    </button>
+                    <button class="trace-tab-item" data-tab="tab-chemicals">
+                        <i class="fa-solid fa-vial-circle-check"></i> 3. Nhật ký Phân bón & Thuốc BVTV
+                    </button>
+                    <button class="trace-tab-item" data-tab="tab-harvest">
+                        <i class="fa-solid fa-basket-shopping"></i> 4. Hồ sơ Thu hoạch & Đóng gói
+                    </button>
+                    <button class="trace-tab-item" data-tab="tab-consumer">
+                        <i class="fa-solid fa-mobile-screen"></i> 5. Giao diện Người tiêu dùng (QR View)
+                    </button>
+                </div>
+
+                <!-- MAIN BATCH DOSSIER CONTAINER -->
+                <div id="batchDossierContainer">
+                    <!-- 1. PRODUCT & ORIGIN HERO CARD -->
+                    <div class="trace-hero-card" id="section-season">
+                        <!-- Product Image Box -->
+                        <div class="product-img-box">
+                            <img id="detailProductImg" src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80" alt="Sản phẩm">
+                            <span class="product-tag-pill" id="detailBatchTag">Mã Lô: LOT-2026-ST25-01</span>
+                        </div>
+
+                        <!-- Product Information Details -->
+                        <div class="product-details-col">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+                                <span class="badge" id="detailCertBadge" style="background:#ecfdf5; color:#047857; font-weight:700; border:1px solid rgba(16,185,129,0.3); font-size:12px;">
+                                    <i class="fa-solid fa-certificate"></i> VietGAP Chuẩn Quốc gia
+                                </span>
+                                <span class="badge" id="detailSeasonBadge" style="background:var(--accent-orange-light); color:#b45309; font-weight:700; font-size:12px;">
+                                    <i class="fa-solid fa-snowflake"></i> Mùa Đông Xuân 2026
+                                </span>
+                            </div>
+
+                            <h2 id="detailProductName">Gạo Thơm Thượng Hạng ST25</h2>
+                            <p class="subtitle" id="detailProductStory" style="font-size:13.5px; line-height:1.5;">
+                                Giống lúa tiến vua ST25 được canh tác theo phương thức Lúa - Tôm tự nhiên, kiểm soát nghiêm ngặt dư lượng hóa chất, cơm dẻo mềm và thơm ngát hương lá dứa.
+                            </p>
+
+                            <!-- Metadata Grid: Season, Crop, Farm, PUC, GPS -->
+                            <div class="product-meta-grid">
+                                <div class="meta-field-item">
+                                    <span class="meta-field-label"><i class="fa-solid fa-seedling text-primary"></i> Giống cây trồng / Hạt:</span>
+                                    <span class="meta-field-value" id="detailVariety">ST25 Thuần Chủng F1 Sóc Trăng</span>
+                                </div>
+                                <div class="meta-field-item">
+                                    <span class="meta-field-label"><i class="fa-solid fa-calendar-check text-teal"></i> Thời gian sinh trưởng:</span>
+                                    <span class="meta-field-value" id="detailCropDuration">15/11/2025 ➔ 20/03/2026 (105 ngày)</span>
+                                </div>
+                                <div class="meta-field-item">
+                                    <span class="meta-field-label"><i class="fa-solid fa-map-location-dot text-orange"></i> Vùng trồng / Lô thửa:</span>
+                                    <span class="meta-field-value" id="detailFarmLocation">Cánh đồng Lúa Sector 1, H. Tháp Mười, Đồng Tháp</span>
+                                </div>
+                                <div class="meta-field-item">
+                                    <span class="meta-field-label"><i class="fa-solid fa-fingerprint text-purple"></i> Mã vùng trồng (PUC Code):</span>
+                                    <span class="meta-field-value" id="detailPucCode" style="font-family:monospace; color:var(--primary); font-size:15px;">VN-DTP-0832-PUC</span>
+                                </div>
+                                <div class="meta-field-item">
+                                    <span class="meta-field-label"><i class="fa-solid fa-satellite text-blue"></i> Tọa độ GPS Vùng trồng:</span>
+                                    <span class="meta-field-value" id="detailGps" style="font-family:monospace; font-size:13px;">10°34'18.2"N 105°47'22.6"E</span>
+                                </div>
+                                <div class="meta-field-item">
+                                    <span class="meta-field-label"><i class="fa-solid fa-user-tie text-green"></i> Kỹ sư / Quản lý nông trại:</span>
+                                    <span class="meta-field-value" id="detailManager">Trần Văn Lượng (Quản lý vườn)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mini QR & Print Quick Actions -->
+                        <div class="qr-preview-box">
+                            <div class="qr-code-canvas-box" id="detailQrContainer">
+                                <!-- QR SVG / Canvas generated by JS -->
+                            </div>
+                            <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:8px;">
+                                QUÉT MÃ TRUY XUẤT NGUỒN GỐC
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
+                                <button class="btn-chip chip-success" id="btnDownloadQr" style="justify-content:center;">
+                                    <i class="fa-solid fa-download"></i> Tải ảnh Mã QR
+                                </button>
+                                <button class="btn-chip" id="btnCopyTraceLink" style="justify-content:center;">
+                                    <i class="fa-solid fa-link"></i> Sao chép Liên kết
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. FARM-TO-FORK JOURNEY STEPPER -->
+                    <div style="margin-bottom:28px;">
+                        <h3 style="font-size:16px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-route text-primary"></i> Hành trình Chuỗi giá trị Nông sản (Farm-to-Fork Journey)
+                        </h3>
+                        <div class="journey-stepper" id="journeyStepperContainer">
+                            <!-- Generated dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- 3. SECTION: FARMING ACTIVITY HISTORY -->
+                    <div class="chart-card shadow-sm" id="section-activities" style="margin-bottom:28px;">
+                        <div class="chart-header">
+                            <div>
+                                <h3 class="chart-title"><i class="fa-solid fa-clock-rotate-left text-primary"></i> Lịch sử & Nhật ký Hoạt động Canh tác Chi tiết</h3>
+                                <p class="subtitle" style="font-size:13px;">Ghi nhận từng công đoạn thực tế từ xử lý đất giống đến chăm sóc và chuẩn bị thu hoạch.</p>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                <select id="activityCategoryFilter" style="padding:6px 12px; border-radius:var(--radius-sm); border:1px solid var(--border-color); font-size:12.5px; font-weight:600;">
+                                    <option value="">Tất cả hoạt động</option>
+                                    <option value="Làm đất">Làm đất & Xử lý</option>
+                                    <option value="Gieo trồng">Gieo giống</option>
+                                    <option value="Bón phân">Bón phân</option>
+                                    <option value="Tưới nước">Tưới tiêu</option>
+                                    <option value="Phun thuốc">Bảo vệ thực vật</option>
+                                    <option value="Thu hoạch">Thu hoạch</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Timeline list -->
+                        <div class="trace-timeline" id="traceActivityTimeline">
+                            <!-- Populated dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- 4. SECTION: FERTILIZER & PESTICIDE USAGE LEDGER -->
+                    <div class="chart-card shadow-sm" id="section-chemicals" style="margin-bottom:28px;">
+                        <div class="chart-header">
+                            <div>
+                                <h3 class="chart-title"><i class="fa-solid fa-flask-vial text-teal"></i> Nhật ký Sử dụng Phân bón & Thuốc Bảo vệ Thực vật</h3>
+                                <p class="subtitle" style="font-size:13px;">Theo dõi nghiêm ngặt liều lượng, hoạt chất, quy trình và thời gian cách ly an toàn (PHI) trước thu hoạch.</p>
+                            </div>
+                            <div class="phi-safety-pill phi-safe">
+                                <i class="fa-solid fa-shield-virus"></i> Chỉ số an toàn: ĐẠT 100% PHI (Pre-Harvest Interval)
+                            </div>
+                        </div>
+
+                        <!-- 4.1 Fertilizer Log Table -->
+                        <div style="margin-bottom:24px;">
+                            <h4 style="font-size:14.5px; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+                                <i class="fa-solid fa-leaf text-green"></i> 1. Nhật ký Sử dụng Phân bón (Fertilizer Ledger)
+                            </h4>
+                            <div class="table-responsive">
+                                <table class="task-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ngày bón</th>
+                                            <th>Tên loại phân bón</th>
+                                            <th>Phân loại phân</th>
+                                            <th>Liều lượng / Diện tích</th>
+                                            <th>Giai đoạn sinh trưởng</th>
+                                            <th>Người thực hiện</th>
+                                            <th>Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="fertilizerTableBody">
+                                        <!-- Generated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 4.2 Pesticide & Biological Control Log Table -->
+                        <div style="margin-bottom:20px;">
+                            <h4 style="font-size:14.5px; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+                                <i class="fa-solid fa-spray-can-sparkles text-orange"></i> 2. Nhật ký Phun Thuốc BVTV & Chế phẩm Sinh học (Pesticide & Bio-control Log)
+                            </h4>
+                            <div class="table-responsive">
+                                <table class="task-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ngày phun</th>
+                                            <th>Tên thuốc / Chế phẩm sinh học</th>
+                                            <th>Hoạt chất chính</th>
+                                            <th>Đối tượng phòng trừ</th>
+                                            <th>Liều lượng</th>
+                                            <th>Thời gian cách ly (PHI)</th>
+                                            <th>Đánh giá An toàn Thu hoạch</th>
+                                            <th>Cán bộ thực hiện</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pesticideTableBody">
+                                        <!-- Generated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 4.3 Chemical Residue Testing Box -->
+                        <div class="residue-test-box">
+                            <div class="residue-status-badge">
+                                <div class="residue-icon">
+                                    <i class="fa-solid fa-file-shield"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-size:15px; font-weight:700; color:#14532d; margin-bottom:3px;">
+                                        Kết quả Kiểm nghiệm Tồn dư Dư lượng Hóa chất & Vi sinh
+                                    </h4>
+                                    <p style="font-size:13px; color:#166534;" id="residueTestSummary">
+                                        Phiếu kiểm nghiệm số: <strong>TEST-VN-2026-883</strong> do Trung tâm Kỹ thuật Tiêu chuẩn Đo lường Chất lượng (Quatest 3) thực hiện.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style="display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px;">
+                                <div style="background:#ffffff; padding:8px 14px; border-radius:var(--radius-sm); border:1px solid #bbf7d0;">
+                                    <span style="color:#64748b; display:block;">Kim loại nặng (Pb, Cd, As):</span>
+                                    <strong style="color:#15803d;"><i class="fa-solid fa-check"></i> Không phát hiện</strong>
+                                </div>
+                                <div style="background:#ffffff; padding:8px 14px; border-radius:var(--radius-sm); border:1px solid #bbf7d0;">
+                                    <span style="color:#64748b; display:block;">Dư lượng thuốc BVTV:</span>
+                                    <strong style="color:#15803d;"><i class="fa-solid fa-check"></i> 0.00 mg/kg (Zero Residue)</strong>
+                                </div>
+                                <div style="background:#ffffff; padding:8px 14px; border-radius:var(--radius-sm); border:1px solid #bbf7d0;">
+                                    <span style="color:#64748b; display:block;">Vi sinh vật (E. Coli, Salmonella):</span>
+                                    <strong style="color:#15803d;"><i class="fa-solid fa-check"></i> Âm tính</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. SECTION: HARVEST & PACKAGING RECORDS -->
+                    <div class="chart-card shadow-sm" id="section-harvest" style="margin-bottom:28px;">
+                        <div class="chart-header">
+                            <div>
+                                <h3 class="chart-title"><i class="fa-solid fa-box-open text-orange"></i> Hồ sơ Đợt Thu hoạch, Phân loại & Đóng gói Xuất xưởng</h3>
+                                <p class="subtitle" style="font-size:13px;">Số liệu thực tế tại thời điểm gặt hái, nghiệm thu chất lượng và lưu trữ bảo quản.</p>
+                            </div>
+                            <span class="badge" style="background:#dcfce7; color:#15803d; font-weight:800; font-size:13px; padding:6px 12px;">
+                                <i class="fa-solid fa-truck-fast"></i> ĐÃ XUẤT XƯỞNG
+                            </span>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; margin-bottom:20px;">
+                            <div style="background:var(--bg-body); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+                                <div style="font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Thời gian thu hoạch thực tế</div>
+                                <div style="font-size:16px; font-weight:800; color:var(--text-main); margin-top:4px;" id="harvestActualTime">
+                                    <i class="fa-solid fa-clock text-primary"></i> 20/03/2026 - 08:30
+                                </div>
+                                <div style="font-size:12.5px; color:var(--text-muted); margin-top:4px;">Thu hoạch cơ giới hóa đồng loạt</div>
+                            </div>
+
+                            <div style="background:var(--bg-body); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+                                <div style="font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Sản lượng đợt thu hoạch</div>
+                                <div style="font-size:16px; font-weight:800; color:var(--primary); margin-top:4px;" id="harvestActualYield">
+                                    <i class="fa-solid fa-weight-scale text-primary"></i> 15,500 kg (15.5 tấn)
+                                </div>
+                                <div style="font-size:12.5px; color:var(--text-muted); margin-top:4px;" id="harvestGradeRatio">Loại 1: 98% | Loại 2: 2%</div>
+                            </div>
+
+                            <div style="background:var(--bg-body); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+                                <div style="font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Cán bộ nghiệm thu chất lượng</div>
+                                <div style="font-size:16px; font-weight:800; color:var(--text-main); margin-top:4px;" id="harvestInspector">
+                                    <i class="fa-solid fa-user-check text-primary"></i> Lê Thị Mai
+                                </div>
+                                <div style="font-size:12.5px; color:var(--text-muted); margin-top:4px;">Kỹ thuật viên Trưởng KCS</div>
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:18px;">
+                            <div style="background:var(--bg-body); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+                                <strong style="font-size:13.5px; color:var(--text-main); display:block; margin-bottom:6px;"><i class="fa-solid fa-box text-teal"></i> Quy cách đóng gói & Dán tem:</strong>
+                                <p style="font-size:13px; color:var(--text-main); margin:0;" id="harvestPackaging">
+                                    Đóng túi hút chân không tráng bạc 5kg tiêu chuẩn xuất khẩu, kèm tem nhãn QR Code chống hàng giả độc bản.
+                                </p>
+                            </div>
+                            <div style="background:var(--bg-body); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+                                <strong style="font-size:13.5px; color:var(--text-main); display:block; margin-bottom:6px;"><i class="fa-solid fa-temperature-arrow-down text-blue"></i> Điều kiện bảo quản & Hạn dùng:</strong>
+                                <p style="font-size:13px; color:var(--text-main); margin:0;" id="harvestStorage">
+                                    Nhiệt độ phòng mát 20-25°C, độ ẩm < 14%. Hạn sử dụng: 12 tháng kể từ ngày đóng gói (22/03/2026 ➔ 22/03/2027).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. SECTION: CONSUMER QR VERIFICATION & MOBILE PREVIEW -->
+                    <div class="chart-card shadow-sm" id="section-consumer" style="margin-bottom:28px;">
+                        <div class="chart-header">
+                            <div>
+                                <h3 class="chart-title"><i class="fa-solid fa-mobile-screen-button text-purple"></i> Giao diện Người tiêu dùng Quét mã QR (Mobile Consumer Preview)</h3>
+                                <p class="subtitle" style="font-size:13px;">Mô phỏng chính xác những gì người tiêu dùng, siêu thị và đối tác nhìn thấy trên điện thoại khi quét mã QR tem nhãn.</p>
+                            </div>
+                            <div style="display:flex; gap:10px;">
+                                <button class="btn-chip chip-success" id="btnPreviewPublicModal"><i class="fa-solid fa-arrow-up-right-from-square"></i> Mở Trang Xác thực Độc lập</button>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Device Mockup -->
+                        <div class="mobile-mockup-wrapper">
+                            <div class="mobile-mockup-device">
+                                <div class="mobile-notch">
+                                    <div class="mobile-notch-camera"></div>
+                                    <div class="mobile-notch-speaker"></div>
+                                </div>
+                                <div class="mobile-screen-content">
+                                    <!-- Mobile Header -->
+                                    <div style="text-align:center; margin-bottom:14px;">
+                                        <div style="display:inline-flex; align-items:center; gap:6px; background:#ecfdf5; color:#047857; font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:20px; border:1px solid rgba(16,185,129,0.3); margin-bottom:8px;">
+                                            <i class="fa-solid fa-shield-check"></i> ĐÃ XÁC THỰC VIETGAP
+                                        </div>
+                                        <h3 id="mobileProductName" style="font-size:18px; font-weight:800; color:#0c2920; margin-bottom:2px;">Gạo Thơm Thượng Hạng ST25</h3>
+                                        <div id="mobileBatchCode" style="font-family:monospace; font-size:12px; color:#10b981; font-weight:700;">LOT-2026-ST25-01</div>
+                                    </div>
+
+                                    <!-- Mobile Image -->
+                                    <div style="width:100%; height:140px; border-radius:12px; overflow:hidden; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                                        <img id="mobileProductImg" src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80" style="width:100%; height:100%; object-fit:cover;" alt="Mobile img">
+                                    </div>
+
+                                    <!-- Mobile Card: Nông trại & Vùng trồng -->
+                                    <div class="mobile-card">
+                                        <strong style="font-size:12.5px; color:#0c2920; display:block; margin-bottom:6px;"><i class="fa-solid fa-house-chimney text-primary"></i> Đơn vị Sản xuất:</strong>
+                                        <div style="font-size:12px; font-weight:700; color:#0c2920;">Trang trại Nông nghiệp Công nghệ cao AgriManage</div>
+                                        <div style="font-size:11.5px; color:#64748b; margin-top:2px;" id="mobileLocation">H. Tháp Mười, Tỉnh Đồng Tháp</div>
+                                        <div style="font-size:11px; color:#10b981; font-weight:700; margin-top:4px;" id="mobilePuc">Mã vùng trồng: VN-DTP-0832-PUC</div>
+                                    </div>
+
+                                    <!-- Mobile Card: An toàn & Thu hoạch -->
+                                    <div class="mobile-card">
+                                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                            <span style="font-size:11.5px; color:#64748b;">Ngày thu hoạch:</span>
+                                            <strong style="font-size:12px; color:#0c2920;" id="mobileHarvestDate">20/03/2026</strong>
+                                        </div>
+                                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                            <span style="font-size:11.5px; color:#64748b;">Tiêu chuẩn:</span>
+                                            <strong style="font-size:12px; color:#15803d;" id="mobileCertStandard">VietGAP Tiêu chuẩn</strong>
+                                        </div>
+                                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                            <span style="font-size:11.5px; color:#64748b;">Thời gian cách ly PHI:</span>
+                                            <strong style="font-size:12px; color:#15803d;">Đạt 100% An toàn</strong>
+                                        </div>
+                                        <div style="display:flex; justify-content:space-between;">
+                                            <span style="font-size:11.5px; color:#64748b;">Dư lượng thuốc BVTV:</span>
+                                            <strong style="font-size:12px; color:#15803d;">0.00 mg/kg</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Mobile Card: Hành trình Canh tác Tóm tắt -->
+                                    <div class="mobile-card">
+                                        <strong style="font-size:12.5px; color:#0c2920; display:block; margin-bottom:6px;"><i class="fa-solid fa-list-check text-primary"></i> Hành trình Canh tác Minh bạch:</strong>
+                                        <ul style="padding-left:16px; margin:0; font-size:11.5px; color:#334155; line-height:1.6;" id="mobileJourneyList">
+                                            <!-- Dynamically filled -->
+                                        </ul>
+                                    </div>
+
+                                    <!-- Mobile Consumer Footer -->
+                                    <div style="text-align:center; padding:10px 0;">
+                                        <div style="font-size:11px; color:#64748b;">Hotline hỗ trợ & Phản ánh chất lượng:</div>
+                                        <div style="font-size:13px; font-weight:800; color:#10b981;">1900 6868 (Miễn phí)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State when search returns no batch -->
+                <div id="traceEmptyState" style="display:none; text-align:center; padding:60px 20px; background:var(--bg-surface); border-radius:var(--radius-lg); border:1px solid var(--border-color); margin-top:20px;">
+                    <div style="width:70px; height:70px; border-radius:50%; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:30px; margin:0 auto 16px;">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <h3 style="font-size:18px; margin-bottom:6px;">Không tìm thấy Lô nông sản phù hợp</h3>
+                    <p class="subtitle" style="font-size:14px; max-width:450px; margin:0 auto 20px;">
+                        Không có lô nông sản nào khớp với từ khóa tìm kiếm hoặc bộ lọc hiện tại. Vui lòng thử lại với mã lô khác hoặc bấm nút bên dưới.
+                    </p>
+                    <button class="btn-primary" id="btnResetTraceFilters"><i class="fa-solid fa-rotate-left"></i> Xem Tất Cả Lô Nông Sản</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL 1: SCAN QR CODE / SIMULATOR -->
+    <div class="modal-overlay" id="scanModal">
+        <div class="modal-content shadow-md" style="max-width: 460px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-qrcode text-primary"></i> Quét Mã QR Truy Xuất</h2>
+                <button class="btn-close" id="btnCloseScanModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <p class="subtitle" style="font-size:13px; margin-bottom:16px;">
+                    Hướng camera điện thoại hoặc thiết bị quét vào mã QR trên tem dán sản phẩm.
+                </p>
+
+                <!-- Scanner Viewport with Laser Line -->
+                <div class="scanner-viewport">
+                    <div class="scanner-laser"></div>
+                    <div class="scanner-corner top-left"></div>
+                    <div class="scanner-corner top-right"></div>
+                    <div class="scanner-corner bottom-left"></div>
+                    <div class="scanner-corner bottom-right"></div>
+                    <div style="color:rgba(255,255,255,0.7); font-size:12px; z-index:10;">
+                        <i class="fa-solid fa-camera" style="font-size:24px; display:block; margin-bottom:6px;"></i>
+                        Đang dò tìm mã QR...
+                    </div>
+                </div>
+
+                <!-- Simulation Quick Click to Scan -->
+                <div style="margin-top:20px; text-align:left;">
+                    <label style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">
+                        Hoặc chọn nhanh mã QR mẫu để giả lập quét:
+                    </label>
+                    <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+                        <button class="btn-chip" onclick="simulateScanLot('LOT-2026-ST25-01')">
+                            🌾 Quét mã: <strong>LOT-2026-ST25-01</strong> (Gạo ST25 Đồng Tháp)
+                        </button>
+                        <button class="btn-chip" onclick="simulateScanLot('LOT-2026-CHOC-02')">
+                            🍅 Quét mã: <strong>LOT-2026-CHOC-02</strong> (Cà chua sô cô la Isreal)
+                        </button>
+                        <button class="btn-chip" onclick="simulateScanLot('LOT-2026-MELON-03')">
+                            🍈 Quét mã: <strong>LOT-2026-MELON-03</strong> (Dưa lưới Huỳnh Long)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-actions" style="margin-top:24px;">
+                    <button type="button" class="btn-cancel" id="btnCancelScan">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: REGISTER NEW TRACEABILITY BATCH -->
+    <div class="modal-overlay" id="newBatchModal">
+        <div class="modal-content shadow-md" style="max-width: 680px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-plus-circle text-primary"></i> Đăng ký Cấp Mã Truy xuất Lô Mới</h2>
+                <button class="btn-close" id="btnCloseNewBatchModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="newBatchForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Mã Lô Nông sản (Lot/Batch ID) <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="newBatchId" required placeholder="VD: LOT-2026-MANGO-06" style="font-family:monospace; text-transform:uppercase;">
+                        </div>
+                        <div class="form-group">
+                            <label>Tên Nông sản Thương phẩm <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="newProductName" required placeholder="VD: Xoài Cát Hòa Lộc Tiền Giang">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Giống cây trồng / Dòng giống <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="newVariety" required placeholder="VD: Xoài cát thuần chủng F1">
+                        </div>
+                        <div class="form-group">
+                            <label>Mùa vụ Canh tác <span style="color:var(--danger)">*</span></label>
+                            <select id="newSeason" required>
+                                <option value="Mùa Đông Xuân 2026">Mùa Đông Xuân 2026</option>
+                                <option value="Mùa Hè Thu 2026">Mùa Hè Thu 2026</option>
+                                <option value="Mùa Thu Đông 2026">Mùa Thu Đông 2026</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Vị trí Vùng trồng & Lô đất <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="newFarmLocation" required placeholder="VD: Vườn Xoài Sector 3, Huyện Cái Bè">
+                        </div>
+                        <div class="form-group">
+                            <label>Mã số Vùng trồng (PUC) <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="newPucCode" required placeholder="VD: VN-TGG-0512-PUC" style="font-family:monospace;">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ngày Thu hoạch Thực tế <span style="color:var(--danger)">*</span></label>
+                            <input type="date" id="newHarvestDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Sản lượng Thu hoạch <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="newHarvestQty" required placeholder="VD: 3,500 kg (3.5 tấn)">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tiêu chuẩn Chứng nhận</label>
+                            <select id="newCertification">
+                                <option value="VietGAP">Tiêu chuẩn VietGAP Quốc gia</option>
+                                <option value="GlobalGAP">Tiêu chuẩn Quốc tế GlobalGAP</option>
+                                <option value="Organic">Chứng nhận Hữu cơ Organic</option>
+                                <option value="OCOP">Chương trình OCOP 4-5 Sao</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Cán bộ Giám sát & Nghiệm thu</label>
+                            <input type="text" id="newInspector" placeholder="Tên cán bộ kiểm tra" value="Trần Văn Lượng (Quản lý vườn)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ảnh đại diện sản phẩm (URL)</label>
+                        <input type="url" id="newProductImg" placeholder="https://..." value="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=600&q=80">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mô tả chất lượng & Cam kết chuỗi cung ứng</label>
+                        <textarea id="newDescription" rows="3" placeholder="Mô tả giống, quy trình chăm sóc hữu cơ, không sử dụng hóa chất độc hại..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="btnCancelNewBatch">Hủy bỏ</button>
+                        <button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Lưu & Sinh Mã QR Truy Xuất</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: OFFICIAL PRINTABLE CERTIFICATE MODAL -->
+    <div class="modal-overlay" id="certificateModal">
+        <div class="modal-content shadow-md" style="max-width: 780px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-award text-primary"></i> Chứng thư Xuất xứ & Truy xuất Nguồn gốc Nông sản</h2>
+                <button class="btn-close" id="btnCloseCertModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <!-- Printable Certificate Container -->
+                <div class="certificate-frame" id="certificatePrintableArea">
+                    <div class="certificate-watermark">AGRIMANAGE CERTIFIED</div>
+
+                    <div style="text-align:center; border-bottom:2px solid #064e3b; padding-bottom:16px; margin-bottom:20px;">
+                        <div style="font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#047857;">
+                            CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+                        </div>
+                        <div style="font-size:12px; font-style:italic; color:#064e3b;">Độc lập - Tự do - Hạnh phúc</div>
+                        <div style="margin-top:14px; font-size:24px; font-weight:900; letter-spacing:1px; color:#064e3b; text-transform:uppercase;">
+                            CHỨNG THƯ TRUY XUẤT NGUỒN GỐC NÔNG SẢN
+                        </div>
+                        <div style="font-size:13px; color:#065f46; font-weight:700;">CERTIFICATE OF AGRICULTURAL ORIGIN & TRACEABILITY</div>
+                    </div>
+
+                    <div style="font-size:14px; line-height:1.8; color:#064e3b;">
+                        <p>Hệ thống Quản lý Nông nghiệp Thông minh <strong>AgriManage SmartFarm</strong> chứng nhận lô hàng nông sản sau đây:</p>
+                        
+                        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; background:#f0fdf4; padding:16px; border-radius:8px; border:1px solid #a7f3d0; margin:16px 0;">
+                            <div><strong>Sản phẩm:</strong> <span id="certProductName">Gạo ST25</span></div>
+                            <div><strong>Mã Lô (Batch ID):</strong> <span id="certBatchId" style="font-family:monospace; font-weight:700;">LOT-2026-ST25-01</span></div>
+                            <div><strong>Giống cây trồng:</strong> <span id="certVariety">ST25 F1</span></div>
+                            <div><strong>Mùa vụ:</strong> <span id="certSeason">Mùa Đông Xuân 2026</span></div>
+                            <div><strong>Mã vùng trồng (PUC):</strong> <span id="certPuc" style="font-family:monospace;">VN-DTP-0832-PUC</span></div>
+                            <div><strong>Tiêu chuẩn:</strong> <span id="certStandard" style="color:#047857; font-weight:700;">VietGAP</span></div>
+                            <div><strong>Ngày thu hoạch:</strong> <span id="certHarvestDate">20/03/2026</span></div>
+                            <div><strong>Sản lượng:</strong> <span id="certYield">15,500 kg</span></div>
+                        </div>
+
+                        <div style="background:#ffffff; border:1px solid #a7f3d0; border-radius:8px; padding:12px; font-size:12.5px; margin-bottom:18px;">
+                            <strong><i class="fa-solid fa-shield-virus"></i> Xác nhận An toàn Vệ sinh Thực phẩm & Cách ly (PHI):</strong>
+                            <div>Lô hàng đã tuân thủ 100% thời gian cách ly phân bón và thuốc BVTV, đạt kiểm nghiệm 0.00 mg/kg dư lượng độc hại theo QCVN 8-2:2011/BYT.</div>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:30px;">
+                            <div style="text-align:center;">
+                                <div class="qr-code-canvas-box" id="certQrBox" style="width:100px; height:100px; padding:4px; margin:0 auto 6px;"></div>
+                                <div style="font-size:10.5px; font-family:monospace;" id="certVerifyCode">VERIFY-AGRI-2026</div>
+                            </div>
+
+                            <div style="text-align:center; min-width:220px;">
+                                <div style="font-size:12.5px; color:#064e3b; margin-bottom:4px;">Ngày cấp chứng nhận: <strong id="certIssueDate">22/03/2026</strong></div>
+                                <div style="font-size:13.5px; font-weight:800; text-transform:uppercase; margin-bottom:40px;">GIÁM ĐỐC CHẤT LƯỢNG NÔNG TRẠI</div>
+                                <div style="font-size:14px; font-weight:700;" id="certDirector">Trần Văn Lượng</div>
+                                <div style="font-size:11px; color:#047857;">(Đã ký điện tử & Xác thực số)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions" style="margin-top:20px; justify-content:space-between;">
+                    <button type="button" class="btn-cancel" id="btnCloseCertAction">Đóng</button>
+                    <button type="button" class="btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> In Chứng Thư Ngay (Print Certificate)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/ui/prototypes/js/common.js"></script>
+    <script src="/ui/features/traceability/traceability.js"></script>
+</body>
+</html>

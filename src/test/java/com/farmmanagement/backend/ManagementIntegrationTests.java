@@ -71,6 +71,73 @@ class ManagementIntegrationTests {
         return new int[]{f,c,m,w};
     }
 
+    @Test void dashboardAggregatesConfirmedUnitsAndExportsSameStoredSnapshot() throws Exception {
+        int f=farm("10"), p=plot(f,"6"), c=crop();
+        int s=call("POST","seasons",obj("plotId",p,"cropId",c,"status","IN_PROGRESS"),201).path("id").asInt();
+        int role=admin.queryForObject("INSERT INTO role(role_name,scope) VALUES (?,'SYSTEM') RETURNING role_id",Integer.class,prefix);
+        for(String permission:List.of("harvests:read","harvests:create","dashboard:read","reports:read","reports:export:xlsx","reports:export:pdf")) admin.update("INSERT INTO auth_role_permission VALUES (?,?)",role,permission);
+        admin.update("INSERT INTO user_role VALUES (?,?)",actor,role);
+        admin.update("INSERT INTO role(role_name,scope) VALUES ('MANAGER','FARM') ON CONFLICT DO NOTHING");
+        admin.update("INSERT INTO farm_member(farm_id,user_id) VALUES (?,?)",f,actor);
+        admin.update("INSERT INTO farm_member_role SELECT ?,?,role_id FROM role WHERE scope='FARM' AND role_name='MANAGER'",f,actor);
+        int kg=admin.queryForObject("SELECT unit_id FROM unit WHERE unit_code='kg'",Integer.class);
+        String base="farms/"+f;
+        call("PUT",base+"/harvest-seasons/"+s,obj("name",prefix,"startDate","2020-01-01","endDate","2020-12-31","unitId",kg),200);
+        admin.update("UPDATE crop_season SET expected_yield=250 WHERE season_id=?",s);
+        for(Object[] values:List.of(new Object[]{"2020-05-01","100","CONFIRMED"},new Object[]{"2020-06-01","120","CONFIRMED"},new Object[]{"2020-06-30","80","CONFIRMED"},new Object[]{"2020-06-02","50","DRAFT"},new Object[]{"2020-06-03","30","CANCELED"}))
+            admin.update("INSERT INTO harvest(season_id,created_by,harvest_date,quantity,record_status) VALUES (?,?,?::date,?::numeric,?)",s,actor,values[0],values[1],values[2]);
+        String q="?fromDate=2020-06-01&toDate=2020-06-30";
+        var production=call("GET",base+"/dashboard/production"+q,null,200);
+        assertEquals(200,production.path("unitGroups").get(0).path("quantity").asInt());assertEquals(2,production.path("unitGroups").get(0).path("count").asInt());
+        var seasons=call("GET",base+"/statistics/seasons"+q,null,200);
+        assertEquals(1,seasons.path("total").asInt());assertEquals(300,seasons.path("items").get(0).path("cumulativeQuantity").asInt());assertEquals(120,seasons.path("items").get(0).path("achievementPercent").asInt());
+        int p2=call("POST","plots",plotBody(f,prefix+" second plot","3"),201).path("id").asInt();
+        int s2=call("POST","seasons",obj("plotId",p2,"cropId",c,"status","IN_PROGRESS"),201).path("id").asInt();
+        int ton=admin.queryForObject("SELECT unit_id FROM unit WHERE unit_code='ton'",Integer.class);
+        call("PUT",base+"/harvest-seasons/"+s2,obj("name",prefix+" tons","startDate","2020-01-01","endDate","2020-12-31","unitId",ton),200);
+        call("POST",base+"/harvests",obj("seasonId",s2,"harvestDate","2020-06-01","quantity","1"),201);
+        assertEquals(2,call("GET",base+"/dashboard/production"+q,null,200).path("unitGroups").size());
+        var report=call("POST",base+"/reports/production",obj("fromDate","2020-06-01","toDate","2020-06-30"),201);
+        String reportPath=base+"/reports/"+report.path("reportId").asText();
+        call("POST",base+"/harvests",obj("seasonId",s,"harvestDate","2020-06-02","quantity","5"),201);
+        assertEquals(3,call("GET",reportPath,null,200).path("total").asInt());
+        var bytes=mvc.perform(get("/api/v1/"+reportPath+"/export?format=xlsx").header("Authorization","Bearer "+token)).andExpect(status().isOk()).andReturn().getResponse().getContentAsByteArray();
+        try(var wb=new org.apache.poi.xssf.usermodel.XSSFWorkbook(new java.io.ByteArrayInputStream(bytes))) { assertEquals(4,wb.getSheet("PR01 Chi tiết").getPhysicalNumberOfRows()); }
+        call("GET","farms/2147483647/reports/"+report.path("reportId").asText(),null,404);
+        call("PUT","seasons/"+s+"/status",obj("status","CANCELLED"),200);
+        assertEquals(205,call("GET",base+"/dashboard/production"+q+"&seasonId="+s,null,200).path("unitGroups").get(0).path("quantity").asInt());
+        assertEquals(1,call("GET",base+"/statistics/seasons"+q,null,200).path("total").asInt());
+        admin.update("UPDATE farm_member SET status='INACTIVE' WHERE farm_id=? AND user_id=?",f,actor);
+        call("GET",reportPath,null,404);
+    }
+
+    @Test void harvestPersistsAndLocksSeasonMetadata() throws Exception {
+        int f=farm("10"), p=plot(f,"6"), c=crop();
+        int s=call("POST","seasons",obj("plotId",p,"cropId",c,"status","IN_PROGRESS"),201).path("id").asInt();
+        int systemRole=admin.queryForObject("INSERT INTO role(role_name,scope) VALUES (?,'SYSTEM') RETURNING role_id",Integer.class,prefix);
+        admin.update("INSERT INTO auth_role_permission VALUES (?,'harvests:read'),(?,'harvests:create')",systemRole,systemRole);
+        admin.update("INSERT INTO user_role VALUES (?,?)",actor,systemRole);
+        admin.update("INSERT INTO role(role_name,scope) VALUES ('MANAGER','FARM') ON CONFLICT DO NOTHING");
+        admin.update("INSERT INTO farm_member(farm_id,user_id) VALUES (?,?)",f,actor);
+        admin.update("INSERT INTO farm_member_role SELECT ?,?,role_id FROM role WHERE scope='FARM' AND role_name='MANAGER'",f,actor);
+        int unit=admin.queryForObject("SELECT unit_id FROM unit WHERE unit_code='kg'",Integer.class);
+        String base="farms/"+f;
+        var config=obj("name",prefix,"startDate","2020-01-01","endDate","2020-12-31","unitId",unit);
+        call("PUT",base+"/harvest-seasons/"+s,config,200);
+        var body=obj("seasonId",s,"harvestDate","2020-06-01","quantity","12.125","quality","A");
+        int h=call("POST",base+"/harvests",body,201).path("id").asInt();
+        assertEquals(new java.math.BigDecimal("12.125"),admin.queryForObject("SELECT quantity FROM harvest WHERE harvest_id=?",java.math.BigDecimal.class,h));
+        assertEquals(1,admin.queryForObject("SELECT count(*) FROM audit_log WHERE entity_type='HARVEST' AND entity_key=? AND actor_user_id=?",Integer.class,Integer.toString(h),actor));
+        call("PUT",base+"/harvest-seasons/"+s,config,409);
+        assertThrows(org.springframework.dao.DataAccessException.class,()->admin.update("UPDATE crop_season SET yield_unit_id=NULL WHERE season_id=?",s));
+        assertThrows(org.springframework.dao.DataAccessException.class,()->admin.update("DELETE FROM harvest WHERE harvest_id=?",h));
+        call("POST",base+"/harvests",body,201);
+        assertEquals(2,call("GET",base+"/harvests?seasonId="+s,null,200).path("total").asInt());
+        call("GET","farms/2147483647/harvests/"+h,null,404);
+        admin.update("UPDATE farm_member SET status='INACTIVE' WHERE farm_id=? AND user_id=?",f,actor);
+        call("POST",base+"/harvests",body,404);
+    }
+
     @Test void farmPlotCropLifecyclePersistsAndEnforcesRelationships() throws Exception {
         int f=farm("10"), p=plot(f,"6"), c=crop();
         assertTrue(call("GET","crops/"+c,null,200).path("growthDays").isNull());

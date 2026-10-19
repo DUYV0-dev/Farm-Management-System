@@ -16,11 +16,14 @@ public class FrontendEntryController {
         return "redirect:/#"+page;
     }
     @GetMapping({"/farm.html","/material.html","/expenses.html","/material-usage.html","/workers.html","/dashboard.html","/login.html",
-        "/frontend/farm.html","/frontend/material.html","/frontend/expenses.html","/frontend/material-usage.html"})
+        "/harvest.html","/advanced-dashboard.html","/purchase.html","/sales.html","/traceability.html",
+        "/frontend/farm.html","/frontend/material.html","/frontend/expenses.html","/frontend/material-usage.html",
+        "/frontend/harvest.html","/frontend/advanced-dashboard.html","/frontend/purchase.html","/frontend/sales.html","/frontend/traceability.html"})
     public String module(HttpServletRequest request) {
         String page=request.getRequestURI().substring(request.getRequestURI().lastIndexOf('/')+1).replace(".html","");
         if(page.equals("workers")) page="staff";
         if(page.equals("dashboard") || page.equals("login")) page="home";
+        if(page.equals("advanced-dashboard")) page="dashboard";
         return "redirect:/#"+page;
     }
 }

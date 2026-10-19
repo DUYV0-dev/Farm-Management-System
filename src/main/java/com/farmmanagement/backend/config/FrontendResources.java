@@ -22,7 +22,9 @@ public class FrontendResources implements WebMvcConfigurer {
             handler.setCachePeriod(0);
             for (String[] feature : new String[][] {
                 {"farm", "farm", ""}, {"inventory", "material", "material.css"},
-                {"expenses", "expenses", "expenses.css"}, {"material-usage", "material-usage", "material-usage.css"}
+                {"expenses", "expenses", "expenses.css"}, {"material-usage", "material-usage", "material-usage.css"},
+                {"harvest","harvest",""},{"advanced-dashboard","advanced-dashboard",""},
+                {"purchase","purchase",""},{"sales","sales",""},{"traceability","traceability",""}
             }) {
                 String directory="features/"+feature[0]+"/";
                 resource(registry,frontend,prefix,feature[1]+".html",directory);
