@@ -558,7 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filtered.forEach(act => {
             const node = document.createElement('div');
             node.className = 'trace-timeline-node';
-            
+
             let iconClass = 'fa-check';
             if (act.category === 'Làm đất') iconClass = 'fa-tractor';
             else if (act.category === 'Gieo trồng') iconClass = 'fa-seedling';
@@ -623,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const matched = allBatches.filter(b => {
-            const matchQuery = !query || 
+            const matchQuery = !query ||
                 b.id.toLowerCase().includes(query) ||
                 b.productName.toLowerCase().includes(query) ||
                 b.variety.toLowerCase().includes(query) ||
@@ -731,7 +731,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCloseScanModal.addEventListener('click', () => scanModal.classList.remove('active'));
     btnCancelScan.addEventListener('click', () => scanModal.classList.remove('active'));
 
-    window.simulateScanLot = function(lotId) {
+    window.simulateScanLot = function (lotId) {
         scanModal.classList.remove('active');
         selectBatch(lotId);
         if (window.showToast) {

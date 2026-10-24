@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriManage - Reports & Analytics</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,18 +19,21 @@
             gap: 24px;
             margin-bottom: 48px;
         }
+
         .chart-card {
             background: var(--bg-surface);
             border-radius: var(--radius-lg);
             padding: 28px;
             border: 1px solid var(--border-color);
         }
+
         .chart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
+
         .chart-container {
             position: relative;
             height: 280px;
@@ -36,6 +41,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="app-container">
         <!-- Top Navigation -->
@@ -47,7 +53,7 @@
                     </div>
                     <span>AgriManage</span>
                 </div>
-                
+
                 <div class="nav-links">
                     <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
                     <a href="activities.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Farming Activities</a>
@@ -56,11 +62,12 @@
                     <a href="index.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Tasks</a>
                     <a href="workers.html" class="nav-item"><i class="fa-solid fa-users"></i> Workers</a>
                     <a href="farm.html" class="nav-item"><i class="fa-solid fa-tractor"></i> Farms</a>
-                    <a href="material.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Material & Warehouse</a>
+                    <a href="material.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Material &
+                        Warehouse</a>
                     <a href="schedule.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
                     <a href="reports.html" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> Reports</a>
                 </div>
-                
+
                 <div class="nav-actions">
                     <button class="btn-icon"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
                     <div class="user-profile">
@@ -80,7 +87,8 @@
                 <div class="page-header">
                     <div class="header-text">
                         <h1>Farm Reports & Analytics</h1>
-                        <p class="subtitle">Generate comprehensive financial, crop yield, inventory, and operational reports.</p>
+                        <p class="subtitle">Generate comprehensive financial, crop yield, inventory, and operational
+                            reports.</p>
                     </div>
                     <div style="display: flex; gap: 12px;">
                         <button class="btn-secondary" id="btnExportPDF">
@@ -95,7 +103,8 @@
                 <!-- Filter Bar -->
                 <div class="reports-filter-bar shadow-sm">
                     <div class="filter-group">
-                        <label style="margin: 0; white-space: nowrap;"><i class="fa-solid fa-calendar" style="color: var(--primary); margin-right: 8px;"></i>Time Range:</label>
+                        <label style="margin: 0; white-space: nowrap;"><i class="fa-solid fa-calendar"
+                                style="color: var(--primary); margin-right: 8px;"></i>Time Range:</label>
                         <select id="reportTimeRange" style="width: auto; padding: 10px 16px;">
                             <option value="q3">Q3 2026 (Jul - Sep)</option>
                             <option value="m9">September 2026</option>
@@ -103,7 +112,8 @@
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label style="margin: 0; white-space: nowrap;"><i class="fa-solid fa-tags" style="color: var(--primary); margin-right: 8px;"></i>Category:</label>
+                        <label style="margin: 0; white-space: nowrap;"><i class="fa-solid fa-tags"
+                                style="color: var(--primary); margin-right: 8px;"></i>Category:</label>
                         <select id="reportCategory" style="width: auto; padding: 10px 16px;">
                             <option value="all">All Modules</option>
                             <option value="harvest">Harvest & Crop Yield</option>
@@ -201,7 +211,7 @@
                     <div class="table-header">
                         <h2>Generated Reports Archive</h2>
                     </div>
-                    
+
                     <div class="table-responsive">
                         <table class="task-table">
                             <thead>
@@ -217,49 +227,70 @@
                             <tbody id="reportsArchiveTable">
                                 <tr>
                                     <td>
-                                        <div style="font-weight: 600; color: var(--text-main);">Q3 Overall Farm Audit</div>
-                                        <div style="font-size: 13px; color: var(--text-muted);">Includes yield metrics and worker logs</div>
+                                        <div style="font-weight: 600; color: var(--text-main);">Q3 Overall Farm Audit
+                                        </div>
+                                        <div style="font-size: 13px; color: var(--text-muted);">Includes yield metrics
+                                            and worker logs</div>
                                     </td>
                                     <td><span class="badge priority-low">Audit</span></td>
                                     <td>Jul 01 - Sep 30, 2026</td>
                                     <td>Farm Manager</td>
-                                    <td><span style="color: var(--primary); font-weight: 600;"><i class="fa-solid fa-file-pdf"></i> PDF</span></td>
+                                    <td><span style="color: var(--primary); font-weight: 600;"><i
+                                                class="fa-solid fa-file-pdf"></i> PDF</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn-icon-sm" onclick="downloadArchiveReport('Q3 Overall Farm Audit')" title="Download"><i class="fa-solid fa-download"></i></button>
-                                            <button class="btn-icon-sm" onclick="viewArchiveReport('Q3 Overall Farm Audit')" title="View"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-icon-sm"
+                                                onclick="downloadArchiveReport('Q3 Overall Farm Audit')"
+                                                title="Download"><i class="fa-solid fa-download"></i></button>
+                                            <button class="btn-icon-sm"
+                                                onclick="viewArchiveReport('Q3 Overall Farm Audit')" title="View"><i
+                                                    class="fa-solid fa-eye"></i></button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <div style="font-weight: 600; color: var(--text-main);">Soil & Irrigation Health Report</div>
-                                        <div style="font-size: 13px; color: var(--text-muted);">pH levels, moisture, and fertilizer analysis</div>
+                                        <div style="font-weight: 600; color: var(--text-main);">Soil & Irrigation Health
+                                            Report</div>
+                                        <div style="font-size: 13px; color: var(--text-muted);">pH levels, moisture, and
+                                            fertilizer analysis</div>
                                     </td>
                                     <td><span class="badge priority-medium">Agronomy</span></td>
                                     <td>Sep 15 - Sep 30, 2026</td>
                                     <td>Jane Smith</td>
-                                    <td><span style="color: var(--accent-teal); font-weight: 600;"><i class="fa-solid fa-file-csv"></i> CSV</span></td>
+                                    <td><span style="color: var(--accent-teal); font-weight: 600;"><i
+                                                class="fa-solid fa-file-csv"></i> CSV</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn-icon-sm" onclick="downloadArchiveReport('Soil & Irrigation Health Report')" title="Download"><i class="fa-solid fa-download"></i></button>
-                                            <button class="btn-icon-sm" onclick="viewArchiveReport('Soil & Irrigation Health Report')" title="View"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-icon-sm"
+                                                onclick="downloadArchiveReport('Soil & Irrigation Health Report')"
+                                                title="Download"><i class="fa-solid fa-download"></i></button>
+                                            <button class="btn-icon-sm"
+                                                onclick="viewArchiveReport('Soil & Irrigation Health Report')"
+                                                title="View"><i class="fa-solid fa-eye"></i></button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <div style="font-weight: 600; color: var(--text-main);">Equipment Maintenance Log</div>
-                                        <div style="font-size: 13px; color: var(--text-muted);">Tractor repairs and sprinkler replacements</div>
+                                        <div style="font-weight: 600; color: var(--text-main);">Equipment Maintenance
+                                            Log</div>
+                                        <div style="font-size: 13px; color: var(--text-muted);">Tractor repairs and
+                                            sprinkler replacements</div>
                                     </td>
                                     <td><span class="badge priority-high">Maintenance</span></td>
                                     <td>Sep 01 - Sep 30, 2026</td>
                                     <td>Mike Johnson</td>
-                                    <td><span style="color: var(--primary); font-weight: 600;"><i class="fa-solid fa-file-pdf"></i> PDF</span></td>
+                                    <td><span style="color: var(--primary); font-weight: 600;"><i
+                                                class="fa-solid fa-file-pdf"></i> PDF</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn-icon-sm" onclick="downloadArchiveReport('Equipment Maintenance Log')" title="Download"><i class="fa-solid fa-download"></i></button>
-                                            <button class="btn-icon-sm" onclick="viewArchiveReport('Equipment Maintenance Log')" title="View"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-icon-sm"
+                                                onclick="downloadArchiveReport('Equipment Maintenance Log')"
+                                                title="Download"><i class="fa-solid fa-download"></i></button>
+                                            <button class="btn-icon-sm"
+                                                onclick="viewArchiveReport('Equipment Maintenance Log')" title="View"><i
+                                                    class="fa-solid fa-eye"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -325,4 +356,5 @@
     <script src="./js/common.js"></script>
     <script src="./js/reports.js"></script>
 </body>
+
 </html>

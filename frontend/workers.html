@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriManage - Workers Management</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
     <div class="app-container">
         <!-- Top Navigation -->
@@ -21,7 +24,7 @@
                     </div>
                     <span>AgriManage</span>
                 </div>
-                
+
                 <div class="nav-links">
                     <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
                     <a href="activities.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Farming Activities</a>
@@ -30,11 +33,12 @@
                     <a href="index.html" class="nav-item"><i class="fa-solid fa-list-check"></i> Tasks</a>
                     <a href="workers.html" class="nav-item active"><i class="fa-solid fa-users"></i> Workers</a>
                     <a href="farm.html" class="nav-item"><i class="fa-solid fa-tractor"></i> Farms</a>
-                    <a href="material.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Material & Warehouse</a>
+                    <a href="material.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Material &
+                        Warehouse</a>
                     <a href="schedule.html" class="nav-item"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
                     <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Reports</a>
                 </div>
-                
+
                 <div class="nav-actions">
                     <button class="btn-icon"><i class="fa-solid fa-bell"></i><span class="badge-dot"></span></button>
                     <div class="user-profile">
@@ -97,7 +101,8 @@
                                 <h2 id="stat-leave-workers">4</h2>
                             </div>
                         </div>
-                        <span class="stat-trend trend-neutral"><i class="fa-solid fa-umbrella-beach"></i> Scheduled</span>
+                        <span class="stat-trend trend-neutral"><i class="fa-solid fa-umbrella-beach"></i>
+                            Scheduled</span>
                     </div>
                     <div class="stat-card shadow-sm">
                         <div class="stat-left">
@@ -122,7 +127,8 @@
                                 <i class="fa-solid fa-search"></i>
                                 <input type="text" id="workerSearch" placeholder="Search by name, role, or field...">
                             </div>
-                            <select id="roleFilter" style="padding: 10px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-weight: 500;">
+                            <select id="roleFilter"
+                                style="padding: 10px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-weight: 500;">
                                 <option value="">All Roles</option>
                                 <option value="Harvester">Harvester</option>
                                 <option value="Agronomist">Agronomist</option>
@@ -131,7 +137,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="table-responsive">
                         <table class="task-table">
                             <thead>
@@ -214,4 +220,5 @@
     <script src="./js/common.js"></script>
     <script src="./js/workers.js"></script>
 </body>
+
 </html>

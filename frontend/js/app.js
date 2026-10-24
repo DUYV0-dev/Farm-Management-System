@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             status: 'completed',
             progress: 100,
             history: [
-                { time: new Date(Date.now() - 2*86400000).toISOString(), desc: 'Task created' },
+                { time: new Date(Date.now() - 2 * 86400000).toISOString(), desc: 'Task created' },
                 { time: new Date(Date.now() - 86400000).toISOString(), desc: 'Task completed by Jane' }
             ]
         }
@@ -52,13 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskModal = document.getElementById('taskModal');
     const historyModal = document.getElementById('historyModal');
     const taskForm = document.getElementById('taskForm');
-    
+
     // Stats Elements
     const statTotal = document.getElementById('stat-total');
     const statPending = document.getElementById('stat-pending');
     const statProgress = document.getElementById('stat-progress');
     const statCompleted = document.getElementById('stat-completed');
-    
+
 
 
     // Search elements
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Form Submission
     taskForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const id = document.getElementById('taskId').value;
         const title = document.getElementById('taskName').value;
         const assignee = document.getElementById('taskAssignee').value;
@@ -153,12 +153,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const filteredTasks = tasks.filter(task => {
             if (!currentFilter) return true;
-            return task.title.toLowerCase().includes(currentFilter) || 
-                   task.assignee.toLowerCase().includes(currentFilter);
+            return task.title.toLowerCase().includes(currentFilter) ||
+                task.assignee.toLowerCase().includes(currentFilter);
         });
 
         filteredTasks.forEach(task => {
-            
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>
@@ -221,16 +221,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (task.status !== newStatus) {
             let oldStatus = task.status;
             task.status = newStatus;
-            
+
             // Auto update progress
             if (newStatus === 'completed') task.progress = 100;
             else if (newStatus === 'in_progress' && task.progress === 0) task.progress = 25;
-            
+
             task.history.push({
                 time: new Date().toISOString(),
                 desc: `Status updated from ${oldStatus.replace('_', ' ')} to ${newStatus.replace('_', ' ')}`
             });
-            
+
             renderTable();
         }
     };
@@ -239,27 +239,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const task = tasks.find(t => t.id === id);
         document.getElementById('taskId').value = task.id;
         document.getElementById('taskName').value = task.title;
-        
+
         // Handle select matching
         const assigneeSelect = document.getElementById('taskAssignee');
-        for(let option of assigneeSelect.options) {
-            if(option.value.includes(task.assignee)) {
+        for (let option of assigneeSelect.options) {
+            if (option.value.includes(task.assignee)) {
                 assigneeSelect.value = option.value;
                 break;
             }
         }
-        
+
         document.getElementById('taskPriority').value = task.priority;
         document.getElementById('taskStartDate').value = task.startDate;
         document.getElementById('taskDueDate').value = task.dueDate;
         document.getElementById('taskDescription').value = task.description;
-        
+
         document.getElementById('modalTitle').textContent = 'Edit Task';
         taskModal.classList.add('active');
     };
 
     window.deleteTask = (id) => {
-        if(confirm('Are you sure you want to delete this farming task?')) {
+        if (confirm('Are you sure you want to delete this farming task?')) {
             tasks = tasks.filter(t => t.id !== id);
             renderTable();
         }
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const task = tasks.find(t => t.id === id);
         const timeline = document.getElementById('historyTimeline');
         timeline.innerHTML = '';
-        
+
         [...task.history].reverse().forEach(log => {
             const date = new Date(log.time);
             timeline.innerHTML += `
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </li>
             `;
         });
-        
+
         historyModal.classList.add('active');
     };
 
