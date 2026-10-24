@@ -62,8 +62,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/ui/advanced-dashboard.html","/ui/harvest.html","/ui/farm.html","/ui/material.html","/ui/purchase.html","/ui/sales.html","/ui/js/**","/ui/css/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/v1/traceability/**").permitAll()
-                .requestMatchers(HttpMethod.POST,"/api/v1/traceability/**").authenticated()
-                .requestMatchers(HttpMethod.GET,"/api/v1/activities/**").permitAll()
+                .requestMatchers("/api/v1/traceability", "/api/v1/traceability/**").authenticated()
+                .requestMatchers("/api/v1/activities", "/api/v1/activities/**").authenticated()
+                .requestMatchers("/api/v1/notifications", "/api/v1/notifications/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/v1/auth/me").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/logout").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/password").authenticated()
@@ -99,7 +100,7 @@ public class SecurityConfig {
                     store.permissions(uid).forEach(p->authorities.add(new SimpleGrantedAuthority(p)));
                     return new JwtAuthenticationToken(jwt,authorities);
                 })));
-        http.headers(h->h.frameOptions(f->f.sameOrigin()).contentSecurityPolicy(c->c.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'self'; base-uri 'none'; form-action 'self'")));
+        http.headers(h->h.frameOptions(f->f.sameOrigin()).contentSecurityPolicy(c->c.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'self'; base-uri 'none'; form-action 'self'")));
         return http.build();
     }
 }
