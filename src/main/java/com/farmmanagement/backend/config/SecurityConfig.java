@@ -6,11 +6,11 @@ import com.farmmanagement.backend.tenancy.*;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 
-
 import java.time.*;
 import java.util.*;
 import javax.crypto.spec.SecretKeySpec;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
@@ -29,40 +29,62 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Bean public PasswordEncoder passwordEncoder() { return new Argon2PasswordEncoder(16,32,1,19456,2); }
-    @Bean public SecretKeySpec jwtKey(@Value("${auth.jwt.secret}") String secret) {
-        byte[] decoded;
-        try { decoded=Base64.getDecoder().decode(secret); }
-        catch (IllegalArgumentException e) { throw new IllegalStateException("JWT_SECRET must be Base64"); }
-        if(decoded.length<32) throw new IllegalStateException("JWT_SECRET must contain at least 32 random bytes");
-        return new SecretKeySpec(decoded,"HmacSHA256");
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new Argon2PasswordEncoder(16, 32, 1, 19456, 2);
     }
-    @Bean public JwtEncoder jwtEncoder(SecretKeySpec key) { return new NimbusJwtEncoder(new ImmutableSecret<>(key)); }
-    @Bean public JwtDecoder jwtDecoder(SecretKeySpec key,@Value("${auth.jwt.issuer}") String issuer,
-                               @Value("${auth.jwt.audience}") String audience) {
-        var decoder=NimbusJwtDecoder.withSecretKey(key).macAlgorithm(MacAlgorithm.HS256).build();
-        OAuth2TokenValidator<Jwt> contract=jwt->{
+
+    @Bean
+    public SecretKeySpec jwtKey(@Value("${auth.jwt.secret}") String secret) {
+        byte[] decoded;
+        try {
+            decoded = Base64.getDecoder().decode(secret);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("JWT_SECRET must be Base64");
+        }
+        if (decoded.length < 32)
+            throw new IllegalStateException("JWT_SECRET must contain at least 32 random bytes");
+        return new SecretKeySpec(decoded, "HmacSHA256");
+    }
+
+    @Bean
+    public JwtEncoder jwtEncoder(SecretKeySpec key) {
+        return new NimbusJwtEncoder(new ImmutableSecret<>(key));
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder(SecretKeySpec key, @Value("${auth.jwt.issuer}") String issuer,
+            @Value("${auth.jwt.audience}") String audience) {
+        var decoder = NimbusJwtDecoder.withSecretKey(key).macAlgorithm(MacAlgorithm.HS256).build();
+        OAuth2TokenValidator<Jwt> contract = jwt -> {
             try {
-                Instant now=Instant.now();
-                boolean valid=jwt.getAudience().contains(audience) && jwt.getExpiresAt()!=null && jwt.getIssuedAt()!=null
-                    && jwt.getExpiresAt().isAfter(now) && !jwt.getIssuedAt().isAfter(now)
-                    && Duration.between(jwt.getIssuedAt(),jwt.getExpiresAt()).getSeconds()==86400
-                    && Integer.parseInt(jwt.getSubject())>0
-                    && UUID.fromString(jwt.getClaimAsString("sessionId")).toString().equals(jwt.getId());
-                if(valid) return OAuth2TokenValidatorResult.success();
-            } catch(RuntimeException ignored) { }
+                Instant now = Instant.now();
+                boolean valid = jwt.getAudience().contains(audience) && jwt.getExpiresAt() != null
+                        && jwt.getIssuedAt() != null
+                        && jwt.getExpiresAt().isAfter(now) && !jwt.getIssuedAt().isAfter(now)
+                        && Duration.between(jwt.getIssuedAt(), jwt.getExpiresAt()).getSeconds() == 86400
+                        && Integer.parseInt(jwt.getSubject()) > 0
+                        && UUID.fromString(jwt.getClaimAsString("sessionId")).toString().equals(jwt.getId());
+                if (valid)
+                    return OAuth2TokenValidatorResult.success();
+            } catch (RuntimeException ignored) {
+            }
             return OAuth2TokenValidatorResult.failure(new OAuth2Error("invalid_token"));
         };
-        decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(new JwtTimestampValidator(Duration.ZERO),new JwtIssuerValidator(issuer),contract));
+        decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(new JwtTimestampValidator(Duration.ZERO),
+                new JwtIssuerValidator(issuer), contract));
         return decoder;
     }
-    @Bean SecurityFilterChain security(HttpSecurity http,AuthStore store,Api api,FarmWorkspaceStore workspaces,TransactionTemplate tx) throws Exception {
+    @Bean SecurityFilterChain security(HttpSecurity http, AuthStore store, Api api,
+            ObjectProvider<FarmWorkspaceStore> workspacesProvider,
+            ObjectProvider<TransactionTemplate> txProvider) throws Exception {
         http.csrf(csrf->csrf.disable()) // Only explicit Authorization bearer; no auth cookies, no HTTP Basic.
             .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .requestCache(c->c.disable())
             .authorizeHttpRequests(a->a
                 .requestMatchers(HttpMethod.GET,"/","/index.html","/index-shell.html","/app.js","/overview-charts.js","/style.css","/features/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/farm.html","/material.html","/expenses.html","/material-usage.html","/workers.html","/dashboard.html","/login.html","/actuator/health").permitAll()
+                .requestMatchers(HttpMethod.GET,"/farm.html","/material.html","/expenses.html","/material-usage.html","/workers.html","/dashboard.html","/login.html","/actuator/health",
+                    "/activities.html","/schedule.html","/reports.html","/notifications.html").permitAll()
                 .requestMatchers(HttpMethod.GET,"/ui/farm.html","/ui/material.html","/ui/material-usage.html","/ui/expenses.html","/ui/js/**","/ui/css/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/ui/advanced-dashboard.html","/ui/harvest.html","/ui/purchase.html","/ui/sales.html","/ui/traceability.html",
                     "/harvest.html","/advanced-dashboard.html","/purchase.html","/sales.html","/traceability.html").permitAll()
@@ -71,7 +93,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/login","/api/v1/auth/register").permitAll()
                 .requestMatchers("/api/v1/workspace", "/api/v1/workspace/**").authenticated()
                 .requestMatchers("/api/v1/data-transfer", "/api/v1/data-transfer/**").authenticated()
-                .requestMatchers("/api/v1/traceability", "/api/v1/traceability/**", "/api/v1/activities", "/api/v1/activities/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/v1/traceability","/api/v1/traceability/**","/api/v1/activities","/api/v1/activities/**").permitAll()
+                .requestMatchers(HttpMethod.POST,"/api/v1/traceability","/api/v1/traceability/**","/api/v1/activities","/api/v1/activities/**").permitAll()
+                .requestMatchers(HttpMethod.PUT,"/api/v1/activities/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/v1/auth/me").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/logout").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/password").authenticated()
@@ -109,9 +133,13 @@ public class SecurityConfig {
                     store.permissions(uid).forEach(p->authorities.add(new SimpleGrantedAuthority(p)));
                     return new JwtAuthenticationToken(jwt,authorities);
                 })));
-        http.addFilterAfter(new FarmContextFilter(workspaces,tx,api),BearerTokenAuthenticationFilter.class);
+        FarmWorkspaceStore workspaces = workspacesProvider.getIfAvailable();
+        TransactionTemplate tx = txProvider.getIfAvailable();
+        if (workspaces != null && tx != null) {
+            http.addFilterAfter(new FarmContextFilter(workspaces, tx, api), BearerTokenAuthenticationFilter.class);
+        }
         http.headers(h->h.frameOptions(f->f.sameOrigin()).addHeaderWriter((request, response) -> {
-            String policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'self'; base-uri 'none'; form-action 'self'";
+            String policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self'; object-src 'none'; frame-ancestors 'self'; base-uri 'none'; form-action 'self'";
             response.setHeader("Content-Security-Policy", policy);
         }));
         return http.build();

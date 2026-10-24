@@ -68,7 +68,7 @@
             priority: 'info',
             status: 'unread',
             time: '3 giờ trước',
-            timestamp: new Date(Date.now() - 3*3600000).toISOString(),
+            timestamp: new Date(Date.now() - 3 * 3600000).toISOString(),
             icon: 'fa-wheat-awn',
             bg: '#ecfdf5',
             color: '#047857'
@@ -94,7 +94,7 @@
             priority: 'warning',
             status: 'resolved',
             time: '2 ngày trước',
-            timestamp: new Date(Date.now() - 2*86400000).toISOString(),
+            timestamp: new Date(Date.now() - 2 * 86400000).toISOString(),
             icon: 'fa-wrench',
             bg: '#fff7ed',
             color: '#c2410c'
@@ -311,7 +311,7 @@
     }
 
     // Universal Notification Details Modal Creator & Handler
-    window.openNotificationDetail = function(id) {
+    window.openNotificationDetail = function (id) {
         const notifs = getNotifications();
         const n = notifs.find(item => String(item.id) === String(id));
         if (!n) return;
@@ -433,7 +433,7 @@
 
         // Resolve Button Action
         const btnResolve = document.getElementById('unmBtnResolve');
-        btnResolve.onclick = function() {
+        btnResolve.onclick = function () {
             n.status = 'resolved';
             n.read = true;
             setNotifications(notifs);
@@ -445,7 +445,7 @@
 
         // Delete Button Action
         const btnDelete = document.getElementById('unmBtnDelete');
-        btnDelete.onclick = function() {
+        btnDelete.onclick = function () {
             if (confirm(`Bạn có chắc muốn xóa thông báo "${n.title}"?`)) {
                 const updated = notifs.filter(item => String(item.id) !== String(id));
                 setNotifications(updated);

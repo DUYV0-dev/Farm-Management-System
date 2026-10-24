@@ -1,6 +1,11 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const store = require('../js/material-store.js');
+const fs = require('node:fs');
+const path = require('node:path');
+const storePath = fs.existsSync(path.resolve(__dirname, '../prototypes/js/material-store.js'))
+    ? '../prototypes/js/material-store.js'
+    : '../js/material-store.js';
+const store = require(storePath);
 function memory(initial = {}) {
     const values = new Map(Object.entries(initial));
     return { getItem: key => values.has(key) ? values.get(key) : null, setItem: (key, value) => values.set(key, value) };

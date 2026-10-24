@@ -445,9 +445,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const overdue = isTaskOverdue(task);
                 const pill = document.createElement('div');
                 pill.className = `calendar-event-item ${getCategoryClass(task.category)} ${overdue ? 'is-overdue' : ''} ${task.status === 'completed' ? 'is-completed' : ''}`;
-                
+
                 const catIcon = getCategoryIcon(task.category);
-                
+
                 pill.innerHTML = `
                     <span class="event-title-span" title="${task.title} - ${task.sector}">
                         <i class="fa-solid ${overdue ? 'fa-triangle-exclamation text-danger' : catIcon}"></i>
@@ -545,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const overdue = isTaskOverdue(task);
                 const row = document.createElement('div');
                 row.className = `agenda-task-row ${overdue ? 'overdue-row' : ''}`;
-                
+
                 row.innerHTML = `
                     <div style="display:flex; align-items:center; gap:12px; flex:1;">
                         <div style="width:36px; height:36px; border-radius:10px; background:${overdue ? '#fef2f2' : 'var(--primary-light)'}; color:${overdue ? '#dc2626' : 'var(--primary-hover)'}; display:flex; align-items:center; justify-content:center; font-size:16px;">
@@ -756,7 +756,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modalTaskAssignee').textContent = task.assignee || 'Chưa phân công';
         document.getElementById('modalTaskSector').textContent = task.sector || 'Toàn trang trại';
         document.getElementById('modalTaskStartDate').textContent = task.startDate || 'Chưa định ngày';
-        
+
         const dueEl = document.getElementById('modalTaskDueDate');
         dueEl.textContent = task.dueDate || 'Chưa định hạn';
         dueEl.style.color = overdue ? '#dc2626' : 'var(--text-main)';
@@ -863,7 +863,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Export Schedule Action (CSV with UTF-8 BOM)
     btnExportSchedule.addEventListener('click', () => {
         let csvContent = "\uFEFFMã việc,Tiêu đề công việc,Mùa vụ,Loại hoạt động,Người phụ trách,Lô thửa đất,Ngày bắt đầu,Hạn chót,Tiến độ (%),Trạng thái,Quá hạn\n";
-        
+
         activities.forEach(t => {
             const overdue = isTaskOverdue(t) ? 'Có (Quá hạn)' : 'Không';
             csvContent += `"${t.id}","${t.title}","${t.season}","${t.category}","${t.assignee}","${t.sector}","${t.startDate}","${t.dueDate}","${t.progress}%","${t.status}","${overdue}"\n`;
