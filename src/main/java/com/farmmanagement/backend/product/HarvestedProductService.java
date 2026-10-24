@@ -14,31 +14,31 @@ public class HarvestedProductService {
         this.store = store;
     }
 
-    @PreAuthorize("hasAuthority('harvests:create')")
+    @PreAuthorize("hasAuthority('harvests:create') or hasAuthority('crops:create')")
     public HarvestedProduct createProduct(HarvestedProduct product) {
         return store.create(product);
     }
 
-    @PreAuthorize("hasAuthority('harvests:read')")
+    @PreAuthorize("hasAuthority('harvests:read') or hasAuthority('crops:read')")
     @Transactional(readOnly = true)
     public HarvestedProduct getProduct(int id) {
         return store.byId(id).orElseThrow(() -> new IllegalArgumentException("Product not found: " + id));
     }
 
-    @PreAuthorize("hasAuthority('harvests:read')")
+    @PreAuthorize("hasAuthority('harvests:read') or hasAuthority('crops:read')")
     @Transactional(readOnly = true)
     public List<HarvestedProduct> getProductsByProduction(int productionId) {
         return store.byProductionId(productionId);
     }
 
-    @PreAuthorize("hasAuthority('harvests:create')")
+    @PreAuthorize("hasAuthority('harvests:create') or hasAuthority('crops:update')")
     public HarvestedProduct updateProduct(int id, HarvestedProduct product) {
         store.byId(id).orElseThrow(() -> new IllegalArgumentException("Product not found: " + id));
         store.update(id, product);
         return store.byId(id).get();
     }
 
-    @PreAuthorize("hasAuthority('harvests:create')")
+    @PreAuthorize("hasAuthority('harvests:create') or hasAuthority('crops:status')")
     public void deleteProduct(int id) {
         store.delete(id);
     }

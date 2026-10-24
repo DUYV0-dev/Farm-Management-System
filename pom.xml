@@ -28,6 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <app.jar.name>backend-0.0.1-SNAPSHOT</app.jar.name>
     </properties>
     <dependencies>
         <dependency><groupId>org.apache.poi</groupId><artifactId>poi-ooxml</artifactId><version>5.4.1</version></dependency>
@@ -111,15 +112,14 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>${app.jar.name}</finalName>
         <resources>
             <resource><directory>src/main/resources</directory></resource>
             <resource>
                 <directory>frontend</directory><targetPath>static/ui</targetPath>
                 <includes>
-                    <include>advanced-dashboard.html</include><include>js/advanced-dashboard.js</include><include>harvest.html</include><include>js/harvest.js</include><include>farm.html</include><include>material.html</include>
-                    <include>purchase.html</include><include>js/purchase.js</include><include>sales.html</include><include>js/sales.js</include>
-                    <include>css/*.css</include><include>js/farm.js</include>
-                    <include>js/material.js</include><include>js/api-client.js</include>
+                    <include>features/**</include><include>shared/**</include>
+                    <include>prototypes/*.html</include><include>prototypes/application.css</include><include>prototypes/entry.js</include><include>prototypes/bridge.js</include><include>prototypes/host.css</include><include>prototypes/charts.js</include><include>prototypes/js/**</include>
                 </includes>
             </resource>
         </resources>
@@ -130,4 +130,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

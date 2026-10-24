@@ -1,0 +1,10 @@
+.usage-filters { display:flex; flex-wrap:wrap; gap:16px; align-items:end; padding:20px; }
+.usage-filters label,.usage-fields label { display:flex; flex-direction:column; gap:6px; font-weight:500; }
+.usage-filters label { flex:1 1 170px; }
+.usage-filters input,.usage-filters select,.usage-fields input,.usage-fields select,.usage-fields textarea {
+    width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; font:inherit;
+}
+.usage-fields { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.usage-fields label:first-child,.usage-fields label:last-child { grid-column:1 / -1; }
+.usage-summary { margin-top:24px; }
+@media(max-width:650px){.usage-fields{grid-template-columns:1fr}}

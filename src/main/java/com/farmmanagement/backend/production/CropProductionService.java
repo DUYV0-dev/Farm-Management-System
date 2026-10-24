@@ -38,7 +38,7 @@ public class CropProductionService {
         return store.byId(id).get();
     }
 
-    @PreAuthorize("hasAuthority('crops:update')")
+    @PreAuthorize("hasAuthority('crops:status') or hasAuthority('crops:update')")
     public void deleteProduction(int id) {
         store.delete(id);
     }

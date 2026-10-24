@@ -1,0 +1,4 @@
+.demo-banner{position:relative;z-index:1100;padding:12px 24px;background:#fff4d6;color:#744900;border-bottom:1px solid #ecd394;font:500 14px/1.5 var(--font-main)}
+.demo-banner strong{font-weight:800}.demo-banner a{color:#106b49;text-decoration:underline;margin-left:12px}
+.demo-banner+.app-container .top-nav{position:relative}
+.demo-chart-note{color:var(--text-muted);font-size:13px;padding:12px;border:1px dashed var(--border-strong);border-radius:var(--radius-md)}

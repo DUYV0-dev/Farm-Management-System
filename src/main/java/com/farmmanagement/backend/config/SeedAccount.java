@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Component
-@Profile("seed")
+@Profile("seed & !production")
 public class SeedAccount implements CommandLineRunner {
     private final org.springframework.context.ConfigurableApplicationContext context;
     private final JdbcTemplate db; private final PasswordEncoder encoder; private final TransactionTemplate tx;

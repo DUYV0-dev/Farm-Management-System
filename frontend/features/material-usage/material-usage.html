@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FARM / N02 · Phân bón & Thuốc bảo vệ thực vật</title>
+    <link rel="stylesheet" href="/ui/shared/style.css">
+    <link rel="stylesheet" href="/ui/shared/design.css">
+    <link rel="stylesheet" href="/ui/shared/icons.css">
+    <link rel="stylesheet" href="/ui/shared/records.css">
+    <link rel="stylesheet" href="/ui/shared/connected.css">
+    <link rel="stylesheet" href="/ui/features/material-usage/material-usage.css">
+    <script src="/ui/shared/api-client.js" defer></script>
+    <script src="/ui/features/material-usage/material-usage.js" defer></script>
+</head>
+<body class="material-page">
+<div class="app-container">
+    <nav class="top-nav shadow-sm" aria-label="Điều hướng trang trại"><div class="nav-container"><a class="nav-brand" href="/">FARM / N02</a><div class="nav-links"><a href="/#farm" class="nav-item">Trang trại & Cây trồng</a><a href="/#material" class="nav-item">Vật tư & Kho</a><a href="/#expenses" class="nav-item">Chi phí</a><a href="/#material-usage" class="nav-item active">Phân bón & Thuốc BVTV</a><a href="/#staff" class="nav-item">Nhân sự</a></div></div></nav>
+    <main class="main-content">
+        <header class="page-header">
+            <div><p class="inventory-eyebrow">NHẬT KÝ CANH TÁC</p><h1>Phân bón & Thuốc bảo vệ thực vật</h1>
+                <p class="subtitle">Ghi lại lượng sử dụng và ngày bón, phun thuốc theo từng mùa vụ.</p></div>
+            <button type="button" class="btn-primary" id="addUsage" hidden>Ghi nhận sử dụng</button>
+        </header>
+        <p id="usageNotice" role="status" hidden></p>
+        <p id="usageError" class="inventory-error" role="alert" hidden></p>
+        <section class="table-wrapper" id="historyPanel" hidden>
+            <div class="table-header"><h2>Lịch sử sử dụng</h2><span id="recordCount" aria-live="polite"></span></div>
+            <form id="filterForm" class="usage-filters">
+                <label>Trang trại<select id="farmFilter" name="farmId"></select></label>
+                <label>Mùa vụ<select id="seasonFilter" name="seasonId"></select></label>
+                <label>Loại sử dụng<select id="typeFilter" name="type"></select></label>
+                <label>Vật tư<select id="materialFilter" name="materialId"></select></label>
+                <label>Từ ngày<input type="date" name="fromDate" id="fromDate" min="0001-01-01" max="9999-12-31"></label>
+                <label>Đến ngày<input type="date" name="toDate" id="toDate" min="0001-01-01" max="9999-12-31"></label>
+                <button type="submit" class="btn-primary">Lọc lịch sử</button>
+                <button type="button" class="btn-secondary" id="clearFilters">Xóa bộ lọc</button>
+            </form>
+            <div class="table-responsive" tabindex="0" role="region" aria-label="Lịch sử sử dụng phân bón và thuốc">
+                <table class="task-table"><thead><tr><th>Ngày sử dụng</th><th>Loại</th><th>Vật tư</th><th>Số lượng</th><th>Trang trại / Mùa vụ</th><th>Ghi chú</th><th>Chi tiết</th></tr></thead><tbody id="usageRows"></tbody></table>
+            </div>
+            <p id="emptyHistory" class="inventory-empty" hidden>Chưa có bản ghi phù hợp với bộ lọc.</p>
+            <div class="inventory-pagination"><span id="pageSummary" aria-live="polite"></span><div>
+                <button type="button" class="btn-secondary" id="previousPage" disabled>← Trước</button>
+                <button type="button" class="btn-secondary" id="nextPage" disabled>Sau →</button>
+            </div></div>
+        </section>
+        <section class="table-wrapper usage-summary" id="summaryPanel" hidden>
+            <div class="table-header"><div><h2>Tổng lượng sử dụng</h2><p class="subtitle">Theo bộ lọc hiện tại, cộng riêng cho từng vật tư và đơn vị.</p></div></div>
+            <div class="table-responsive"><table class="task-table"><thead><tr><th>Loại</th><th>Vật tư</th><th>Số lần</th><th>Tổng lượng sử dụng</th></tr></thead><tbody id="summaryRows"></tbody></table></div>
+        </section>
+        <noscript><p class="inventory-error">Vui lòng bật JavaScript để sử dụng chức năng này.</p></noscript>
+    </main>
+</div>
+<dialog id="usageDialog" class="inventory-dialog" aria-labelledby="usageTitle">
+    <div class="modal-header"><h2 id="usageTitle">Ghi nhận sử dụng</h2><button type="button" class="btn-close" id="closeDialog" aria-label="Đóng">×</button></div>
+    <form id="usageForm">
+        <div class="usage-fields">
+            <label>Mùa vụ<select name="seasonId" id="usageSeason" required></select></label>
+            <label>Loại sử dụng<select name="type" id="usageType" required></select></label>
+            <label>Vật tư<select name="materialId" id="usageMaterial" required></select></label>
+            <label>Số lượng sử dụng<input name="quantity" type="number" min="0.001" max="999999999999.999" step="0.001" required><span id="usageUnit" class="record-meta"></span></label>
+            <label>Ngày sử dụng<input name="applicationDate" id="usageDate" type="date" min="0001-01-01" required></label>
+            <label>Ghi chú<textarea name="notes" maxlength="1000" rows="3" placeholder="Vị trí bón, phun thuốc, mục đích sử dụng…"></textarea></label>
+        </div>
+        <p id="formHint" class="subtitle"></p>
+        <p id="formError" class="inventory-error" role="alert" hidden></p>
+        <div class="form-actions"><button type="button" class="btn-cancel" id="cancelUsage">Hủy</button><button type="submit" class="btn-primary" id="saveUsage">Lưu sử dụng</button></div>
+    </form>
+</dialog>
+</body>
+</html>

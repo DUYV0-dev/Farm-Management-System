@@ -32,8 +32,12 @@ class ManagementApiTests {
     @Autowired JwtEncoder encoder;
     @MockitoBean AuthStore users;
     @MockitoBean ManagementStore store;
+    @MockitoBean com.farmmanagement.backend.tenancy.FarmWorkspaceStore workspaces;
+    @MockitoBean org.springframework.transaction.support.TransactionTemplate transaction;
     String token;
     @BeforeEach void setup() {
+        doAnswer(call->{ ((java.util.function.Consumer<org.springframework.transaction.TransactionStatus>)call.getArgument(0))
+            .accept(mock(org.springframework.transaction.TransactionStatus.class)); return null; }).when(transaction).executeWithoutResult(any());
         UUID sid=UUID.randomUUID(); Instant now=Instant.now().minusSeconds(1);
         var claims=JwtClaimsSet.builder().issuer("test-issuer").audience(List.of("test-audience"))
             .subject("1").id(sid.toString()).claim("sessionId",sid.toString()).issuedAt(now).expiresAt(now.plusSeconds(86400)).build();
@@ -127,7 +131,7 @@ class ManagementApiTests {
     }
     @Test void protectedFragmentsCannotBeFetchedAsStaticResources() throws Exception {
         mvc.perform(get("/protected/users.html").header("Authorization","Bearer "+token)).andExpect(status().isForbidden());
-        mvc.perform(get("/actuator/health").header("Authorization","Bearer "+token)).andExpect(status().isForbidden());
+        mvc.perform(get("/actuator/env").header("Authorization","Bearer "+token)).andExpect(status().isForbidden());
     }
     @Test void logoutRevokesOnlyCurrentSession() throws Exception {
         mvc.perform(post("/api/v1/auth/logout").header("Authorization","Bearer "+token)).andExpect(status().isNoContent());

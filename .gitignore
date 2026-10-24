@@ -1,8 +1,15 @@
 target/
+.test-data/
 .vscode/
 *.class
 HELP.md
 .build-cache/
+logs/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

@@ -2,7 +2,7 @@ package com.farmmanagement.backend.farm;
 
 import com.farmmanagement.backend.common.DomainException;
 
-
+import java.time.LocalDate;
 import java.util.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -171,7 +171,7 @@ public class FarmService {
     }
 
     // ── Crop Season ──────────────────────────────────────────────────────────
-    @PreAuthorize("hasAuthority('crops:read')") // Using crops:read as it's part of crops logic
+    @PreAuthorize("hasAuthority('crops:read')")
     @Transactional(readOnly = true)
     public Map<String, Object> listSeasons(int page, int size, String search, Integer plotId) {
         if (plotId != null && plotId <= 0) throw new IllegalArgumentException();
@@ -186,12 +186,45 @@ public class FarmService {
     public FarmStore.Season getSeason(int id) { return season(id); }
 
     @PreAuthorize("hasAuthority('crops:create')")
-    public FarmStore.Season createSeason(int actor, int plotId, int cropId, String status, String requestId) {
+    public FarmStore.Season createSeason(int actor, String seasonName, int plotId, int cropId,
+                                         LocalDate startDate, LocalDate endDate, String description,
+                                         String status, String requestId) {
         if (!Set.of("PLANNED", "IN_PROGRESS", "COMPLETED", "CANCELLED").contains(status)) 
             throw new IllegalArgumentException();
+        if (seasonName != null && (seasonName.isBlank() || seasonName.length() > 100))
+            throw new IllegalArgumentException();
+        if (startDate != null && endDate != null && startDate.isAfter(endDate))
+            throw new IllegalArgumentException();
+        if (description != null && description.length() > 1000)
+            throw new IllegalArgumentException();
+
         // DB trigger fpc_guard checks if plot and crop are ACTIVE
-        int id = store.createSeason(plotId, cropId, status);
+        int id = store.createSeason(seasonName, plotId, cropId, startDate, endDate, description, status);
         store.auditAction(actor, "CROP_SEASON", id, "CREATE", requestId);
+        return season(id);
+    }
+
+    @PreAuthorize("hasAuthority('crops:create')")
+    public FarmStore.Season createSeason(int actor, int plotId, int cropId, String status, String requestId) {
+        return createSeason(actor, null, plotId, cropId, null, null, null, status, requestId);
+    }
+
+    @PreAuthorize("hasAuthority('crops:update')")
+    public FarmStore.Season updateSeason(int actor, int id, String seasonName,
+                                         LocalDate startDate, LocalDate endDate, String description,
+                                         String status, String requestId) {
+        if (!Set.of("PLANNED", "IN_PROGRESS", "COMPLETED", "CANCELLED").contains(status)) 
+            throw new IllegalArgumentException();
+        if (seasonName != null && (seasonName.isBlank() || seasonName.length() > 100))
+            throw new IllegalArgumentException();
+        if (startDate != null && endDate != null && startDate.isAfter(endDate))
+            throw new IllegalArgumentException();
+        if (description != null && description.length() > 1000)
+            throw new IllegalArgumentException();
+
+        season(id);
+        store.updateSeason(id, seasonName, startDate, endDate, description, status);
+        store.auditAction(actor, "CROP_SEASON", id, "UPDATE", requestId);
         return season(id);
     }
 
@@ -203,5 +236,12 @@ public class FarmService {
         store.updateSeasonStatus(id, status);
         store.auditAction(actor, "CROP_SEASON", id, "UPDATE_STATUS", requestId);
         return season(id);
+    }
+
+    @PreAuthorize("hasAuthority('crops:delete')")
+    public void deleteSeason(int actor, int id, String requestId) {
+        season(id);
+        store.deleteSeason(id);
+        store.auditAction(actor, "CROP_SEASON", id, "DELETE", requestId);
     }
 }

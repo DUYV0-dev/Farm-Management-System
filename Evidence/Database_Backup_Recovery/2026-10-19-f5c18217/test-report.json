@@ -1,0 +1,213 @@
+{
+  "status": "PASS",
+  "completed_at": "2026-10-19T02:03:37.626710+00:00",
+  "test_cluster_port": 59710,
+  "production_database_accessed": false,
+  "fixtures": "Synthetic data with current application migrations 00 through 13",
+  "duration_seconds": 28.589,
+  "results": [
+    {
+      "name": "Full database backup with populated farm fixtures",
+      "status": "PASS",
+      "details": {
+        "action": "backup",
+        "started_at": "2026-10-19T02:03:11.838905+00:00",
+        "status": "PASS",
+        "backup_dir": "D:\\Project\\Do an quan ly du an\\Farm Management System N02\\Farm-Management-System\\.test-data\\database-recovery-f5c1821796314411b8f9532d863b8a80\\backup",
+        "archive_sha256": "4c55963df901beddb51463b1ed9db2359cbe5389379627fecf7631b3aae52d79",
+        "tables": 21,
+        "duration_seconds": 2.584,
+        "completed_at": "2026-10-19T02:03:14.466533+00:00"
+      },
+      "duration_seconds": 2.713
+    },
+    {
+      "name": "Offline archive validation without a database connection",
+      "status": "PASS",
+      "details": {
+        "action": "check-backup",
+        "started_at": "2026-10-19T02:03:14.552791+00:00",
+        "status": "PASS",
+        "checked_at": "2026-10-19T02:03:14.592422+00:00",
+        "backup_dir": "D:\\Project\\Do an quan ly du an\\Farm Management System N02\\Farm-Management-System\\.test-data\\database-recovery-f5c1821796314411b8f9532d863b8a80\\backup",
+        "archive_bytes": 101369,
+        "archive_sha256": "4c55963df901beddb51463b1ed9db2359cbe5389379627fecf7631b3aae52d79",
+        "checks": {
+          "manifest": "PASS",
+          "archive_size": "PASS",
+          "sha256": "PASS",
+          "archive_catalog": "PASS",
+          "full_archive_read": "PASS"
+        },
+        "duration_seconds": 0.04,
+        "restore_validated": false,
+        "limitation": "Archive integrity only; database restoration and restored-data consistency require restore/verify",
+        "completed_at": "2026-10-19T02:03:14.592741+00:00"
+      },
+      "duration_seconds": 0.122
+    },
+    {
+      "name": "Restore archive into a new database and compare all data",
+      "status": "PASS",
+      "details": {
+        "action": "restore",
+        "started_at": "2026-10-19T02:03:14.673443+00:00",
+        "status": "PASS",
+        "database": "recovery_restored",
+        "checked_at": "2026-10-19T02:03:17.943158+00:00",
+        "tables_checked": 21,
+        "sequences_checked": 14,
+        "differences": [],
+        "duration_seconds": 3.269,
+        "rto_minutes": 60,
+        "rto_met": true,
+        "backup_age_seconds": 6.063,
+        "rpo_hours": 24,
+        "rpo_met": true,
+        "data_consistent": true,
+        "rpo_measurement": "Age of the backup snapshot at recovery completion; excludes transactions after that snapshot",
+        "completed_at": "2026-10-19T02:03:17.943738+00:00"
+      },
+      "duration_seconds": 3.36
+    },
+    {
+      "name": "Independent restored-data consistency verification",
+      "status": "PASS",
+      "details": {
+        "action": "verify",
+        "started_at": "2026-10-19T02:03:18.032522+00:00",
+        "status": "PASS",
+        "database": "recovery_restored",
+        "checked_at": "2026-10-19T02:03:20.125542+00:00",
+        "tables_checked": 21,
+        "sequences_checked": 14,
+        "differences": [],
+        "completed_at": "2026-10-19T02:03:20.125589+00:00"
+      },
+      "duration_seconds": 2.173
+    },
+    {
+      "name": "Restored farm relationships, Unicode, numeric precision, binary data and RLS",
+      "status": "PASS",
+      "details": {
+        "unicode": true,
+        "farm_count": true,
+        "inventory_precision": true,
+        "expense_relation": true,
+        "binary_and_null": true,
+        "large_object": true,
+        "rls_isolation": true
+      },
+      "duration_seconds": 0.481
+    },
+    {
+      "name": "Existing recovery database is never overwritten",
+      "status": "PASS",
+      "details": {
+        "action": "restore",
+        "started_at": "2026-10-19T02:03:20.724291+00:00",
+        "status": "FAIL",
+        "error": "Target database already exists; choose a NEW database name",
+        "completed_at": "2026-10-19T02:03:20.801148+00:00"
+      },
+      "duration_seconds": 2.503
+    },
+    {
+      "name": "Corrupted backup rejected before creating a database",
+      "status": "PASS",
+      "details": {
+        "action": "restore",
+        "started_at": "2026-10-19T02:03:23.199699+00:00",
+        "status": "FAIL",
+        "error": "Backup checksum/size mismatch; restore refused",
+        "completed_at": "2026-10-19T02:03:23.201303+00:00"
+      },
+      "duration_seconds": 0.123
+    },
+    {
+      "name": "Detect changed data when row count stays unchanged",
+      "status": "PASS",
+      "details": {
+        "action": "verify",
+        "started_at": "2026-10-19T02:03:23.345541+00:00",
+        "status": "FAIL",
+        "database": "recovery_restored",
+        "checked_at": "2026-10-19T02:03:24.867220+00:00",
+        "tables_checked": 21,
+        "sequences_checked": 14,
+        "differences": [
+          "Changed tables: public.recovery_probe (data)"
+        ],
+        "completed_at": "2026-10-19T02:03:24.867273+00:00"
+      },
+      "duration_seconds": 3.62
+    },
+    {
+      "name": "Detect changed identity sequence state",
+      "status": "PASS",
+      "details": {
+        "action": "verify",
+        "started_at": "2026-10-19T02:03:26.965131+00:00",
+        "status": "FAIL",
+        "database": "recovery_restored",
+        "checked_at": "2026-10-19T02:03:29.304112+00:00",
+        "tables_checked": 21,
+        "sequences_checked": 14,
+        "differences": [
+          "Changed sequences: public.recovery_probe_id_seq (state)"
+        ],
+        "completed_at": "2026-10-19T02:03:29.304155+00:00"
+      },
+      "duration_seconds": 2.485
+    },
+    {
+      "name": "Detect a real constraint change after normalizing equivalent SQL",
+      "status": "PASS",
+      "details": {
+        "action": "verify",
+        "started_at": "2026-10-19T02:03:29.448401+00:00",
+        "status": "FAIL",
+        "database": "recovery_restored",
+        "checked_at": "2026-10-19T02:03:31.484143+00:00",
+        "tables_checked": 21,
+        "sequences_checked": 14,
+        "differences": [
+          "Changed tables: public.recovery_probe (constraints)"
+        ],
+        "completed_at": "2026-10-19T02:03:31.484199+00:00"
+      },
+      "duration_seconds": 2.183
+    },
+    {
+      "name": "Detect a missing table after restoration",
+      "status": "PASS",
+      "details": {
+        "action": "verify",
+        "started_at": "2026-10-19T02:03:31.633223+00:00",
+        "status": "FAIL",
+        "database": "recovery_restored",
+        "checked_at": "2026-10-19T02:03:33.854984+00:00",
+        "tables_checked": 20,
+        "sequences_checked": 13,
+        "differences": [
+          "Missing tables: public.recovery_probe",
+          "Missing sequences: public.recovery_probe_id_seq"
+        ],
+        "completed_at": "2026-10-19T02:03:33.855028+00:00"
+      },
+      "duration_seconds": 2.334
+    },
+    {
+      "name": "Restore failure rolls back all schema/data changes",
+      "status": "PASS",
+      "details": {
+        "action": "restore",
+        "started_at": "2026-10-19T02:03:36.486618+00:00",
+        "status": "FAIL",
+        "error": "Recovery failed; keep rollback_target offline for inspection. Restore SQL is transactional. pg_restore failed (exit 1): pg_restore: error: could not execute query: ERROR:  role \"missing_restore_owner\" does not exist\nCommand was: ALTER TABLE public.owner_probe OWNER TO missing_restore_owner;",
+        "completed_at": "2026-10-19T02:03:36.895087+00:00"
+      },
+      "duration_seconds": 3.081
+    }
+  ]
+}

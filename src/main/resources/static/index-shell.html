@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AgriManage · Quản lý trang trại</title><link rel="icon" href="/ui/shared/avatar.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/ui/shared/style.css"><link rel="stylesheet" href="/ui/shared/design.css"><link rel="stylesheet" href="/ui/shared/icons.css"><link rel="stylesheet" href="/ui/prototypes/application.css">
+<script src="/app.js" defer></script><script src="/overview-charts.js" defer></script><script src="/features/admin/admin.js" defer></script><script src="/features/workspace/staff.js" defer></script>
+<link rel="stylesheet" href="/ui/prototypes/host.css"></head><body>
+<div id="authScreen" class="auth-page-container"><div class="auth-card">
+<div class="auth-brand"><div class="logo-icon shadow-sm"><i class="fa-solid fa-seedling" aria-hidden="true"></i></div><h2>AgriManage</h2><p class="subtitle">Không gian quản lý trang trại của bạn</p></div>
+<div class="auth-tabs"><button id="authLoginTab" class="auth-tab active" type="button" aria-controls="loginPanel" aria-pressed="true">Đăng nhập</button><button id="authRegisterTab" class="auth-tab" type="button" aria-controls="registerPanel" aria-pressed="false">Đăng ký trang trại</button></div>
+<div id="loginPanel"><p class="subtitle">Nhân viên dùng tài khoản do chủ trang trại cấp.</p><form id="loginForm" method="post">
+<div class="form-group"><label for="username">Tên đăng nhập</label><input id="username" name="username" autocomplete="username" required minlength="3" maxlength="50"></div>
+<div class="form-group"><label for="password">Mật khẩu</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="128"></div>
+<label class="toggle"><input id="showPassword" type="checkbox"> Hiện mật khẩu</label><button id="loginButton" class="btn-primary btn-large" type="submit" disabled>Đăng nhập <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></form></div>
+<details id="registerPanel"><summary>Đăng ký tài khoản chủ và trang trại</summary><form id="registerForm">
+<label>Họ tên chủ trang trại<input name="fullName" required maxlength="100" autocomplete="name"></label>
+<label>Tên đăng nhập<input name="username" required minlength="3" maxlength="50" pattern="[a-z0-9._-]{3,50}" autocomplete="username"></label>
+<label>Email<input name="email" type="email" required maxlength="254" autocomplete="email"></label>
+<label>Mật khẩu (12–128 ký tự, có chữ và số)<input name="password" type="password" required minlength="12" maxlength="128" autocomplete="new-password"></label>
+<label>Tên trang trại<input name="farmName" required maxlength="100"></label>
+<label>Địa chỉ<input name="address" required maxlength="255"></label>
+<label>Diện tích (ha)<input name="areaHa" type="number" required min="0.01" max="9999999" step="0.01"></label>
+<button type="submit">Đăng ký trang trại</button></form></details>
+</div></div>
+<div id="accountPanel" hidden><div class="workspace-topline"><a class="workspace-brand" href="/#home"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-9M12 15C5 15 3 11 3 5c6 0 9 3 9 9M12 12c0-6 3-9 9-9 0 6-3 9-9 9"/></svg></span><span>AgriManage<small>FARM / N02</small></span></a><div class="account-heading"><p class="eyebrow" id="workspaceType">ĐÃ ĐĂNG NHẬP</p><h2 id="welcome"></h2></div><div class="account-tools"><details class="account-settings"><summary>Tài khoản</summary><div class="account-settings-panel"><dl><dt>Tên đăng nhập</dt><dd id="accountName"></dd><dt>Vai trò hệ thống</dt><dd id="accountRoles"></dd></dl><form id="passwordForm"><h3>Đổi mật khẩu</h3><label>Mật khẩu hiện tại<input name="currentPassword" type="password" autocomplete="current-password" required maxlength="128"></label><label>Mật khẩu mới (12–128 ký tự, có chữ và số)<input name="newPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="128"></label><button>Đổi mật khẩu và đăng xuất mọi phiên</button></form></div></details><button id="logoutButton" class="secondary" type="button">Đăng xuất</button></div></div>
+<div id="farmWorkspace" hidden><label>Trang trại<select id="farmSelector"></select></label><p id="onboardingMessage"></p><button id="completeButton" type="button">Bắt đầu thiết lập trang trại</button></div>
+<nav class="actions nav-links" aria-label="Dữ liệu và chức năng bổ sung"><button id="transferButton" type="button" data-page="data-transfer" hidden class="nav-item">Nhập / Xuất dữ liệu</button><button id="dashboardButton" type="button" data-page="dashboard" data-permission="dashboard:read" hidden class="nav-item">Báo cáo nâng cao</button><button id="harvestButton" type="button" data-page="harvest" data-permission="harvests:read" hidden class="nav-item">Thu hoạch</button><button id="purchaseButton" type="button" data-page="purchase" data-permission="purchases:read" hidden class="nav-item">Mua hàng</button><button id="salesButton" type="button" data-page="sales" data-permission="sales:read" hidden class="nav-item">Bán hàng</button><button id="traceabilityButton" type="button" data-page="traceability" data-permission="farms:read" hidden class="nav-item">Truy xuất nguồn gốc</button></nav>
+<nav class="actions nav-links" aria-label="Chức năng được cấp quyền"><button id="checkButton" type="button" data-page="home" class="nav-item">Tổng quan</button><button type="button" class="nav-item" data-page="activities">Hoạt động</button>
+<button type="button" class="nav-item" data-page="tasks">Công việc</button>
+<button type="button" class="nav-item" data-page="schedule">Lịch</button>
+<button type="button" class="nav-item" data-page="reports">Báo cáo</button>
+<button type="button" class="nav-item" data-page="notifications">Thông báo</button>
+<button id="staffButton" type="button" data-page="staff" hidden class="nav-item">Nhân viên</button><button id="farmButton" type="button" data-page="farm" hidden class="nav-item">Trang trại & Cây trồng</button><button id="materialButton" type="button" data-page="material" hidden class="nav-item">Vật tư & Kho</button><button id="expensesButton" type="button" data-page="expenses" data-permission="expenses:read" hidden class="nav-item">Chi phí</button><button id="usageButton" type="button" data-page="material-usage" data-permission="usage:read" hidden class="nav-item">Phân bón & Thuốc BVTV</button><button id="usersButton" type="button" data-page="users" data-permission="users:read" hidden class="nav-item">Người dùng hệ thống</button><button id="rolesButton" type="button" data-page="roles" data-permission="roles:read" hidden class="nav-item">Vai trò hệ thống</button></nav>
+</div>
+<p id="message" role="status" aria-live="polite"></p>
+<main id="managementPanel" class="main-content content-container" hidden></main>
+<footer>Hệ thống quản lý trang trại · Nhóm 02</footer>
+<iframe id="prototypeFrame" title="AgriManage" src="/ui/prototypes/login.html"></iframe></body></html>

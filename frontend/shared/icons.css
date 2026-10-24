@@ -1,0 +1,14 @@
+/* Local symbols: no network font, CDN or Font Awesome package is needed. */
+.fa-solid,.fa-regular{font-style:normal;display:inline-block;min-width:1em;text-align:center;font-family:system-ui,sans-serif}
+.fa-solid::before,.fa-regular::before{content:'◇'}
+.fa-house::before{content:'⌂'}.fa-seedling::before,.fa-leaf::before{content:'♧'}
+.fa-users::before,.fa-user::before,.fa-user-gear::before{content:'♙'}
+.fa-plus::before{content:'+'}.fa-xmark::before{content:'×'}.fa-pen::before,.fa-pen-to-square::before{content:'✎'}
+.fa-search::before,.fa-magnifying-glass::before{content:'⌕'}.fa-ban::before{content:'⊘'}
+.fa-check::before,.fa-list-check::before,.fa-check-circle::before{content:'✓'}
+.fa-calendar-days::before{content:'▦'}.fa-chart-pie::before,.fa-chart-line::before{content:'◴'}
+.fa-bell::before{content:'♧'}.fa-tractor::before{content:'♧'}.fa-boxes-stacked::before,.fa-warehouse::before{content:'▤'}
+.fa-eye::before{content:'◉'}.fa-download::before{content:'↓'}.fa-arrow-right::before{content:'→'}
+.fa-arrow-left::before{content:'←'}.fa-chevron-down::before{content:'⌄'}.fa-filter::before{content:'▽'}
+.fa-clock::before{content:'◷'}.fa-cloud-sun::before{content:'☀'}.fa-circle-info::before{content:'ⓘ'}
+.fa-triangle-exclamation::before{content:'⚠'}.fa-ellipsis-vertical::before{content:'⋮'}
