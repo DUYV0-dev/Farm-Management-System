@@ -2,6 +2,7 @@ package com.farmmanagement.backend.farm;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,8 +22,9 @@ public class FarmStore {
     public record Crop(int id, String name, String scientificName, String category,
                        Integer growthDays, String description, String status, String createdAt) {}
                        
-    public record Season(int id, int plotId, String plotName, String farmName, 
-                         int cropId, String cropName, String status) {}
+    public record Season(int id, String seasonName, int plotId, String plotName, String farmName, 
+                         int cropId, String cropName, String startDate, String endDate,
+                         String description, String status) {}
 
     private Farm farmRow(ResultSet r, int n) throws SQLException {
         return new Farm(r.getInt("farm_id"), r.getString("farm_name"), r.getString("address"),
@@ -46,9 +48,19 @@ public class FarmStore {
     }
     
     private Season seasonRow(ResultSet r, int n) throws SQLException {
-        return new Season(r.getInt("season_id"), r.getInt("plot_id"), r.getString("plot_name"),
+        java.sql.Date start = null;
+        java.sql.Date end = null;
+        try { start = r.getDate("start_date"); } catch (SQLException ignored) {}
+        try { end = r.getDate("end_date"); } catch (SQLException ignored) {}
+        String sName = null;
+        try { sName = r.getString("season_name"); } catch (SQLException ignored) {}
+        String desc = null;
+        try { desc = r.getString("description"); } catch (SQLException ignored) {}
+        return new Season(r.getInt("season_id"), sName, r.getInt("plot_id"), r.getString("plot_name"),
             r.getString("farm_name"), r.getInt("crop_id"), r.getString("crop_name"),
-            r.getString("status"));
+            start != null ? start.toString() : null,
+            end != null ? end.toString() : null,
+            desc, r.getString("status"));
     }
 
     // ─── Farm CRUD ───────────────────────────────────────────────────────────
@@ -184,30 +196,35 @@ public class FarmStore {
                 SELECT s.*, p.plot_name, f.farm_name, c.crop_name 
                 FROM public.crop_season s JOIN public.plot p USING(plot_id) 
                 JOIN public.farm f USING(farm_id) JOIN public.crop c USING(crop_id)
-                WHERE s.plot_id=? AND strpos(lower(c.crop_name),lower(?))>0
+                WHERE s.plot_id=? AND (strpos(lower(c.crop_name),lower(?))>0 
+                    OR strpos(lower(COALESCE(s.season_name,'')),lower(?))>0)
                 ORDER BY s.season_id DESC LIMIT ? OFFSET ?
-                """, this::seasonRow, plotId, search, limit, offset);
+                """, this::seasonRow, plotId, search, search, limit, offset);
         }
         return db.query("""
             SELECT s.*, p.plot_name, f.farm_name, c.crop_name 
             FROM public.crop_season s JOIN public.plot p USING(plot_id) 
             JOIN public.farm f USING(farm_id) JOIN public.crop c USING(crop_id)
             WHERE strpos(lower(c.crop_name),lower(?))>0 OR strpos(lower(p.plot_name),lower(?))>0
+               OR strpos(lower(f.farm_name),lower(?))>0 OR strpos(lower(COALESCE(s.season_name,'')),lower(?))>0
             ORDER BY s.season_id DESC LIMIT ? OFFSET ?
-            """, this::seasonRow, search, search, limit, offset);
+            """, this::seasonRow, search, search, search, search, limit, offset);
     }
 
     public long countSeasons(String search, Integer plotId) {
         if (plotId != null) {
             return db.queryForObject("""
                 SELECT count(*) FROM public.crop_season s JOIN public.crop c USING(crop_id)
-                WHERE s.plot_id=? AND strpos(lower(c.crop_name),lower(?))>0
-                """, Long.class, plotId, search);
+                WHERE s.plot_id=? AND (strpos(lower(c.crop_name),lower(?))>0 
+                    OR strpos(lower(COALESCE(s.season_name,'')),lower(?))>0)
+                """, Long.class, plotId, search, search);
         }
         return db.queryForObject("""
             SELECT count(*) FROM public.crop_season s JOIN public.plot p USING(plot_id) JOIN public.crop c USING(crop_id)
+            JOIN public.farm f USING(farm_id)
             WHERE strpos(lower(c.crop_name),lower(?))>0 OR strpos(lower(p.plot_name),lower(?))>0
-            """, Long.class, search, search);
+               OR strpos(lower(f.farm_name),lower(?))>0 OR strpos(lower(COALESCE(s.season_name,'')),lower(?))>0
+            """, Long.class, search, search, search, search);
     }
     
     public Optional<Season> season(int id) {
@@ -219,14 +236,31 @@ public class FarmStore {
             """, this::seasonRow, id).stream().findFirst();
     }
 
-    public int createSeason(int plotId, int cropId, String status) {
+    public int createSeason(String seasonName, int plotId, int cropId, LocalDate startDate, LocalDate endDate, String description, String status) {
         return db.queryForObject("""
-            INSERT INTO public.crop_season(plot_id,crop_id,status) VALUES (?,?,?) RETURNING season_id
-            """, Integer.class, plotId, cropId, status);
+            INSERT INTO public.crop_season(season_name,plot_id,crop_id,start_date,end_date,description,status) 
+            VALUES (?,?,?,?,?,?,?) RETURNING season_id
+            """, Integer.class, seasonName, plotId, cropId, startDate, endDate, description, status);
+    }
+
+    public int createSeason(int plotId, int cropId, String status) {
+        return createSeason(null, plotId, cropId, null, null, null, status);
     }
     
+    public void updateSeason(int id, String seasonName, LocalDate startDate, LocalDate endDate, String description, String status) {
+        db.update("""
+            UPDATE public.crop_season 
+            SET season_name=?, start_date=?, end_date=?, description=?, status=? 
+            WHERE season_id=?
+            """, seasonName, startDate, endDate, description, status, id);
+    }
+
     public void updateSeasonStatus(int id, String status) {
         db.update("UPDATE public.crop_season SET status=? WHERE season_id=?", status, id);
+    }
+
+    public void deleteSeason(int id) {
+        db.update("DELETE FROM public.crop_season WHERE season_id=?", id);
     }
 
     // ─── Audit ───────────────────────────────────────────────────────────────

@@ -4,9 +4,9 @@ import com.farmmanagement.backend.common.Input;
 import com.farmmanagement.backend.auth.AuthController;
 import com.farmmanagement.backend.common.Api;
 
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.*;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,6 +38,17 @@ public class FarmController {
         int val = v.asInt();
         if (val <= 0) throw new IllegalArgumentException();
         return val;
+    }
+
+    private LocalDate optDate(JsonNode body, String name) {
+        JsonNode v = body.get(name);
+        if (v == null || v.isNull()) return null;
+        if (!v.isTextual()) throw new IllegalArgumentException();
+        String s = v.asText().trim();
+        if (s.isEmpty()) return null;
+        if (!s.matches("\\d{4}-\\d{2}-\\d{2}") || s.startsWith("0000-")) throw new IllegalArgumentException();
+        try { return LocalDate.parse(s); }
+        catch (java.time.format.DateTimeParseException ex) { throw new IllegalArgumentException(); }
     }
 
     // ─── Farms ───────────────────────────────────────────────────────────────
@@ -231,13 +242,44 @@ public class FarmController {
     public ResponseEntity<?> createSeason(@AuthenticationPrincipal Jwt jwt,
                                           @RequestBody JsonNode body, HttpServletRequest request) {
         AuthController.noQuery(request);
-        Input.fields(body, "plotId", "cropId", "status");
-        int plotId = reqInt(body, "plotId");
-        int cropId = reqInt(body, "cropId");
-        String status = Input.text(body, "status", 20);
-        var season = service.createSeason(actor(jwt), plotId, cropId, status, Api.requestId(request));
+        int plotId, cropId;
+        String status, seasonName = null, description = null;
+        LocalDate startDate = null, endDate = null;
+
+        if (body.has("seasonName") || body.has("startDate") || body.has("endDate") || body.has("description")) {
+            Input.fields(body, "seasonName", "plotId", "cropId", "startDate", "endDate", "description", "status");
+            seasonName = optText(body, "seasonName", 100);
+            plotId = reqInt(body, "plotId");
+            cropId = reqInt(body, "cropId");
+            startDate = optDate(body, "startDate");
+            endDate = optDate(body, "endDate");
+            description = optText(body, "description", 1000);
+            status = Input.text(body, "status", 20);
+        } else {
+            Input.fields(body, "plotId", "cropId", "status");
+            plotId = reqInt(body, "plotId");
+            cropId = reqInt(body, "cropId");
+            status = Input.text(body, "status", 20);
+        }
+
+        var season = service.createSeason(actor(jwt), seasonName, plotId, cropId, startDate, endDate, description, status, Api.requestId(request));
         return ResponseEntity.created(URI.create("/api/v1/seasons/" + season.id()))
             .body(Api.success(season, request));
+    }
+
+    @PutMapping(value = "/seasons/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> updateSeason(@AuthenticationPrincipal Jwt jwt, @PathVariable int id,
+                                            @RequestBody JsonNode body, HttpServletRequest request) {
+        id(id); AuthController.noQuery(request);
+        Input.fields(body, "seasonName", "startDate", "endDate", "description", "status");
+        String seasonName = optText(body, "seasonName", 100);
+        LocalDate startDate = optDate(body, "startDate");
+        LocalDate endDate = optDate(body, "endDate");
+        String description = optText(body, "description", 1000);
+        String status = Input.text(body, "status", 20);
+
+        var season = service.updateSeason(actor(jwt), id, seasonName, startDate, endDate, description, status, Api.requestId(request));
+        return Api.success(season, request);
     }
 
     @PutMapping(value = "/seasons/{id}/status", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -246,5 +288,12 @@ public class FarmController {
         id(id); AuthController.noQuery(request); Input.fields(body, "status");
         return Api.success(service.updateSeasonStatus(actor(jwt), id, Input.text(body, "status", 20),
             Api.requestId(request)), request);
+    }
+
+    @DeleteMapping("/seasons/{id}")
+    public Map<String, Object> deleteSeason(@AuthenticationPrincipal Jwt jwt, @PathVariable int id, HttpServletRequest request) {
+        id(id); AuthController.noQuery(request);
+        service.deleteSeason(actor(jwt), id, Api.requestId(request));
+        return Api.success(Map.of("deleted", true, "id", id), request);
     }
 }

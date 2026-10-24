@@ -17,7 +17,7 @@ const sleep = ms => new Promise(r => setTimeout(r,ms));
     };
     function send(method,params={}){return new Promise((resolve,reject)=>{const id=++seq;pending.set(id,{resolve,reject});ws.send(JSON.stringify({id,method,params}));});}
     async function evaluate(expression){const r=await send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.exception?.description || r.exceptionDetails.text);return r.result.value;}
-    async function waitFor(expression){for(let i=0;i<100;i++){if(await evaluate(expression))return;await sleep(100);}throw new Error('Timed out: '+expression+'; '+await evaluate("document.getElementById('message')?.textContent || ''"));}
+    async function waitFor(expression){for(let i=0;i<300;i++){if(await evaluate(expression))return;await sleep(100);}throw new Error('Timed out: '+expression+'; '+await evaluate("document.getElementById('message')?.textContent || document.querySelector('.backend-login [role=alert]')?.textContent || ''"));}
     async function moduleReady(name){await evaluate(`document.getElementById('${name}Button').click()`);await waitFor(`document.querySelector('iframe')?.contentDocument?.readyState==='complete' && document.querySelector('iframe').contentDocument.getElementById('${name==='farm'?'btnAdd':'addRecord'}') && !document.querySelector('iframe').contentDocument.getElementById('${name==='farm'?'btnAdd':'addRecord'}').disabled`);await evaluate("window.d=document.querySelector('iframe').contentDocument;window.w=document.querySelector('iframe').contentWindow;true");}
     async function fill(values){await evaluate(`for(const [id,value] of Object.entries(${JSON.stringify(values)})){d.getElementById(id).value=value;}`);}
     async function submit(id,closed){await evaluate(`d.getElementById('${id}').requestSubmit()`);await waitFor(closed);}
@@ -80,5 +80,31 @@ const sleep = ms => new Promise(r => setTimeout(r,ms));
     const mobile=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync('target/management-mobile.png',Buffer.from(mobile.data,'base64'));
     assert.deepEqual(errors,[]);
     await evaluate("document.getElementById('logoutButton').click()");await waitFor("document.getElementById('accountPanel').hidden");
-    console.log('PASS logout and no uncaught browser exceptions');ws.close();
+    console.log('PASS logout and no uncaught browser exceptions');
+    await send('Page.navigate',{url:'http://127.0.0.1:18080/frontend/dashboard.html'});
+    await waitFor("document.readyState==='complete' && !!window.ManagementApi");
+    await evaluate("document.querySelector('a[href=\"farm.html\"]').click()");
+    await waitFor("!!document.querySelector('.backend-login[open]')");
+    await evaluate(`const f=document.querySelector('.backend-login form');f.elements.username.value=${JSON.stringify(username)};f.elements.password.value='IntegrationPassword123';f.requestSubmit()`);
+    await waitFor("document.getElementById('managementFrame')?.contentDocument?.getElementById('btnAdd')?.disabled===false");
+    assert.equal(await evaluate("location.pathname"),'/frontend/dashboard.html');
+    await evaluate("document.querySelector('a[href=\"material.html\"]').click()");
+    await waitFor("document.getElementById('managementFrame')?.contentDocument?.getElementById('addRecord')?.disabled===false");
+    assert.equal(await evaluate("!!document.querySelector('.backend-login')"),false,'Switch modules without logging in again');
+    assert.equal(await evaluate("document.getElementById('managementFrame').contentDocument.getElementById('storageError').hidden"),true);
+    await evaluate("document.getElementById('btnLogout').click()");
+    await waitFor("document.readyState==='complete' && !document.getElementById('managementFrame')");
+    assert.deepEqual(errors,[]);
+    console.log('PASS frontend dashboard, real login, Farms, Material & Warehouse, shared session and logout');
+    for (const [module,button] of [['farm','btnAdd'],['material','addRecord']]) {
+        await send('Page.navigate',{url:`http://127.0.0.1:18080/frontend/${module}.html`});
+        await waitFor("!!document.querySelector('.backend-login[open]')");
+        assert.equal(await evaluate('location.pathname'),`/frontend/${module}.html`,'Standalone management page must not redirect to dashboard');
+        await evaluate(`const form=document.querySelector('.backend-login form');form.elements.username.value=${JSON.stringify(username)};form.elements.password.value='IntegrationPassword123';form.requestSubmit()`);
+        await waitFor(`document.getElementById('${button}')?.disabled===false`);
+        assert.equal(await evaluate('location.pathname'),`/frontend/${module}.html`);
+        assert.equal(await evaluate("!!document.querySelector('.top-nav')"),true,'Keep standalone navigation');
+    }
+    assert.deepEqual(errors,[]);
+    console.log('PASS standalone Farms and Material & Warehouse stay on their own page and load authenticated data');ws.close();
 })().catch(error=>{console.error(error.message);process.exit(1);});

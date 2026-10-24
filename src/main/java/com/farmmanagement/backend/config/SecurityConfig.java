@@ -2,11 +2,15 @@ package com.farmmanagement.backend.config;
 
 import com.farmmanagement.backend.auth.AuthStore;
 import com.farmmanagement.backend.common.Api;
+import com.farmmanagement.backend.tenancy.*;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 
 import java.time.*;
 import java.util.*;
 import javax.crypto.spec.SecretKeySpec;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
@@ -71,70 +75,73 @@ public class SecurityConfig {
                 new JwtIssuerValidator(issuer), contract));
         return decoder;
     }
-
-    @Bean
-    SecurityFilterChain security(HttpSecurity http, AuthStore store, Api api) throws Exception {
-        http.csrf(csrf -> csrf.disable()) // Only explicit Authorization bearer; no auth cookies, no HTTP Basic.
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .requestCache(c -> c.disable())
-                .authorizeHttpRequests(a -> a
-                        .requestMatchers(HttpMethod.GET, "/", "/index.html", "/traceability.html", "/activities.html",
-                                "/dashboard.html", "/notifications.html", "/workers.html", "/schedule.html",
-                                "/reports.html", "/app.js", "/style.css", "/js/**", "/css/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/ui/advanced-dashboard.html", "/ui/harvest.html",
-                                "/ui/farm.html", "/ui/material.html", "/ui/js/**", "/ui/css/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/traceability/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/traceability/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/activities/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/me").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/logout").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/password").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/admin/users").hasAuthority("users:read")
-                        .requestMatchers(HttpMethod.GET, "/admin/roles").hasAuthority("roles:read")
-                        .requestMatchers(HttpMethod.GET, "/admin/farms").hasAuthority("farms:read")
-                        .requestMatchers("/api/v1/users", "/api/v1/users/**", "/api/v1/roles", "/api/v1/roles/**",
-                                "/api/v1/permissions")
-                        .authenticated()
-                        .requestMatchers("/api/v1/dashboard-farms", "/api/v1/harvest-farms", "/api/v1/harvest-units")
-                        .authenticated()
-                        .requestMatchers("/api/v1/productions", "/api/v1/productions/**", "/api/v1/products",
-                                "/api/v1/products/**")
-                        .authenticated()
-                        .requestMatchers("/api/v1/farms", "/api/v1/farms/**", "/api/v1/plots", "/api/v1/plots/**",
-                                "/api/v1/crops", "/api/v1/crops/**", "/api/v1/seasons", "/api/v1/seasons/**")
-                        .authenticated()
-                        .requestMatchers("/api/v1/material-categories", "/api/v1/material-categories/**",
-                                "/api/v1/materials", "/api/v1/materials/**", "/api/v1/warehouses",
-                                "/api/v1/warehouses/**",
-                                "/api/v1/inventory", "/api/v1/inventory/**")
-                        .authenticated()
-                        .anyRequest().denyAll())
-                .exceptionHandling(e -> e
-                        .authenticationEntryPoint(
-                                (q, s, x) -> api.write(q, s, 401, "UNAUTHENTICATED", "Vui lòng đăng nhập lại."))
-                        .accessDeniedHandler(
-                                (q, s, x) -> api.write(q, s, 403, "FORBIDDEN", "Bạn không có quyền truy cập.")))
-                .oauth2ResourceServer(o -> o
-                        .authenticationEntryPoint(
-                                (q, s, x) -> api.write(q, s, 401, "UNAUTHENTICATED", "Vui lòng đăng nhập lại."))
-                        .jwt(j -> j.jwtAuthenticationConverter(jwt -> {
-                            int uid = Integer.parseInt(jwt.getSubject());
-                            UUID sid = UUID.fromString(jwt.getClaimAsString("sessionId"));
-                            if (!store.validSession(sid, uid))
-                                throw new OAuth2AuthenticationException("invalid_token");
-                            var roles = store.roles(uid);
-                            if (roles.isEmpty())
-                                throw new OAuth2AuthenticationException("invalid_token");
-                            var authorities = new ArrayList<SimpleGrantedAuthority>();
-                            roles.forEach(r -> authorities.add(new SimpleGrantedAuthority("ROLE_" + r)));
-                            store.permissions(uid).forEach(p -> authorities.add(new SimpleGrantedAuthority(p)));
-                            return new JwtAuthenticationToken(jwt, authorities);
-                        })));
-        http.headers(h -> h.frameOptions(f -> f.sameOrigin()).contentSecurityPolicy(c -> c.policyDirectives(
-                "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'self'; base-uri 'none'; form-action 'self'")));
+    @Bean SecurityFilterChain security(HttpSecurity http, AuthStore store, Api api,
+            ObjectProvider<FarmWorkspaceStore> workspacesProvider,
+            ObjectProvider<TransactionTemplate> txProvider) throws Exception {
+        http.csrf(csrf->csrf.disable()) // Only explicit Authorization bearer; no auth cookies, no HTTP Basic.
+            .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .requestCache(c->c.disable())
+            .authorizeHttpRequests(a->a
+                .requestMatchers(HttpMethod.GET,"/","/index.html","/index-shell.html","/app.js","/overview-charts.js","/style.css","/features/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/farm.html","/material.html","/expenses.html","/material-usage.html","/workers.html","/dashboard.html","/login.html","/actuator/health",
+                    "/activities.html","/schedule.html","/reports.html","/notifications.html").permitAll()
+                .requestMatchers(HttpMethod.GET,"/ui/farm.html","/ui/material.html","/ui/material-usage.html","/ui/expenses.html","/ui/js/**","/ui/css/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/ui/advanced-dashboard.html","/ui/harvest.html","/ui/purchase.html","/ui/sales.html","/ui/traceability.html",
+                    "/harvest.html","/advanced-dashboard.html","/purchase.html","/sales.html","/traceability.html").permitAll()
+                .requestMatchers(HttpMethod.GET,"/ui/features/**","/ui/shared/**","/ui/prototypes/*.html","/ui/prototypes/application.css","/ui/prototypes/entry.js","/ui/prototypes/bridge.js","/ui/prototypes/host.css","/ui/prototypes/charts.js","/ui/prototypes/js/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/frontend/*.html","/frontend/js/**","/frontend/css/**").permitAll()
+                .requestMatchers(HttpMethod.POST,"/api/v1/auth/login","/api/v1/auth/register").permitAll()
+                .requestMatchers("/api/v1/workspace", "/api/v1/workspace/**").authenticated()
+                .requestMatchers("/api/v1/data-transfer", "/api/v1/data-transfer/**").authenticated()
+                .requestMatchers(HttpMethod.GET,"/api/v1/traceability","/api/v1/traceability/**","/api/v1/activities","/api/v1/activities/**").permitAll()
+                .requestMatchers(HttpMethod.POST,"/api/v1/traceability","/api/v1/traceability/**","/api/v1/activities","/api/v1/activities/**").permitAll()
+                .requestMatchers(HttpMethod.PUT,"/api/v1/activities/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/auth/me").authenticated()
+                .requestMatchers(HttpMethod.POST,"/api/v1/auth/logout").authenticated()
+                .requestMatchers(HttpMethod.POST,"/api/v1/auth/password").authenticated()
+                .requestMatchers(HttpMethod.GET,"/admin/users").hasAuthority("users:read")
+                .requestMatchers(HttpMethod.GET,"/admin/roles").hasAuthority("roles:read")
+                .requestMatchers(HttpMethod.GET,"/admin/farms").hasAuthority("farms:read")
+                .requestMatchers("/api/v1/users", "/api/v1/users/**", "/api/v1/roles", "/api/v1/roles/**", "/api/v1/permissions").authenticated()
+                .requestMatchers("/api/v1/dashboard-farms", "/api/v1/harvest-farms", "/api/v1/harvest-units").authenticated()
+                .requestMatchers("/api/v1/productions", "/api/v1/productions/**", "/api/v1/products", "/api/v1/products/**").authenticated()
+                .requestMatchers("/api/v1/expenses", "/api/v1/expenses/**").authenticated()
+                .requestMatchers("/api/v1/material-usages", "/api/v1/material-usages/**").authenticated()
+                .requestMatchers("/api/v1/farms", "/api/v1/farms/**", "/api/v1/plots", "/api/v1/plots/**", 
+                                 "/api/v1/crops", "/api/v1/crops/**", "/api/v1/seasons", "/api/v1/seasons/**").authenticated()
+                .requestMatchers("/api/v1/material-categories", "/api/v1/material-categories/**",
+                    "/api/v1/materials", "/api/v1/materials/**", "/api/v1/warehouses", "/api/v1/warehouses/**",
+                    "/api/v1/inventory", "/api/v1/inventory/**").authenticated()
+                .requestMatchers("/api/v1/suppliers", "/api/v1/suppliers/**",
+                    "/api/v1/purchase-orders", "/api/v1/purchase-orders/**",
+                    "/api/v1/customers", "/api/v1/customers/**",
+                    "/api/v1/sales-orders", "/api/v1/sales-orders/**").authenticated()
+                .anyRequest().denyAll())
+            .exceptionHandling(e->e
+                .authenticationEntryPoint((q,s,x)->api.write(q,s,401,"UNAUTHENTICATED","Vui lòng đăng nhập lại."))
+                .accessDeniedHandler((q,s,x)->api.write(q,s,403,"FORBIDDEN","Bạn không có quyền truy cập.")))
+            .oauth2ResourceServer(o->o
+                .authenticationEntryPoint((q,s,x)->api.write(q,s,401,"UNAUTHENTICATED","Vui lòng đăng nhập lại."))
+                .jwt(j->j.jwtAuthenticationConverter(jwt->{
+                    int uid=Integer.parseInt(jwt.getSubject());
+                    UUID sid=UUID.fromString(jwt.getClaimAsString("sessionId"));
+                    if(!store.validSession(sid,uid)) throw new OAuth2AuthenticationException("invalid_token");
+                    var roles=store.roles(uid);
+                    if(roles.isEmpty()) throw new OAuth2AuthenticationException("invalid_token");
+                    var authorities=new ArrayList<SimpleGrantedAuthority>();
+                    roles.forEach(r->authorities.add(new SimpleGrantedAuthority("ROLE_"+r)));
+                    store.permissions(uid).forEach(p->authorities.add(new SimpleGrantedAuthority(p)));
+                    return new JwtAuthenticationToken(jwt,authorities);
+                })));
+        FarmWorkspaceStore workspaces = workspacesProvider.getIfAvailable();
+        TransactionTemplate tx = txProvider.getIfAvailable();
+        if (workspaces != null && tx != null) {
+            http.addFilterAfter(new FarmContextFilter(workspaces, tx, api), BearerTokenAuthenticationFilter.class);
+        }
+        http.headers(h->h.frameOptions(f->f.sameOrigin()).addHeaderWriter((request, response) -> {
+            String policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self'; object-src 'none'; frame-ancestors 'self'; base-uri 'none'; form-action 'self'";
+            response.setHeader("Content-Security-Policy", policy);
+        }));
         return http.build();
     }
 }

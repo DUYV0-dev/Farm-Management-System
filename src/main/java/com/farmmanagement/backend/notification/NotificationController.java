@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
+@org.springframework.context.annotation.Profile("demo & !production")
 @RequestMapping("/api/v1/notifications")
 public class NotificationController {
 

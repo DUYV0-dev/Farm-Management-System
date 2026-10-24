@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FARM / N02 · Chi phí nông nghiệp</title>
+    <link rel="stylesheet" href="/ui/shared/style.css">
+    <link rel="stylesheet" href="/ui/shared/design.css">
+    <link rel="stylesheet" href="/ui/shared/icons.css">
+    <link rel="stylesheet" href="/ui/shared/records.css">
+    <link rel="stylesheet" href="/ui/shared/connected.css">
+    <link rel="stylesheet" href="/ui/shared/forms.css">
+    <link rel="stylesheet" href="/ui/features/expenses/expenses.css">
+    <script src="/ui/shared/api-client.js" defer></script>
+    <script src="/ui/features/expenses/expenses.js" defer></script>
+</head>
+<body class="material-page">
+<div class="app-container">
+    <nav class="top-nav shadow-sm" aria-label="Điều hướng trang trại"><div class="nav-container"><a class="nav-brand" href="/">FARM / N02</a><div class="nav-links"><a href="/#farm" class="nav-item">Trang trại & Cây trồng</a><a href="/#material" class="nav-item">Vật tư & Kho</a><a href="/#expenses" class="nav-item active">Chi phí</a><a href="/#material-usage" class="nav-item">Phân bón & Thuốc BVTV</a><a href="/#staff" class="nav-item">Nhân sự</a></div></div></nav>
+    <main class="main-content">
+        <header class="page-header">
+            <div><p class="inventory-eyebrow">CHI PHÍ SẢN XUẤT</p><h1>Chi phí nông nghiệp</h1>
+                <p class="subtitle">Ghi nhận và theo dõi các khoản chi theo trang trại, mùa vụ và loại chi phí.</p></div>
+            <button type="button" class="btn-primary" id="addExpense" hidden>Ghi nhận chi phí</button>
+        </header>
+        <p id="expenseNotice" role="status" hidden></p>
+        <p id="expenseError" class="inventory-error" role="alert" hidden></p>
+        <section id="historyPanel" hidden>
+            <div class="expense-overview" aria-label="Tổng hợp chi phí theo bộ lọc">
+                <div class="expense-card"><span>Tổng chi phí</span><strong id="totalAmount">—</strong><small>Theo toàn bộ kết quả đã lọc</small></div>
+                <div class="expense-card"><span>Số khoản chi</span><strong id="expenseCount">—</strong><small>Đã ghi nhận trong lịch sử</small></div>
+            </div>
+            <div class="table-wrapper">
+                <div class="table-header"><h2>Lịch sử chi phí</h2><span id="recordCount" aria-live="polite"></span></div>
+                <form id="filterForm" class="usage-filters">
+                    <label>Trang trại<select id="farmFilter" name="farmId"></select></label>
+                    <label>Mùa vụ<select id="seasonFilter" name="seasonId"></select></label>
+                    <label>Loại chi phí<select id="categoryFilter" name="category"></select></label>
+                    <label>Từ ngày<input type="date" name="fromDate" min="0001-01-01" max="9999-12-31"></label>
+                    <label>Đến ngày<input type="date" name="toDate" min="0001-01-01" max="9999-12-31"></label>
+                    <button type="submit" class="btn-primary">Lọc lịch sử</button>
+                    <button type="button" class="btn-secondary" id="clearFilters">Xóa bộ lọc</button>
+                </form>
+                <div class="table-responsive" tabindex="0" role="region" aria-label="Lịch sử chi phí nông nghiệp">
+                    <table class="task-table"><thead><tr><th>Ngày phát sinh</th><th>Loại chi phí</th><th>Số tiền</th><th>Trang trại / Mùa vụ</th><th>Mô tả</th><th>Chi tiết</th></tr></thead><tbody id="expenseRows"></tbody></table>
+                </div>
+                <p id="emptyHistory" class="inventory-empty" hidden>Chưa có khoản chi phù hợp với bộ lọc.</p>
+                <div class="inventory-pagination"><span id="pageSummary" aria-live="polite"></span><div>
+                    <button type="button" class="btn-secondary" id="previousPage" disabled>← Trước</button>
+                    <button type="button" class="btn-secondary" id="nextPage" disabled>Sau →</button>
+                </div></div>
+            </div>
+        </section>
+        <section class="table-wrapper usage-summary" id="summaryPanel" hidden>
+            <div class="table-header"><div><h2>Chi phí theo loại</h2><p class="subtitle">Tổng tiền và số khoản chi theo bộ lọc hiện tại.</p></div></div>
+            <div class="table-responsive"><table class="task-table"><thead><tr><th>Loại chi phí</th><th>Số khoản chi</th><th>Tổng tiền</th></tr></thead><tbody id="summaryRows"></tbody></table></div>
+        </section>
+        <noscript><p class="inventory-error">Vui lòng bật JavaScript để sử dụng chức năng này.</p></noscript>
+    </main>
+</div>
+<dialog id="expenseDialog" class="inventory-dialog" aria-labelledby="expenseTitle">
+    <div class="modal-header"><h2 id="expenseTitle">Ghi nhận chi phí</h2><button type="button" class="btn-close" id="closeDialog" aria-label="Đóng">×</button></div>
+    <form id="expenseForm">
+        <div class="usage-fields">
+            <label>Trang trại<select name="farmId" id="expenseFarm" required></select></label>
+            <label>Mùa vụ<select name="seasonId" id="expenseSeason"></select><span class="record-meta">Bỏ trống cho chi phí chung của trang trại.</span></label>
+            <label>Loại chi phí<select name="category" id="expenseCategory" required></select></label>
+            <label>Số tiền (VND)<input name="amount" type="text" inputmode="decimal" maxlength="19" pattern="[0-9]{1,16}(\.[0-9]{1,2})?" placeholder="Ví dụ: 1500000 hoặc 1500000.50" required><span class="record-meta">Số tiền lớn hơn 0, tối đa 2 chữ số thập phân; không nhập dấu phân cách hàng nghìn.</span></label>
+            <label>Ngày phát sinh<input name="expenseDate" id="expenseDate" type="date" min="0001-01-01" max="9999-12-31" required></label>
+            <label>Mô tả<textarea name="description" maxlength="1000" rows="3" placeholder="Nội dung khoản chi, hóa đơn hoặc ghi chú…"></textarea></label>
+        </div>
+        <p id="formHint" class="subtitle"></p>
+        <p id="formError" class="inventory-error" role="alert" hidden></p>
+        <div class="form-actions"><button type="button" class="btn-cancel" id="cancelExpense">Hủy</button><button type="submit" class="btn-primary" id="saveExpense">Lưu chi phí</button></div>
+    </form>
+</dialog>
+</body>
+</html>

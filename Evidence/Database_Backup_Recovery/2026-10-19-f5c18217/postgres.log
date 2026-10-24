@@ -1,0 +1,15 @@
+2026-10-19 09:03:10.692 +07 [11368] LOG:  starting PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35226, 64-bit
+2026-10-19 09:03:10.692 +07 [11368] LOG:  listening on IPv4 address "127.0.0.1", port 59710
+2026-10-19 09:03:10.735 +07 [21460] LOG:  database system was shut down at 2026-10-19 09:03:10 +07
+2026-10-19 09:03:10.740 +07 [11368] LOG:  database system is ready to accept connections
+2026-10-19 09:03:36.884 +07 [16040] ERROR:  role "missing_restore_owner" does not exist
+2026-10-19 09:03:36.884 +07 [16040] STATEMENT:  ALTER TABLE public.owner_probe OWNER TO missing_restore_owner;
+	
+	
+2026-10-19 09:03:36.954 +07 [11368] LOG:  received fast shutdown request
+2026-10-19 09:03:36.956 +07 [11368] LOG:  aborting any active transactions
+2026-10-19 09:03:36.960 +07 [11368] LOG:  background worker "logical replication launcher" (PID 22536) exited with exit code 1
+2026-10-19 09:03:36.961 +07 [22048] LOG:  shutting down
+2026-10-19 09:03:36.962 +07 [22048] LOG:  checkpoint starting: shutdown immediate
+2026-10-19 09:03:37.466 +07 [22048] LOG:  checkpoint complete: wrote 3255 buffers (19.9%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 1 recycled; write=0.133 s, sync=0.348 s, total=0.505 s; sync files=1154, longest=0.002 s, average=0.001 s; distance=15994 kB, estimate=15994 kB; lsn=0/278FA48, redo lsn=0/278FA48
+2026-10-19 09:03:37.608 +07 [11368] LOG:  database system is shut down

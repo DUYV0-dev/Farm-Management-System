@@ -1,0 +1,11 @@
+{
+  "action": "verify",
+  "started_at": "2026-10-19T02:03:18.032522+00:00",
+  "status": "PASS",
+  "database": "recovery_restored",
+  "checked_at": "2026-10-19T02:03:20.125542+00:00",
+  "tables_checked": 21,
+  "sequences_checked": 14,
+  "differences": [],
+  "completed_at": "2026-10-19T02:03:20.125589+00:00"
+}

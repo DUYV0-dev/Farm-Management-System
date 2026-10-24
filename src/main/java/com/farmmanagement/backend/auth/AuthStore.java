@@ -31,7 +31,8 @@ public class AuthStore {
         return db.queryForList("""
             SELECT DISTINCT rp.permission_code FROM public.auth_role_permission rp
             JOIN public.role r USING(role_id) JOIN public.user_role ur USING(role_id)
-            WHERE ur.user_id=? AND r.scope='SYSTEM' ORDER BY rp.permission_code
+            WHERE ur.user_id=? AND r.scope='SYSTEM'
+            AND (rp.permission_code LIKE 'users:%' OR rp.permission_code LIKE 'roles:%') ORDER BY rp.permission_code
             """,String.class,id);
     }
     public void changePassword(int uid, String hash) {
@@ -50,16 +51,10 @@ public class AuthStore {
     }
     public List<Map<String,Object>> memberships(int id) {
         return db.query("""
-            SELECT fm.farm_id,fm.status,fm.joined_at,f.farm_name,f.status AS farm_status,
-              COALESCE(string_agg(r.role_name,',' ORDER BY r.role_name) FILTER (WHERE r.scope='FARM'),'') AS roles
-            FROM public.farm_member fm JOIN public.farm f USING(farm_id)
-            LEFT JOIN public.farm_member_role fmr ON fmr.farm_id=fm.farm_id AND fmr.user_id=fm.user_id
-            LEFT JOIN public.role r ON r.role_id=fmr.role_id
-            WHERE fm.user_id=? GROUP BY fm.farm_id,fm.status,fm.joined_at,f.farm_name,f.status
-            ORDER BY fm.farm_id
-            """,(r,n)->Map.<String,Object>of("farmId",r.getInt("farm_id"),"status",r.getString("status"),
+            SELECT * FROM public.workspace_memberships(?) ORDER BY farm_id
+            """,(r,n)->Map.<String,Object>of("farmId",r.getInt("farm_id"),"status",r.getString("member_status"),
                 "farmName",r.getString("farm_name"),"farmStatus",r.getString("farm_status"),
-                "joinedAt",r.getDate("joined_at").toString(),"roles",r.getString("roles").isEmpty()?List.of():List.of(r.getString("roles").split(","))),id);
+                "onboardingStatus",r.getString("onboarding_status"),"roles",r.getString("roles").isEmpty()?List.of():List.of(r.getString("roles").split(","))),id);
     }
     public void createSession(UUID sid, int uid, Instant issued, Instant expires) {
         db.update("INSERT INTO public.auth_session(session_id,user_id,issued_at,expires_at) VALUES (?,?,?,?)",

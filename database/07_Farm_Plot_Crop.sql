@@ -46,15 +46,21 @@ CREATE TABLE IF NOT EXISTS public.crop (
 );
 CREATE TABLE IF NOT EXISTS public.crop_season (
     season_id SERIAL PRIMARY KEY,
+    season_name VARCHAR(100),
     plot_id INTEGER NOT NULL REFERENCES public.plot(plot_id) ON DELETE RESTRICT,
     crop_id INTEGER NOT NULL REFERENCES public.crop(crop_id) ON DELETE RESTRICT,
+    start_date DATE,
+    end_date DATE,
+    description TEXT,
     status VARCHAR(20) NOT NULL DEFAULT 'PLANNED'
-        CHECK (status IN ('PLANNED','IN_PROGRESS','COMPLETED','CANCELLED'))
+        CHECK (status IN ('PLANNED','IN_PROGRESS','COMPLETED','CANCELLED')),
+    CONSTRAINT ck_season_dates CHECK (start_date IS NULL OR end_date IS NULL OR start_date <= end_date)
 );
 CREATE UNIQUE INDEX IF NOT EXISTS uq_crop_name ON public.crop(lower(btrim(crop_name)));
 CREATE UNIQUE INDEX IF NOT EXISTS uq_plot_name ON public.plot(farm_id,lower(btrim(plot_name)));
 CREATE INDEX IF NOT EXISTS ix_season_plot ON public.crop_season(plot_id,status);
 CREATE INDEX IF NOT EXISTS ix_season_crop ON public.crop_season(crop_id,status);
+CREATE INDEX IF NOT EXISTS ix_season_name ON public.crop_season(lower(btrim(season_name)));
 
 CREATE TABLE IF NOT EXISTS public.farm_member (
     farm_id     INTEGER NOT NULL REFERENCES public.farm(farm_id) ON DELETE CASCADE,
@@ -99,7 +105,8 @@ ON CONFLICT DO NOTHING;
 -- ─── GRANTS ──────────────────────────────────────────────────────────────────
 GRANT SELECT, INSERT, UPDATE ON public.farm TO farm_app;
 GRANT SELECT, INSERT, UPDATE ON public.plot TO farm_app;
-GRANT SELECT, INSERT, UPDATE ON public.crop, public.crop_season TO farm_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.crop_season TO farm_app;
+GRANT SELECT, INSERT, UPDATE ON public.crop TO farm_app;
 GRANT SELECT, INSERT, UPDATE ON public.farm_member TO farm_app;
 GRANT SELECT, INSERT, DELETE ON public.farm_member_role TO farm_app;
 

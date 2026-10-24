@@ -47,7 +47,11 @@ public class AuthService {
     }
     public Map<String,Object> me(int uid) {
         var user=store.byId(uid).orElseThrow(()->new BadCredentialsException("Invalid user"));
-        return Map.of("user",store.publicUser(user),"memberships",store.memberships(uid));
+        var result=new HashMap<String,Object>(store.publicUser(user));
+        var authentication=org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if(authentication!=null) result.put("permissions",authentication.getAuthorities().stream()
+            .map(org.springframework.security.core.GrantedAuthority::getAuthority).filter(p->p.contains(":" )).distinct().sorted().toList());
+        return Map.of("user",result,"memberships",store.memberships(uid));
     }
     @Transactional
     public void logout(Jwt jwt) { store.revoke(UUID.fromString(jwt.getClaimAsString("sessionId")),Integer.parseInt(jwt.getSubject())); }
