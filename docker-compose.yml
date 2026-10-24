@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: farm-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-farm_management_erd_v1}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_secure_pass}
+      APP_DB_USER: ${DB_USERNAME:-farm_app}
+      APP_DB_PASSWORD: ${DB_PASSWORD:-farm_app_secure_pass}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database:/database:ro
+      - ./scripts/docker-init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-farm_management_erd_v1}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - farm-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: farm-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8080
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-farm_management_erd_v1}
+      DB_USERNAME: ${DB_USERNAME:-farm_app}
+      DB_PASSWORD: ${DB_PASSWORD:-farm_app_secure_pass}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8080/actuator/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+    networks:
+      - farm-network
+
+networks:
+  farm-network:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local

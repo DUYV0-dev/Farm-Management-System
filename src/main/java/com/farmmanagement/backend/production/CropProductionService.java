@@ -1,10 +1,12 @@
 package com.farmmanagement.backend.production;
 
-import org.springframework.stereotype.Service;
-import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class CropProductionService {
     private final CropProductionStore store;
 
@@ -18,11 +20,13 @@ public class CropProductionService {
     }
 
     @PreAuthorize("hasAuthority('crops:read')")
+    @Transactional(readOnly = true)
     public CropProduction getProduction(int id) {
         return store.byId(id).orElseThrow(() -> new IllegalArgumentException("Crop production not found: " + id));
     }
 
     @PreAuthorize("hasAuthority('crops:read')")
+    @Transactional(readOnly = true)
     public List<CropProduction> getProductionsByFarm(int farmId) {
         return store.byFarmId(farmId);
     }
@@ -34,7 +38,7 @@ public class CropProductionService {
         return store.byId(id).get();
     }
 
-    @PreAuthorize("hasAuthority('crops:status')")
+    @PreAuthorize("hasAuthority('crops:status') or hasAuthority('crops:update')")
     public void deleteProduction(int id) {
         store.delete(id);
     }

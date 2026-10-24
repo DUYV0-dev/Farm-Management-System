@@ -75,6 +75,7 @@ public class SecurityConfig {
                 new JwtIssuerValidator(issuer), contract));
         return decoder;
     }
+
     @Bean SecurityFilterChain security(HttpSecurity http, AuthStore store, Api api,
             ObjectProvider<FarmWorkspaceStore> workspacesProvider,
             ObjectProvider<TransactionTemplate> txProvider) throws Exception {
@@ -96,6 +97,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/api/v1/traceability","/api/v1/traceability/**","/api/v1/activities","/api/v1/activities/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/traceability","/api/v1/traceability/**","/api/v1/activities","/api/v1/activities/**").permitAll()
                 .requestMatchers(HttpMethod.PUT,"/api/v1/activities/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE,"/api/v1/traceability/**","/api/v1/activities/**").authenticated()
+                .requestMatchers("/api/v1/notifications", "/api/v1/notifications/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/v1/auth/me").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/logout").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/password").authenticated()
