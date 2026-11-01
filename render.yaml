@@ -1,0 +1,45 @@
+databases:
+  - name: farm-management-db
+    databaseName: farm_management
+    user: farm_owner
+    plan: free
+
+services:
+  - type: web
+    name: farm-management-app
+    runtime: java
+    plan: free
+    buildCommand: "./mvnw clean package -DskipTests -q"
+    startCommand: "bash scripts/railway-start.sh"
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: DB_URL
+        fromDatabase:
+          name: farm-management-db
+          property: connectionString
+      - key: PGUSER
+        fromDatabase:
+          name: farm-management-db
+          property: user
+      - key: PGPASSWORD
+        fromDatabase:
+          name: farm-management-db
+          property: password
+      - key: DB_MIGRATION_USERNAME
+        fromDatabase:
+          name: farm-management-db
+          property: user
+      - key: DB_MIGRATION_PASSWORD
+        fromDatabase:
+          name: farm-management-db
+          property: password
+      - key: DB_APP_PASSWORD
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SERVER_ADDRESS
+        value: 0.0.0.0
+      - key: APP_OPEN_BROWSER
+        value: "false"
+      - key: APP_FRONTEND_WORKING_TREE
+        value: "false"
