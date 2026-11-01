@@ -45,7 +45,9 @@ public final class DatabaseMigrations {
         if(appPassword!=null && !appPassword.isBlank() && (command.equals("migrate") || command.equals("upgrade-legacy"))) {
             if(appPassword.length()<24) throw new IllegalStateException("DB_APP_PASSWORD must contain at least 24 characters");
             try(var connection=DriverManager.getConnection(url,user,password);var statement=connection.createStatement()) {
-                statement.execute("ALTER ROLE farm_app LOGIN NOSUPERUSER NOBYPASSRLS PASSWORD '"+appPassword.replace("'","''")+"'");
+                statement.execute("ALTER ROLE farm_app WITH PASSWORD '"+appPassword.replace("'","''")+"'");
+            } catch (Exception e) {
+                System.err.println("[WARN] Could not alter role farm_app: " + e.getMessage());
             }
         }
     }

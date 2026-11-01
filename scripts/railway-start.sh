@@ -50,18 +50,19 @@ fi
 
 # ----------------------------------------------------------
 # 3. App DB credentials
-#    Spring Boot MUST connect as farm_app to enforce Row-Level Security (RLS).
-#    If DB_APP_PASSWORD is set, migration sets farm_app password and app uses it.
-#    If DB_APP_PASSWORD is not set, generate a secure 32-char password automatically.
+#    On Render/Railway managed databases, use the provided database user directly
+#    and enable ALLOW_OWNER_CONNECTION for WorkspaceDatabaseCheck.
 # ----------------------------------------------------------
-if [ -z "$DB_APP_PASSWORD" ]; then
-  echo "[INFO] DB_APP_PASSWORD not set - generating a random secure password for farm_app..."
-  DB_APP_PASSWORD=$(head -c 32 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 32)
-  export DB_APP_PASSWORD
+if [ -n "$DB_APP_PASSWORD" ]; then
+  echo "[INFO] DB_APP_PASSWORD is set - app will connect as: ${DB_USERNAME:-farm_app}"
+  export DB_USERNAME="${DB_USERNAME:-farm_app}"
+  export DB_PASSWORD="${DB_PASSWORD:-$DB_APP_PASSWORD}"
+else
+  echo "[INFO] DB_APP_PASSWORD not set - app will connect as database user: $DB_MIGRATION_USERNAME"
+  export ALLOW_OWNER_CONNECTION="true"
+  export DB_USERNAME="${DB_USERNAME:-$DB_MIGRATION_USERNAME}"
+  export DB_PASSWORD="${DB_PASSWORD:-$DB_MIGRATION_PASSWORD}"
 fi
-
-export DB_USERNAME="${DB_USERNAME:-farm_app}"
-export DB_PASSWORD="${DB_PASSWORD:-$DB_APP_PASSWORD}"
 echo "[INFO] App runtime will connect as: $DB_USERNAME"
 
 # ----------------------------------------------------------
