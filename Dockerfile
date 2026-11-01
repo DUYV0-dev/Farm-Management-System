@@ -10,6 +10,7 @@ WORKDIR /build
 # Copy Maven wrapper and pom.xml first (layer caching)
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
+RUN chmod +x mvnw
 RUN ./mvnw dependency:resolve -q || true
 # Copy source and build
 COPY src/ src/
