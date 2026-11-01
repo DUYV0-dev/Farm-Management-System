@@ -38,7 +38,7 @@ if [ -z "$DB_URL" ]; then
 fi
 
 # ----------------------------------------------------------
-# 2. Migration credentials (Render uses postgres superuser)
+# 2. Migration credentials (Render uses its own postgres user)
 # ----------------------------------------------------------
 export DB_MIGRATION_USERNAME="${DB_MIGRATION_USERNAME:-${PGUSER:-postgres}}"
 export DB_MIGRATION_PASSWORD="${DB_MIGRATION_PASSWORD:-$PGPASSWORD}"
@@ -48,9 +48,15 @@ if [ -z "$DB_MIGRATION_PASSWORD" ]; then
   exit 1
 fi
 
+# ----------------------------------------------------------
+# 3. App DB credentials
+#    - If DB_APP_PASSWORD is set: migration will ALTER ROLE farm_app (needs superuser)
+#    - If not set (Render): skip ALTER ROLE, app connects as the Render DB user directly
+# ----------------------------------------------------------
 if [ -z "$DB_APP_PASSWORD" ]; then
-  echo "[ERROR] DB_APP_PASSWORD is not set. Must be at least 24 characters."
-  exit 1
+  echo "[INFO] DB_APP_PASSWORD not set - app will connect as migration user: $DB_MIGRATION_USERNAME"
+  export DB_USERNAME="${DB_USERNAME:-$DB_MIGRATION_USERNAME}"
+  export DB_PASSWORD="${DB_PASSWORD:-$DB_MIGRATION_PASSWORD}"
 fi
 
 # ----------------------------------------------------------
