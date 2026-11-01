@@ -20,12 +20,19 @@ public class MaterialUsageService {
     public MaterialUsageService(MaterialUsageStore store, FarmStore farms) { this.store = store; this.farms = farms; }
 
     public record TypeOption(String code, String name) {}
+    @PreAuthorize("hasAuthority('usage:create')")
+    public MaterialUsage recordFromWarehouse(int actor,int season,int material,UsageType type,BigDecimal quantity,LocalDate date,String notes,int warehouse,String requestId) {
+        if(warehouse<=0) throw new IllegalArgumentException();
+        var record=record(actor,season,material,type,quantity,date,notes,requestId);
+        store.consumeStock(record.id(),warehouse,material,quantity);
+        return record;
+    }
 
     @PreAuthorize("hasAnyAuthority('usage:read','usage:create')")
     @Transactional(readOnly = true)
     public Map<String,Object> options() {
         return Map.of("types", Arrays.stream(UsageType.values()).map(t -> new TypeOption(t.name(), t.label())).toList(),
-            "seasons", store.seasons(), "materials", store.materials());
+            "seasons", store.seasons(), "materials", store.materials(),"warehouses",store.warehouses());
     }
 
     @PreAuthorize("hasAuthority('usage:create')")

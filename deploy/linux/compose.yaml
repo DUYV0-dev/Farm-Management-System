@@ -1,0 +1,99 @@
+name: farm-management
+
+x-app-image: &app-image
+  image: farm-management:${RELEASE_TAG:-local}
+  build:
+    context: ../..
+    dockerfile: deploy/linux/Dockerfile
+    args:
+      JAR_FILE: ${JAR_FILE:-target/backend-0.0.1-SNAPSHOT.jar}
+
+services:
+  db:
+    image: postgres:18-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: farm_management
+      POSTGRES_USER: farm_owner
+      POSTGRES_PASSWORD: ${DB_OWNER_PASSWORD:?Set DB_OWNER_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks: [data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U farm_owner -d farm_management']
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  migrate:
+    <<: *app-image
+    restart: "no"
+    entrypoint: [java, '-Dloader.main=com.farmmanagement.backend.config.DatabaseMigrations', -cp, /app/backend.jar, org.springframework.boot.loader.launch.PropertiesLauncher]
+    command: [migrate]
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/farm_management
+      DB_MIGRATION_USERNAME: farm_owner
+      DB_MIGRATION_PASSWORD: ${DB_OWNER_PASSWORD:?Set DB_OWNER_PASSWORD in .env}
+      DB_APP_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+    networks: [data]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    <<: *app-image
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/farm_management
+      DB_USERNAME: farm_app
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      FORWARD_HEADERS_STRATEGY: native
+      TRUSTED_PROXY_REGEX: '172[.]30[.]40[.]10'
+    volumes:
+      - app_logs:/app/logs
+    networks: [edge, data]
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, --max-time, '3', 'http://127.0.0.1:8080/actuator/health']
+      interval: 15s
+      timeout: 5s
+      start_period: 60s
+      retries: 5
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?Set APP_DOMAIN in .env}
+      ACME_EMAIL: ${ACME_EMAIL:?Set ACME_EMAIL in .env}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      edge:
+        ipv4_address: 172.30.40.10
+    depends_on:
+      app:
+        condition: service_healthy
+
+networks:
+  edge:
+    ipam:
+      config:
+        - subnet: 172.30.40.0/24
+  data:
+    internal: true
+
+volumes:
+  postgres_data:
+  app_logs:
+  caddy_data:
+  caddy_config:

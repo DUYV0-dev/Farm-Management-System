@@ -28,14 +28,15 @@ public class FarmContextFilter extends OncePerRequestFilter {
                     var auth=SecurityContextHolder.getContext().getAuthentication();
                     if(auth instanceof JwtAuthenticationToken jwt) {
                         int uid=Integer.parseInt(jwt.getToken().getSubject());
-                        String header=req.getHeader("X-Farm-Id");
+                        boolean account=path(req).equals("/api/v1/account") || path(req).startsWith("/api/v1/account/") || path(req).startsWith("/api/v1/store/");
+                        String header=account?null:req.getHeader("X-Farm-Id");
                         Integer farm=null;
                         var memberships=store.memberships(uid);
                         var active=memberships.stream().filter(m->m.status().equals("ACTIVE") && m.farmStatus().equals("ACTIVE")).toList();
                         if(header!=null) {
                             try { farm=Integer.valueOf(header); if(farm<=0) throw new NumberFormatException(); }
                             catch(NumberFormatException ex) { api.write(req,res,422,"VALIDATION_ERROR","Mã trang trại không hợp lệ.");return; }
-                        } else if(active.size()==1) farm=active.getFirst().farmId();
+                        } else if(!account && !path(req).startsWith("/api/v1/auth/") && active.size()==1) farm=active.getFirst().farmId();
                         FarmWorkspaceStore.Membership selected=null;
                         if(farm!=null) {
                             int id=farm;
@@ -50,6 +51,7 @@ public class FarmContextFilter extends OncePerRequestFilter {
                         }
                         SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt.getToken(),authorities));
                         boolean business=!path(req).startsWith("/api/v1/auth/")
+                            && !account
                             && !path(req).startsWith("/api/v1/workspace")
                             && !path(req).matches("/api/v1/(users|roles|permissions)(/.*)?");
                         if(business && (selected==null || !selected.onboardingStatus().equals("READY"))) {

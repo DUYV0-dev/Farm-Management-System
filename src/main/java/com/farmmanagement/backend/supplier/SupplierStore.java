@@ -336,7 +336,8 @@ public class SupplierStore {
     }
 
     public void lockPurchaseOrder(int poId) {
-        db.queryForObject("SELECT po_id FROM public.purchase_order WHERE po_id = ? FOR UPDATE", Integer.class, poId);
+        if(db.queryForList("SELECT po_id FROM public.purchase_order WHERE po_id = ? FOR UPDATE",Integer.class,poId).isEmpty())
+            throw com.farmmanagement.backend.common.DomainException.missing();
     }
 
     public void auditAction(int actor, String entityType, int entityId, String action, String requestId) {

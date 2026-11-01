@@ -1,0 +1,30 @@
+﻿{
+    "status":  "PASS",
+    "sha256":  "9FF0E6C3A6BDA1FBED3F0AC34DDC10FB2A624B3D00753836ACFB7B0F7CEFAF8C",
+    "sourceFingerprint":  "EB4CCC2AA034315618C9060A9087ECAC80119C3217ADEBF8AE5DEF7F6A486359",
+    "browser":  true,
+    "restartPersistence":  true,
+    "backupRestore":  true,
+    "artifactVerified":  true,
+    "tests":  {
+                  "passed":  140,
+                  "skipped":  15,
+                  "errors":  0,
+                  "tests":  155,
+                  "failures":  0
+              },
+    "evidence":  "D:\\Project\\Do an quan ly du an\\Farm-Management-System\\.test-data\\production-429165948f6f4a4f8588432cbc27f6bf",
+    "verifiedAt":  "2026-10-31T00:14:59.3681714+00:00",
+    "ideSourceLaunch":  "PASS: development profile, current UI and installed PostgreSQL 55433 over verified HTTPS",
+    "productionDataCheck":  {
+                                "users":  1,
+                                "migration":  "018",
+                                "farms":  1,
+                                "database":  "farm_management",
+                                "port":  55433,
+                                "existingMigrationFilesChanged":  0,
+                                "tasks":  0,
+                                "loginSessions":  6
+                            },
+    "visualComparison":  "Desktop overview compared with previous screenshot; current layout retained"
+}

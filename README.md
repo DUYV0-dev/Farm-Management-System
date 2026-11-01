@@ -1,56 +1,36 @@
-Farm, Plot, Crop, Material and Warehouse management: [installation and verification](docs/MANAGEMENT.md).
+# AgriManage — Farm Management System
 
-# Farm-Management-System
+Ứng dụng web hiện hành dùng frontend HTML/CSS/JavaScript, backend Java 21 Spring Boot
+và PostgreSQL. Giao diện hiện tại được giữ nguyên; dữ liệu nghiệp vụ được lưu ở PostgreSQL.
 
-Backend xác thực, phân quyền và quản lý người dùng/vai trò: xem [hướng dẫn cài đặt, migration và API](docs/AUTH_USER_ROLE_MANAGEMENT.md).
+- [Cấu trúc và phân chia trách nhiệm](docs/ARCHITECTURE.md)
+- [Chạy IntelliJ, kiểm chứng và phát hành](docs/RUNBOOK.md)
+- [Danh mục script và cách chọn đúng lệnh](scripts/README.md)
+- [Database trên máy hiện tại](docs/DATABASE_CONFIGURATION.md)
+- [Trang admin và cấp quyền bằng PostgreSQL](docs/ADMIN.md)
+- [Chuẩn bị public Internet bằng Docker, HTTPS và reverse proxy](docs/PUBLIC_DEPLOYMENT.md)
 
-# Hệ Thống Quản Lý Tổng Thể Cho Trang Trại Trồng Trọt
+## Chạy như hiện tại
 
-## 1. Giới thiệu dự án (Project Overview)
-Dự án được thực hiện nhằm đáp ứng yêu cầu của môn học Quản lý dự án CNTT (chuyên ngành Công nghệ phần mềm) trong thời gian 8 tuần (từ 07/09/2026 đến 01/11/2026) với nguồn nhân lực gồm 5 sinh viên[cite: 1]. 
-Mục đích là cung cấp một giải pháp phần mềm toàn diện giúp các trang trại trồng trọt số hóa và tối ưu hóa quy trình quản lý hoạt động canh tác, từ khâu quản lý vườn, mùa vụ, vật tư đến theo dõi tiến độ công việc[cite: 1].
+Reload Maven nếu IntelliJ yêu cầu, Run `FarmManagementSystemN02Application.java`.
+Trên máy đã cài, chương trình tự đọc cấu hình IDE riêng, mở https://localhost:8443/
+và dùng database farm_management tại 127.0.0.1:55433. Stop trong IDE chỉ dừng web.
 
-## 2. Kiến trúc và Nền tảng (Architecture & Platforms)
-- Hệ thống bao gồm nền tảng Web và Desktop[cite: 1, 2].
-- Cả hai nền tảng chia sẻ chung một cơ sở dữ liệu và giao tiếp qua REST API[cite: 1, 2].
+## Nguồn chính
 
-## 3. Các tính năng cốt lõi (Core Features)
-Hệ thống hỗ trợ các chức năng quản lý toàn diện bao gồm:
-- **Quản lý danh mục cốt lõi**: Hỗ trợ quản lý người dùng, trang trại/vườn, cây trồng, mùa vụ, công việc canh tác và vật tư[cite: 1, 2].
-- **Tiện ích thao tác**: Cung cấp tính năng tìm kiếm, bộ lọc dữ liệu[cite: 1, 2].
-- **Thống kê & Giám sát**: Hiển thị bảng điều khiển (dashboard) tổng quan[cite: 1, 2].
-- **Báo cáo**: Tích hợp khả năng xuất báo cáo thống kê dưới định dạng PDF và Excel[cite: 1, 2].
+Frontend: frontend/app, frontend/features, frontend/shared. Backend: src/main/java.
+Schema duy nhất: src/main/resources/db/migration/V*.sql. Demo, SQL và hướng dẫn cũ
+nằm ở archive; các công cụ chuyển schema lịch sử nằm ở scripts/legacy.
 
-## 4. Phương pháp luận và Quản lý dự án (Methodology)
-- **Quy trình phát triển**: Áp dụng Agile Scrum trong 07 Sprint, mỗi Sprint kéo dài 01 tuần[cite: 2].
-- **Công cụ quản lý**: Sử dụng Jira để quản lý Epic, backlog, task, bug và tiến độ[cite: 2].
-- **Quản lý mã nguồn**: Sử dụng GitHub để quản lý branch, commit và Pull Request[cite: 2].
-- **Quy trình thực hiện**: Bao gồm khảo sát và phân tích yêu cầu; thiết kế UI, kiến trúc và cơ sở dữ liệu; phát triển Web, Desktop và API; tích hợp; kiểm thử; triển khai demo; hoàn thiện báo cáo và nghiệm thu[cite: 2].
+## Kiểm chứng và tạo release
 
-## 5. Tiêu chí nghiệm thu và Thành công (Project Success Criteria)
-Để dự án được đánh giá thành công, cần đạt các yêu cầu sau:
-- Hoàn thành và nghiệm thu dự án đúng thời hạn vào ngày 01/11/2026 (sau 04 Sprint)[cite: 1].
-- Hệ thống trình diễn thành công toàn bộ các chức năng bắt buộc (Must have)[cite: 1, 2].
-- Chất lượng phần mềm đạt tối thiểu 90% tỷ lệ chạy thành công các test case ưu tiên cao[cite: 1, 2].
-- Ứng dụng không còn tồn đọng lỗi nghiêm trọng (critical bugs) trong các luồng nghiệp vụ demo chính[cite: 1, 2].
-- Chi phí thực hiện kiểm soát trong ngân sách dự kiến là 2.420.000 VNĐ và tuyệt đối không vượt quá ngưỡng tối đa 2.500.000 VNĐ[cite: 1, 2].
+```powershell
+.\scripts\Build-Release.ps1
+```
 
-## 6. Sản phẩm chuyển giao (Deliverables)
-Ngoài mã nguồn hệ thống (Web, Desktop, API) được quản lý và lưu trữ trên GitHub[cite: 1], dự án còn bao gồm:
-- Các tài liệu quản lý dự án (business case, charter, team contract, scope statement, WBS, v.v.)[cite: 1].
-- Tài liệu khảo sát và phân tích yêu cầu phần mềm[cite: 1].
-- Tài liệu thiết kế (Giao diện UI/UX, kiến trúc hệ thống và cơ sở dữ liệu)[cite: 1].
-- Báo cáo kiểm thử và danh sách Test case[cite: 1].
-- Gói triển khai phần mềm (ứng dụng demo chạy trên máy chủ)[cite: 1].
+Lệnh kiểm tra API/giao diện, PostgreSQL, backup/restore và dữ liệu sau restart rồi tạo
+JAR/ZIP có checksum và manifest trong dist. Production phục vụ đúng giao diện đã đóng
+gói trong JAR, không đọc source hoặc tự chọn cấu hình cá nhân trên máy.
 
-## 7. Đội ngũ phát triển (Team Members & Roles)
-| Vai trò | Họ Tên | Trách nhiệm chính |
-| :--- | :--- | :--- |
-| **PM/Scrum Master kiêm Integration** | Nguyễn Huỳnh Thanh Phương | Điều phối, Jira/GitHub, tích hợp[cite: 2] |
-| **BA/PO** | Hồng Thái Vinh | Yêu cầu, backlog, CSDL[cite: 2] |
-| **UI-UX + Frontend** | Trần Văn Lượng | Thiết kế và Frontend Web[cite: 2] |
-| **Backend/API + DevOps** | Võ Hà Duy | API, Desktop[cite: 2] |
-| **Database + QA/Tester** | Phạm Thanh Sơn | Kiểm thử, duyệt data[cite: 2] |
-
----
-*Ghi chú: Mọi thay đổi lớn về phạm vi, tiến độ hoặc kinh phí của dự án phải được ghi nhận trên Jira, phân tích tác động và được cả nhóm thống nhất[cite: 2].*
+Các mô tả dự án và hướng dẫn trước khi chuẩn hóa được giữ tại archive/docs.
+Không dùng hướng dẫn migration thủ công cũ để cài/nâng cấp database hiện hành.

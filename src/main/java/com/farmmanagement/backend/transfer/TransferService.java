@@ -75,6 +75,8 @@ public class TransferService {
         BigDecimal plotArea=BigDecimal.ZERO;
         for(int i=0;i<rows.size();i++) {
             var row=rows.get(i);int number=i+1;
+            if(schema.key().equals("material-usages") && (row.get("warehouseId")==null || row.get("warehouseId").isBlank()))
+                TransferValidator.issue(issues,number,"warehouseId","REQUIRED","Chọn kho xuất để nhật ký sử dụng và tồn kho được cập nhật cùng giao dịch.");
             if("INACTIVE".equals(row.get("status")) && schema.statusPermission()!=null && !has(schema.statusPermission()))
                 TransferValidator.issue(issues,number,"status","FORBIDDEN_FIELD","Bạn chưa có quyền nhập trạng thái INACTIVE.");
             String source=row.get("sourceId");
@@ -137,7 +139,7 @@ public class TransferService {
             case "warehouses" -> inventory.createWarehouse(actor,farm,name,row.get("location"),row.get("capacityText"),requestId).id();
             case "inventory" -> inventory.adjustInventory(actor,integer(row,"warehouseId"),integer(row,"materialId"),row.get("quantity"),requestId).id();
             case "expenses" -> expenses.recordExpense(actor,farm,integer(row,"seasonId"),ExpenseCategory.valueOf(row.get("category")),new BigDecimal(row.get("amount")),date(row,"expenseDate"),description,requestId).id();
-            case "material-usages" -> usages.record(actor,integer(row,"seasonId"),integer(row,"materialId"),UsageType.valueOf(row.get("type")),new BigDecimal(row.get("quantity")),date(row,"applicationDate"),row.get("notes"),requestId).id();
+            case "material-usages" -> usages.recordFromWarehouse(actor,integer(row,"seasonId"),integer(row,"materialId"),UsageType.valueOf(row.get("type")),new BigDecimal(row.get("quantity")),date(row,"applicationDate"),row.get("notes"),integer(row,"warehouseId"),requestId).id();
             default -> throw new IllegalArgumentException();
         };
         if(schema.statusPermission()!=null && "INACTIVE".equals(row.get("status"))) {

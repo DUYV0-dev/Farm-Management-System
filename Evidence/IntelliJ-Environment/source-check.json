@@ -1,0 +1,9 @@
+﻿{
+    "status":  "PASS",
+    "configuration":  "application.properties",
+    "database":  "127.0.0.1:55433/farm_management",
+    "sourceHttps":  true,
+    "profilesRequired":  false,
+    "businessWrites":  false,
+    "checkedAt":  "2026-10-31T04:20:36.5403176+00:00"
+}

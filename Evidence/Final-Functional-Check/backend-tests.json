@@ -1,0 +1,956 @@
+[
+  {
+    "suite": "AuthSecurityTests",
+    "test": "wrongIssuerRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "AuthSecurityTests",
+    "test": "weakSigningKeyRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "AuthSecurityTests",
+    "test": "passwordUsesArgon2idAndUniqueSalt",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "AuthSecurityTests",
+    "test": "expiredTokenRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "AuthSecurityTests",
+    "test": "wrongSignatureRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "AuthSecurityTests",
+    "test": "noSystemRoleCannotLogin",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "AuthSecurityTests",
+    "test": "inactiveUserCannotLoginEvenWithCorrectPassword",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "AuthSecurityTests",
+    "test": "inconsistentSessionRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "AuthSecurityTests",
+    "test": "valid24HourTokenAccepted",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "AuthSecurityTests",
+    "test": "wrongAudienceRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "LoginThrottleTests",
+    "test": "isolatesClientsAndDoesNotThrottleBusinessRequests",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "LoginThrottleTests",
+    "test": "rejectsRepeatedAuthenticationButDoesNotTrustSpoofedForwardedAddresses",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "allMutationsDenyOrdinaryUsers(String, String, String)[1]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "allMutationsDenyOrdinaryUsers(String, String, String)[2]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "allMutationsDenyOrdinaryUsers(String, String, String)[3]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "allMutationsDenyOrdinaryUsers(String, String, String)[4]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "allMutationsDenyOrdinaryUsers(String, String, String)[5]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "allMutationsDenyOrdinaryUsers(String, String, String)[6]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "allMutationsDenyOrdinaryUsers(String, String, String)[7]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "allMutationsDenyOrdinaryUsers(String, String, String)[8]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "protectedReadsRequireAuthenticationAndExactPermission(String, String)[1]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "protectedReadsRequireAuthenticationAndExactPermission(String, String)[2]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "protectedReadsRequireAuthenticationAndExactPermission(String, String)[3]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "protectedReadsRequireAuthenticationAndExactPermission(String, String)[4]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "protectedReadsRequireAuthenticationAndExactPermission(String, String)[5]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "farmRoleIdsCannotBeAssignedAsSystemRoles",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "passwordChangeEndpointWorksWithoutAdministrativePermission",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "roleNameAloneDoesNotBypassPermissionValidation",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "accountDisabledWhileWaitingForAdministrationLockIsDenied",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "permissionRevokedWhileWaitingForAdministrationLockIsDenied",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "protectedFragmentsCannotBeFetchedAsStaticResources",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "createUserReturns201AndLocation",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "permissionsAreReadAgainForSameToken",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "databaseFailureDuringAuthenticationIs503",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "revokedSessionRejectedEvenWithPermission",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "duplicateDataIs409",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "logoutRevokesOnlyCurrentSession",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "invalidPaginationAndIdAre422",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "assigningRolesUsesAuthenticatedActorAndAuditId",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "missingUserIs404",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementApiTests",
+    "test": "bodyCannotInjectRolesOrActor",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "activationDoesNotRestoreSessions",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "deactivationRevokesSessionsAndRecordsAudit",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "rejectsUnknownPermissions",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "cannotDeactivateSelf",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "cannotChangeAdminPermissions",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "weakPasswordDoesNotWrite",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "delegatedManagerCannotGrantHigherPermissions",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "resetHashesPasswordAndUsesRevokingStoreOperation",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "emptyRolesAndUnboundedPaginationRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "createHashesPasswordAndAssignsDefaultRoleOnly",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "cannotRemoveLastAdministratorRole",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "cannotDeactivateLastAdministrator",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "cannotElevateOwnRolePermissions",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "delegatedManagerCannotResetAdministratorPassword",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementServiceTests",
+    "test": "delegatedManagerCannotAssignAdmin",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "PasswordHandlingTests",
+    "test": "wrongCurrentPasswordCannotChangePassword",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "PasswordHandlingTests",
+    "test": "publicUserNeverContainsPasswordHash",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "PasswordHandlingTests",
+    "test": "reusedAndWeakPasswordsRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "PasswordHandlingTests",
+    "test": "changingPasswordChecksCurrentPasswordAndHashesNewOne",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ArchitectureTests",
+    "test": "shippedFrontendDoesNotUseBrowserStorageForBusinessData",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ArchitectureTests",
+    "test": "demoModulesAreOutsideRuntimeSourceTree",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ArchitectureTests",
+    "test": "controllersAndServicesDoNotExecuteSql",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DatabaseStartupCheckTests",
+    "test": "authenticationErrorsNeverExposeDriverSecrets",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DatabaseStartupCheckTests",
+    "test": "connectionCheckIsReadOnlyAndRequiresTheCurrentProductionMigration",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DatabaseStartupCheckTests",
+    "test": "missingDatabaseDoesNotChooseTheLegacyPort",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DatabaseStartupCheckTests",
+    "test": "connectionRefusedAndMissingDatabaseHaveActionableMessages",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DatabaseStartupCheckTests",
+    "test": "selectedDatabaseWinsAndEmptyTestPasswordIsAllowed",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DatabaseStartupCheckTests",
+    "test": "developmentDatabaseCanStillUseTheSupportedLegacySchema",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DatabaseStartupCheckTests",
+    "test": "connectionTargetHidesUrlCredentialsAndParameters",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DatabaseStartupCheckTests",
+    "test": "productionWithoutMigration018StopsBeforeApplicationStarts",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "WindowsUserEnvironmentTests",
+    "test": "sourceRunRecoversJwtAndTlsFromAnUpdatedWindowsUserEnvironment",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "WindowsUserEnvironmentTests",
+    "test": "packagedApplicationAndOtherPlatformsNeverReadThePersonalWindowsEnvironment",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "WindowsUserEnvironmentTests",
+    "test": "explicitProcessJvmAndSpringSettingsRetainPrecedence",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DashboardApiTests",
+    "test": "snapshotCreationPersistencePaginationAndExportAllRows",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DashboardApiTests",
+    "test": "missingTokenRevokedSessionAndForeignFarmDenied",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DashboardApiTests",
+    "test": "currentInventoryDoesNotPretendToBeHistorical",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DashboardApiTests",
+    "test": "withdrawnMembershipAndExportPermissionBlockSavedFiles",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DashboardApiTests",
+    "test": "missingSourcesDoNotBecomeZeroAndExpensesHaveSeparatePermission",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DashboardApiTests",
+    "test": "oversizedSnapshotIsNotSilentlyTruncated",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DashboardApiTests",
+    "test": "filterIdsCheckedAgainstFarm",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DashboardApiTests",
+    "test": "emptyProductionIsAvailableAndHasNoInventedTotals",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DashboardApiTests",
+    "test": "sourceErrorsAreNotZeroSuccess",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DashboardApiTests",
+    "test": "invalidDatesRepeatedAndUnsupportedFiltersRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "DashboardApiTests",
+    "test": "expiredAndDifferentOwnerReportsCannotBeReadOrExported",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ReportExportTests",
+    "test": "missingFontFailsExplicitly",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ReportExportTests",
+    "test": "spreadsheetKeepsNumbersDatesVietnameseAndUntrustedTextAsText",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ReportExportTests",
+    "test": "pdfHasVietnameseAllRowsRepeatedHeadersAndPageNumbers",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ReportExportTests",
+    "test": "valuesBeyondExcelPrecisionAlsoHaveExactText",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmExpenseUiApiTests",
+    "test": "optionsRequireExpensePermissionAndSupportCreateOnlyAccounts",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmExpenseUiApiTests",
+    "test": "historyAndSummaryPreserveLargeDecimalAmountsAndPassSeasonFilter",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmExpenseUiApiTests",
+    "test": "createPermissionDoesNotExposeExpenseHistory",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmSeasonApiTests",
+    "test": "createSeasonLegacyPayloadSucceeds",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmSeasonApiTests",
+    "test": "createSeasonInvalidDatesThrowsBadRequest",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmSeasonApiTests",
+    "test": "createSeasonFullPayloadSucceeds",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmSeasonApiTests",
+    "test": "updateSeasonFullPayloadSucceeds",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmSeasonApiTests",
+    "test": "deleteSeasonSucceeds",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmSeasonApiTests",
+    "test": "listSeasonsReturnsData",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmManagementSystemN02ApplicationTests",
+    "test": "contextLoads",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "harvestCreatesSaleableLotAndTraceabilityUsesActualRecords",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "inventoryMovementsAreAtomicIdempotentAndTenantScoped",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "registrationIsAtomicAndCannotGrantAdministrativeRoles",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "operationalApisRejectAnonymousRequestsAndDemoWrites",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "publicStoreOrdersArePrivateTenantScopedAndStockDeductsOnlyOnceOnAcceptance",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "farmIsolationAndJobRevocationTakeEffectOnExistingTokens",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "currentFrontendIsAvailableAndHistoricalAssetsAreBlocked",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "registrationStaffSetupAndPersistence",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "operationalTasksPersistValidateRelationshipsAndKeepHistory",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "systemAdministratorHasSeparateAccountManagement",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "dataTransferValidatesBeforeWritingAndExportsOnlyTheSelectedFarm",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "accountRegistrationHasNoFarmAndOwnersCanManageMultipleFarmsWithoutStaff",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "FarmWorkspaceIntegrationTests",
+    "test": "simultaneousStoreRetriesAndCompetingAcceptancesCannotOversell",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "boundariesAndMultipleHarvestsOnSameDayAreAllowed",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "crossFarmDoesNotDiscloseOrWrite",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "filteredPaginatedHistoryAndEmptyResults",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "ownerCannotCreateEvenWithGlobalPermission",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "unknownFieldsAndLongQualityRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "missingTokenAndPermissionDenied",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "outsideSeasonRejected(String)[1]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "outsideSeasonRejected(String)[2]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "metadataLockedOnceHistoryExists",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "createPersistsExactQuantityQualityActorAndAudit",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "invalidQuantitiesDoNotWrite(String)[1]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "invalidQuantitiesDoNotWrite(String)[2]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "invalidQuantitiesDoNotWrite(String)[3]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "invalidQuantitiesDoNotWrite(String)[4]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "invalidQuantitiesDoNotWrite(String)[5]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "closedUnconfiguredAndFutureSeasonRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "HarvestApiTests",
+    "test": "seasonFromOtherFarmRejected",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "ManagementIntegrationTests",
+    "test": "everyModuleRequiresExactPermissionsAndRevocationIsImmediate",
+    "status": "FAIL",
+    "message": "Response status expected:<200> but was:<403>"
+  },
+  {
+    "suite": "ManagementIntegrationTests",
+    "test": "concurrentInventoryUpsertsKeepOneRow",
+    "status": "FAIL",
+    "message": "Response status expected:<201> but was:<403>"
+  },
+  {
+    "suite": "ManagementIntegrationTests",
+    "test": "concurrentPlotWritesCannotOverbookFarm",
+    "status": "FAIL",
+    "message": "Response status expected:<201> but was:<403>"
+  },
+  {
+    "suite": "ManagementIntegrationTests",
+    "test": "packagedUiAndProtectedFarmRouteAreAvailable",
+    "status": "FAIL",
+    "message": "Status expected:<200> but was:<404>"
+  },
+  {
+    "suite": "ManagementIntegrationTests",
+    "test": "farmPlotCropLifecyclePersistsAndEnforcesRelationships",
+    "status": "FAIL",
+    "message": "Response status expected:<201> but was:<403>"
+  },
+  {
+    "suite": "ManagementIntegrationTests",
+    "test": "updatesDuplicatesAndInputValidation",
+    "status": "FAIL",
+    "message": "Response status expected:<201> but was:<403>"
+  },
+  {
+    "suite": "ManagementIntegrationTests",
+    "test": "dashboardAggregatesConfirmedUnitsAndExportsSameStoredSnapshot",
+    "status": "FAIL",
+    "message": "Response status expected:<201> but was:<403>"
+  },
+  {
+    "suite": "ManagementIntegrationTests",
+    "test": "inventoryLifecycleIsAtomicAndBlocksInvalidDeactivation",
+    "status": "FAIL",
+    "message": "Response status expected:<201> but was:<403>"
+  },
+  {
+    "suite": "ManagementIntegrationTests",
+    "test": "harvestPersistsAndLocksSeasonMetadata",
+    "status": "FAIL",
+    "message": "Response status expected:<201> but was:<403>"
+  },
+  {
+    "suite": "RbacIntegrationTests",
+    "test": "delegatedManagerCannotElevateOrModifyAdministrator",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "RbacIntegrationTests",
+    "test": "roleLifecycleUpdatesExistingTokenAndRecordsAudit",
+    "status": "FAIL",
+    "message": "GET farms ==> expected: <200> but was: <403>"
+  },
+  {
+    "suite": "RbacIntegrationTests",
+    "test": "farmScopeCannotSupplySystemPermissions",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "RbacIntegrationTests",
+    "test": "queuedWriteRechecksAuthorizationAfterConcurrentRevocation(String)[1]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "RbacIntegrationTests",
+    "test": "queuedWriteRechecksAuthorizationAfterConcurrentRevocation(String)[2]",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "RbacIntegrationTests",
+    "test": "deactivationAndPasswordResetPermanentlyRevokeOldSessions",
+    "status": "FAIL",
+    "message": "GET farms ==> expected: <200> but was: <403>"
+  },
+  {
+    "suite": "SalesAndOrderApiTests",
+    "test": "cancelConfirmedSalesOrderRestoresProductStock",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SalesAndOrderApiTests",
+    "test": "createSalesOrderConfirmedDeductsProductAvailability",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SalesAndOrderApiTests",
+    "test": "createSalesOrderConfirmedWithInsufficientStockThrowsConflict",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SalesAndOrderApiTests",
+    "test": "createCustomerSuccessAndAudit",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SalesAndOrderApiTests",
+    "test": "listCustomersReturnsPagedItems",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SalesAndOrderApiTests",
+    "test": "cannotChangeDeliveredOrderThrowsConflict",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SalesAndOrderApiTests",
+    "test": "createSalesOrderPendingDoesNotDeductStock",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SupplierAndPurchaseApiTests",
+    "test": "deactivatingSupplierWithOpenOrdersThrowsConflict",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SupplierAndPurchaseApiTests",
+    "test": "unauthenticatedRequestReturns401",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SupplierAndPurchaseApiTests",
+    "test": "receiveAlreadyReceivedOrderThrowsConflict",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SupplierAndPurchaseApiTests",
+    "test": "createPurchaseOrderCalculatesTotalAmountAndSavesItems",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SupplierAndPurchaseApiTests",
+    "test": "createSupplierInvalidEmailThrows422",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SupplierAndPurchaseApiTests",
+    "test": "createSupplierSuccessAndAudit",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SupplierAndPurchaseApiTests",
+    "test": "listSuppliersReturnsPagedItems",
+    "status": "PASS",
+    "message": ""
+  },
+  {
+    "suite": "SupplierAndPurchaseApiTests",
+    "test": "receiveMaterialsUpdatesWarehouseInventoryAndMarksReceived",
+    "status": "PASS",
+    "message": ""
+  }
+]

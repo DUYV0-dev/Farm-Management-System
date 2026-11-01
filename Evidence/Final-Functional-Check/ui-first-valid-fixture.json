@@ -1,0 +1,79 @@
+{
+  "status": "FAIL",
+  "results": [
+    {
+      "name": "Fixture/API: tai khoan, trang trai, khu dat, cay trong, mua vu, nhom vat tu va kho",
+      "status": "PASS"
+    },
+    {
+      "name": "UI: nhap kho va doc lai so du",
+      "status": "PASS"
+    },
+    {
+      "name": "UI: nha cung cap, tao don mua, dat hang va nhan vao kho",
+      "status": "PASS"
+    },
+    {
+      "name": "UI: su dung phan bon tru kho va hien thi nhat ky",
+      "status": "PASS"
+    },
+    {
+      "name": "UI: nhat ky sinh truong va san luong du kien",
+      "status": "PASS"
+    },
+    {
+      "name": "UI: thu hoach tao lo nong san va truy xuat nguon goc",
+      "status": "PASS"
+    },
+    {
+      "name": "UI: ghi chi phi va doi chieu tong tien",
+      "status": "PASS"
+    },
+    {
+      "name": "UI: khach hang va don ban truc tiep, giao hang, ghi doanh thu",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'SHIPPED'\n- 'DELIVERED'\n"
+    },
+    {
+      "name": "UI: bao cao du lieu that, xuat PDF va Excel",
+      "status": "FAIL",
+      "error": "Both report downloads must finish"
+    },
+    {
+      "name": "UI/API: nhap va xuat du lieu, kiem tra truoc khi ghi",
+      "status": "PASS"
+    },
+    {
+      "name": "API: cach ly trang trai va gioi han quyen nhan vien",
+      "status": "FAIL",
+      "error": "Error: Dữ liệu bị trùng hoặc vi phạm ràng buộc. Kiểm tra tên và bản ghi liên quan. Mã: b8b286a9-ff62-4a25-98f1-65277833bb88\n    at request (http://127.0.0.1:18080/app.js:12:631)"
+    },
+    {
+      "name": "UI: cac trang tai khoan va bo cuc dien thoai",
+      "status": "PASS"
+    },
+    {
+      "name": "UI: doi mat khau, thu hoi phien va dang nhap lai",
+      "status": "PASS"
+    },
+    {
+      "name": "UI: quan tri he thong tao nguoi dung va vai tro",
+      "status": "PASS"
+    },
+    {
+      "name": "API: gan quyen, thu hoi quyen, reset mat khau va vo hieu hoa tai khoan",
+      "status": "PASS"
+    },
+    {
+      "name": "Browser: khong co loi JavaScript trong cac thao tac",
+      "status": "FAIL",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     error: 'Unexpected browser dialog: Đơn mua hàng đã nhận vật tư vào kho, không thể thay đổi trạng thái. Mã: 8424d811-a7a5-42b9-8609-7f59bab852a1',\n+     stage: 'UI: nha cung cap, tao don mua, dat hang va nhan vao kho'\n+   }\n+ ]\n- []\n"
+    }
+  ],
+  "errors": [
+    {
+      "stage": "UI: nha cung cap, tao don mua, dat hang va nhan vao kho",
+      "error": "Unexpected browser dialog: Đơn mua hàng đã nhận vật tư vào kho, không thể thay đổi trạng thái. Mã: 8424d811-a7a5-42b9-8609-7f59bab852a1"
+    }
+  ]
+}

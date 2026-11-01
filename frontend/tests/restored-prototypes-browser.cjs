@@ -13,8 +13,8 @@ const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  };
  const send=(method,params={})=>new Promise((resolve,reject)=>{const id=++sequence;pending.set(id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));});
  const evaluate=async expression=>{const result=await send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(result.exceptionDetails)throw Error(result.exceptionDetails.exception?.description||result.exceptionDetails.text);return result.result.value;};
- async function until(expression){for(let i=0;i<150;i++){if(await evaluate(expression))return;await delay(100);}throw Error('Timeout: '+expression+'; '+JSON.stringify(errors)+'; '+await evaluate("document.getElementById('prototypeFrame').contentDocument.body.textContent.slice(-1800)"));}
- const original="document.getElementById('prototypeFrame').contentDocument";
+ async function until(expression){for(let i=0;i<150;i++){if(await evaluate(expression))return;await delay(100);}throw Error('Timeout: '+expression+'; '+JSON.stringify(errors)+'; '+await evaluate("document.getElementById('featureFrame').contentDocument.body.textContent.slice(-1800)"));}
+ const original="document.getElementById('featureFrame').contentDocument";
  const feature=original+".querySelector('main iframe')?.contentDocument";
  async function form(expression,values){await evaluate(`(()=>{const form=${expression};for(const [id,value] of Object.entries(${JSON.stringify(values)}))form.ownerDocument.getElementById(id).value=value;form.requestSubmit();})()`);}
  await send('Runtime.enable');await send('Page.enable');await send('Network.enable');
@@ -70,7 +70,7 @@ const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  await until(`${original}?.getElementById('cropSeasonChart') && ${original}.readyState==='complete'`);
  await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
  await delay(250);
- assert.equal(await evaluate(`${original}.documentElement.scrollWidth<=document.getElementById('prototypeFrame').clientWidth`),true,'Original UI fits mobile');
+ assert.equal(await evaluate(`${original}.documentElement.scrollWidth<=document.getElementById('featureFrame').clientWidth`),true,'Original UI fits mobile');
  const mobile=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync('target/original-prototypes-mobile.png',Buffer.from(mobile.data,'base64'));
  await evaluate('ManagementApi.logout()');
  await until(`${original}?.getElementById('loginEmail')`);

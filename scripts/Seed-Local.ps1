@@ -1,5 +1,6 @@
 ﻿$ErrorActionPreference = "Stop"
 Set-Location (Split-Path $PSScriptRoot -Parent)
+if (-not $env:DB_URL) { throw 'Seed chi dung cho database phat trien duoc chon ro bang DB_URL. Ban cai chinh tao tai khoan qua giao dien dang ky.' }
 . (Join-Path $PSScriptRoot "Configure-Local.ps1")
 $env:DB_USERNAME = "postgres"
 $dbSecret = Read-Host "Mat khau PostgreSQL cua postgres (chi de seed)" -AsSecureString

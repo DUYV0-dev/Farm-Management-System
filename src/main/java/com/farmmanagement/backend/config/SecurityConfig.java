@@ -78,27 +78,29 @@ public class SecurityConfig {
 
     @Bean SecurityFilterChain security(HttpSecurity http, AuthStore store, Api api,
             ObjectProvider<FarmWorkspaceStore> workspacesProvider,
-            ObjectProvider<TransactionTemplate> txProvider) throws Exception {
+            ObjectProvider<TransactionTemplate> txProvider,
+            @Value("${app.production:false}") boolean production) throws Exception {
         http.csrf(csrf->csrf.disable()) // Only explicit Authorization bearer; no auth cookies, no HTTP Basic.
             .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .requestCache(c->c.disable())
             .authorizeHttpRequests(a->a
-                .requestMatchers(HttpMethod.GET,"/","/index.html","/index-shell.html","/app.js","/overview-charts.js","/style.css","/features/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/portal.css","/shop","/shop/","/shop/**","/api/v1/store/products","/api/v1/store/orders/**").permitAll()
+                .requestMatchers(HttpMethod.POST,"/api/v1/store/orders").permitAll()
+                .requestMatchers("/api/v1/account","/api/v1/account/**").authenticated()
+                .requestMatchers("/ui/prototypes/**","/frontend/prototypes/**","/ui/features/traceability/**").denyAll()
+                .requestMatchers(HttpMethod.GET,"/","/admin","/admin/","/index.html","/index-shell.html","/app.js","/marketplace.js","/style.css","/features/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/farm.html","/material.html","/expenses.html","/material-usage.html","/workers.html","/dashboard.html","/login.html","/actuator/health",
                     "/activities.html","/schedule.html","/reports.html","/notifications.html").permitAll()
                 .requestMatchers(HttpMethod.GET,"/ui/farm.html","/ui/material.html","/ui/material-usage.html","/ui/expenses.html","/ui/js/**","/ui/css/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/ui/advanced-dashboard.html","/ui/harvest.html","/ui/purchase.html","/ui/sales.html","/ui/traceability.html",
                     "/harvest.html","/advanced-dashboard.html","/purchase.html","/sales.html","/traceability.html").permitAll()
-                .requestMatchers(HttpMethod.GET,"/ui/features/**","/ui/shared/**","/ui/prototypes/*.html","/ui/prototypes/application.css","/ui/prototypes/entry.js","/ui/prototypes/bridge.js","/ui/prototypes/host.css","/ui/prototypes/charts.js","/ui/prototypes/js/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/ui/features/**","/ui/shared/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/frontend/*.html","/frontend/js/**","/frontend/css/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/login","/api/v1/auth/register").permitAll()
                 .requestMatchers("/api/v1/workspace", "/api/v1/workspace/**").authenticated()
                 .requestMatchers("/api/v1/data-transfer", "/api/v1/data-transfer/**").authenticated()
-                .requestMatchers(HttpMethod.GET,"/api/v1/traceability","/api/v1/traceability/**","/api/v1/activities","/api/v1/activities/**").permitAll()
-                .requestMatchers(HttpMethod.POST,"/api/v1/traceability","/api/v1/traceability/**","/api/v1/activities","/api/v1/activities/**").permitAll()
-                .requestMatchers(HttpMethod.PUT,"/api/v1/activities/**").permitAll()
-                .requestMatchers(HttpMethod.DELETE,"/api/v1/traceability/**","/api/v1/activities/**").authenticated()
-                .requestMatchers("/api/v1/notifications", "/api/v1/notifications/**").authenticated()
+                .requestMatchers("/api/v1/operations/**", "/api/v1/traceability", "/api/v1/traceability/**",
+                    "/api/v1/activities", "/api/v1/activities/**", "/api/v1/notifications", "/api/v1/notifications/**").authenticated()
                 .requestMatchers(HttpMethod.GET,"/api/v1/auth/me").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/logout").authenticated()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/password").authenticated()
@@ -138,6 +140,10 @@ public class SecurityConfig {
                 })));
         FarmWorkspaceStore workspaces = workspacesProvider.getIfAvailable();
         TransactionTemplate tx = txProvider.getIfAvailable();
+        if (production && (workspaces == null || tx == null)) {
+            throw new IllegalStateException("Production requires the farm context filter and transaction manager");
+        }
+        if(production) http.addFilterBefore(new com.farmmanagement.backend.auth.LoginThrottle(api,30,java.time.Clock.systemUTC()),BearerTokenAuthenticationFilter.class);
         if (workspaces != null && tx != null) {
             http.addFilterAfter(new FarmContextFilter(workspaces, tx, api), BearerTokenAuthenticationFilter.class);
         }

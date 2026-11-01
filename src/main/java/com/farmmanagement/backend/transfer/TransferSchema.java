@@ -65,7 +65,7 @@ public final class TransferSchema {
             choice("category","category",null,"SEEDS","FERTILIZER","PESTICIDES","LABOR","EQUIPMENT","IRRIGATION","TRANSPORT","OTHER"),
             decimal("amount","amount","0.01","9999999999999999.99",2),date("expenseDate","expense_date",true),description()),
         dataset("material-usages","Sử dụng vật tư","material_usage","usage_id","EXISTS(SELECT 1 FROM public.crop_season s JOIN public.plot p USING(plot_id) WHERE s.season_id=t.season_id AND p.farm_id=?)",
-            "usage:read","usage:create",null,"append",reference("seasonId","season_id"),reference("materialId","material_id"),
+            "usage:read","usage:create",null,"append",reference("seasonId","season_id"),reference("materialId","material_id"),integer("warehouseId","warehouse_id",false,Integer.MAX_VALUE),
             choice("type","usage_type",null,"FERTILIZER","PESTICIDE"),decimal("quantity","quantity","0.001","999999999999.999",3),
             date("applicationDate","application_date",true),text("notes","notes",false,1000))
     );

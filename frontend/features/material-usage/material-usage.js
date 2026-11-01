@@ -13,6 +13,7 @@
     };
     let options = { seasons: [], materials: [], types: [] }, page = 0, total = 0, rows = [], busy = false, saving = false;
     let activeFilters = '';
+    let requestKey=crypto.randomUUID();
     function error(id, message) { $(id).textContent = message; $(id).hidden = false; }
     function seasonFilters() {
         const selected = $('seasonFilter').value, farm = $('farmFilter').value;
@@ -21,6 +22,7 @@
         if ([...$('seasonFilter').options].some(item => item.value === selected)) $('seasonFilter').value = selected;
     }
     function populateOptions() {
+        $('usageWarehouse').innerHTML=option('', 'Chọn kho xuất')+(options.warehouses||[]).map(w=>option(w.id,w.name)).join('');
         const selected = ['farmFilter', 'seasonFilter', 'materialFilter', 'typeFilter'].map(id => $(id).value);
         const farms = [...new Map(options.seasons.map(season => [season.farmId, season.farmName])).entries()];
         $('farmFilter').innerHTML = option('', 'Tất cả trang trại') + farms.map(([id,name]) => option(id,name)).join('');
@@ -106,7 +108,7 @@
         if (busy || saving) return;
         $('addUsage').disabled = true;
         try {
-            await refreshOptions(); $('usageForm').reset(); $('formError').hidden = true;
+            await refreshOptions(); $('usageForm').reset(); $('formError').hidden = true;requestKey=crypto.randomUUID();
             $('usageDate').value = $('usageDate').max = today(); updateUnit();
             const available = options.seasons.some(item => item.available) && options.materials.some(item => item.available);
             $('saveUsage').disabled = !available;
@@ -126,7 +128,8 @@
         const fields = new FormData($('usageForm'));
         try {
             if (fields.get('applicationDate') > today()) throw new Error('Ngày sử dụng không được ở tương lai.');
-            await api.write('material-usages', 'POST', {
+            await api.write('operations/usage', 'POST', {
+                warehouseId:Number(fields.get('warehouseId')),requestKey,
                 seasonId: Number(fields.get('seasonId')), materialId: Number(fields.get('materialId')),
                 type: fields.get('type'), quantity: fields.get('quantity'),
                 applicationDate: fields.get('applicationDate'), notes: fields.get('notes').trim() || null

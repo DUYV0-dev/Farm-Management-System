@@ -240,7 +240,8 @@ public class SalesOrderStore {
     }
 
     public void lockSalesOrder(int soId) {
-        db.queryForObject("SELECT so_id FROM public.sales_order WHERE so_id = ? FOR UPDATE", Integer.class, soId);
+        if(db.queryForList("SELECT so_id FROM public.sales_order WHERE so_id = ? FOR UPDATE",Integer.class,soId).isEmpty())
+            throw com.farmmanagement.backend.common.DomainException.missing();
     }
 
     public void auditAction(int actor, String entityType, int entityId, String action, String requestId) {

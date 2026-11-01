@@ -41,7 +41,7 @@ public class DashboardService {
     }
     @PreAuthorize("hasAuthority('dashboard:read')")
     public Map<String,Object> tasks(int actor,int farm,Filters f) {
-        filters(actor,farm,f);var m=metadata(farm,f,"UNAVAILABLE");m.put("reason","Chưa có nguồn FARMING_TASK xác nhận, liên kết mùa vụ và trang trại. Hoạt động demo trong bộ nhớ không được dùng cho KPI.");return m;
+        filters(actor,farm,f);var m=metadata(farm,f,"AVAILABLE");m.put("byStatus",store.taskSummary(farm,f));return m;
     }
     @PreAuthorize("hasAuthority('dashboard:read') and hasAuthority('warehouses:read')")
     public Map<String,Object> inventory(int actor,int farm,LocalDate from,LocalDate to,Integer warehouse,Integer material) {
@@ -57,7 +57,7 @@ public class DashboardService {
         if(warehouse!=null && (warehouse<=0 || !store.warehouseBelongs(farm,warehouse))) throw DomainException.missing();
         if(material!=null && material<=0) throw new IllegalArgumentException();
         var f=new LinkedHashMap<String,Object>();f.put("fromDate",from);f.put("toDate",to);f.put("warehouseId",warehouse);f.put("materialId",material);
-        var m=metadata(farm,f,"UNAVAILABLE");m.put("currency","VND");m.put("purchaseValue",null);m.put("productionExpense",null);m.put("reason","Chưa có đơn mua vật tư xác nhận. Giá trị đơn mua không đồng nghĩa tổng chi phí sản xuất hoặc tiền đã thanh toán.");return m;
+        var m=metadata(farm,f,"AVAILABLE");m.put("currency","VND");m.putAll(store.expenseSummary(farm,from,to));m.put("rule","Chi phí sản xuất và giá trị mua hàng đã nhận được trình bày riêng; không cộng hai nguồn để tránh tính trùng.");return m;
     }
     static void limit(int rows) { if(rows>MAX_ROWS) throw new DomainException(413,"REPORT_TOO_LARGE","Dữ liệu vượt 9.999 dòng; hãy thu hẹp khoảng ngày hoặc bộ lọc."); }
     @PreAuthorize("hasAuthority('reports:read') and hasAuthority('harvests:read') and hasAuthority('crops:read')")
