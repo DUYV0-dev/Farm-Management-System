@@ -23,7 +23,9 @@ public class WorkspaceDatabaseCheck implements ApplicationRunner {
               AND pg_has_role(current_user,c.relowner,'USAGE'))
             FROM pg_roles r WHERE r.rolname=current_user
             """,Boolean.class));
-        if(bypass) throw new IllegalStateException("Chạy ứng dụng bằng DB_USERNAME=farm_app, không dùng tài khoản chủ database hoặc tài khoản bỏ qua row security.");
+        boolean allowOwner = "true".equalsIgnoreCase(System.getenv("ALLOW_OWNER_CONNECTION"))
+            || environment.getProperty("app.allow-owner-connection", Boolean.class, false);
+        if(bypass && !allowOwner) throw new IllegalStateException("Chạy ứng dụng bằng DB_USERNAME=farm_app, không dùng tài khoản chủ database hoặc tài khoản bỏ qua row security.");
         boolean protectedTables=Boolean.TRUE.equals(db.queryForObject("""
             SELECT count(*)=8 AND bool_and(c.relrowsecurity)
             FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace

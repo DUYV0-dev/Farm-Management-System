@@ -50,14 +50,19 @@ fi
 
 # ----------------------------------------------------------
 # 3. App DB credentials
-#    - If DB_APP_PASSWORD is set: migration will ALTER ROLE farm_app (needs superuser)
-#    - If not set (Render): skip ALTER ROLE, app connects as the Render DB user directly
+#    Spring Boot MUST connect as farm_app to enforce Row-Level Security (RLS).
+#    If DB_APP_PASSWORD is set, migration sets farm_app password and app uses it.
+#    If DB_APP_PASSWORD is not set, generate a secure 32-char password automatically.
 # ----------------------------------------------------------
 if [ -z "$DB_APP_PASSWORD" ]; then
-  echo "[INFO] DB_APP_PASSWORD not set - app will connect as migration user: $DB_MIGRATION_USERNAME"
-  export DB_USERNAME="${DB_USERNAME:-$DB_MIGRATION_USERNAME}"
-  export DB_PASSWORD="${DB_PASSWORD:-$DB_MIGRATION_PASSWORD}"
+  echo "[INFO] DB_APP_PASSWORD not set - generating a random secure password for farm_app..."
+  DB_APP_PASSWORD=$(head -c 32 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 32)
+  export DB_APP_PASSWORD
 fi
+
+export DB_USERNAME="${DB_USERNAME:-farm_app}"
+export DB_PASSWORD="${DB_PASSWORD:-$DB_APP_PASSWORD}"
+echo "[INFO] App runtime will connect as: $DB_USERNAME"
 
 # ----------------------------------------------------------
 # 3. Runtime settings
