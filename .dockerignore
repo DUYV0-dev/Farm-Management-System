@@ -1,7 +1,24 @@
-**
-!target/
-!target/backend-0.0.1-SNAPSHOT.jar
-!backend.jar
-!deploy/
-!deploy/linux/
-!deploy/linux/Dockerfile
+# Exclude heavy/unnecessary folders from Docker build context
+# (Multi-stage build needs: .mvn/, mvnw, pom.xml, src/, frontend/, scripts/)
+
+target/
+dist/
+.test-data/
+.git/
+.idea/
+.vscode/
+logs/
+archive/
+Evidence/
+docs/
+config/
+.build-cache/
+__pycache__/
+*.py[cod]
+*.p12
+*.pfx
+*.pem
+*.key
+.env
+.env.*
+.mvn/wrapper/maven-wrapper.jar
