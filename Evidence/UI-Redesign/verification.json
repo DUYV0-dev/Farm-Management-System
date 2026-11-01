@@ -1,0 +1,18 @@
+﻿{
+    "status":  "PASS",
+    "sha256":  "9A2B6D1CFB9EA17BA2148D021A9D4E0F0E2032D0793B85F1B21B55A97404A088",
+    "sourceFingerprint":  "4EDF7B05FBFFA5CD8198F83C2DC63460713DF51B50626811AC85A04EDEEDAC18",
+    "browser":  true,
+    "restartPersistence":  true,
+    "backupRestore":  true,
+    "artifactVerified":  true,
+    "tests":  {
+                  "passed":  140,
+                  "skipped":  15,
+                  "errors":  0,
+                  "tests":  155,
+                  "failures":  0
+              },
+    "evidence":  "D:\\Project\\Do an quan ly du an\\Farm-Management-System\\.test-data\\production-2c1a3a35174a4d3fa97924751720e5d6",
+    "verifiedAt":  "2026-10-31T01:50:38.2754943+00:00"
+}

@@ -4,7 +4,7 @@
     const $ = id => document.getElementById(id);
     const escape = v => String(v ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
     const money = v => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v ?? 0);
-    const number = v => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 2 }).format(v ?? 0);
+    const number = v => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 3 }).format(v ?? 0);
 
     let tab = 'customers';
     let customers = [], salesOrders = [], products = [], farms = [];
@@ -48,8 +48,8 @@
             farms = (await api.all('farms', 'farms:read')) || [];
             // Try loading harvested products
             try {
-                const prodRes = await api.write('products', 'GET');
-                products = (prodRes.data && Array.isArray(prodRes.data)) ? prodRes.data : (Array.isArray(prodRes) ? prodRes : []);
+                const prodRes = await api.all('operations/products', 'sales:read');
+                products = prodRes.map(p => ({...p, productId:p.product_id, productName:p.product_name}));
             } catch (ignored) {
                 products = [];
             }
@@ -288,15 +288,15 @@
     function addSoItemRow() {
         const row = document.createElement('div');
         row.className = 'item-row';
-        const opts = products.map(p => {
+        const opts = products.filter(p=>p.status==='AVAILABLE' && Number(p.quantity)>0).map(p => {
             const stock = p.quantity != null ? p.quantity : 0;
             return `<option value="${p.productId}" data-stock="${stock}">${escape(p.productName)} (Còn: ${number(stock)})</option>`;
         }).join('');
 
         row.innerHTML = `
-            <select class="item-prod" required style="flex:2;">${opts || '<option value="1">Nông sản thu hoạch chung</option>'}</select>
-            <input type="number" class="item-qty" placeholder="Số lượng" step="0.01" min="0.01" value="1" required style="flex:1;">
-            <input type="number" class="item-price" placeholder="Đơn giá" step="1000" min="0" value="50000" required style="flex:1;">
+            <select class="item-prod" required style="flex:2;">${opts || '<option value="">Chưa có nông sản khả dụng</option>'}</select>
+            <input type="number" class="item-qty" placeholder="Số lượng" step="0.001" min="0.001" value="1" required style="flex:1;">
+            <input type="number" class="item-price" placeholder="Đơn giá" step="0.01" min="0" required style="flex:1;">
             <button type="button" class="btn-cancel remove-so-item-btn" style="padding:4px 8px;">×</button>
         `;
         row.querySelector('.remove-so-item-btn').addEventListener('click', () => {
@@ -494,7 +494,12 @@
             }
         });
 
-        switchTab('customers');
+        const channels=document.createElement('section');channels.className='sales-channels';
+        for(const [title,description,label,action] of [
+            ['Đăng bán trên cửa hàng','Thiết lập giá và công khai nông sản đã thu hoạch.','Đăng sản phẩm ↗',()=>window.parent.ManagementApi.navigate('shop')],
+            ['Bán trực tiếp cho khách','Lập đơn cung cấp nông sản và theo dõi giao hàng.','Tạo đơn bán',()=>{switchTab('sales');openAddSo();}]
+        ]){const card=document.createElement('article'),copy=document.createElement('div'),h=document.createElement('h3'),p=document.createElement('p'),b=document.createElement('button');card.className='channel-card';h.textContent=title;p.textContent=description;b.textContent=label;b.type='button';b.onclick=action;copy.append(h,p);card.append(copy,b);channels.append(card);}document.querySelector('.page-header').after(channels);
+        switchTab('sales');
         loadData();
     });
 })();

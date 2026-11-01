@@ -1,0 +1,173 @@
+{
+  "status": "NEEDS_REVIEW",
+  "checkedAt": "2026-10-31T04:56:24.123244+00:00",
+  "backend": {
+    "tests": 159,
+    "passed": 148,
+    "failures": 11,
+    "errors": 0,
+    "skipped": 0
+  },
+  "backendSuites": [
+    {
+      "suite": "AuthSecurityTests",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "LoginThrottleTests",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "ManagementApiTests",
+      "tests": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "ManagementServiceTests",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "PasswordHandlingTests",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "ArchitectureTests",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "DatabaseStartupCheckTests",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "WindowsUserEnvironmentTests",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "DashboardApiTests",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "ReportExportTests",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "FarmExpenseUiApiTests",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "FarmSeasonApiTests",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "FarmManagementSystemN02ApplicationTests",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "FarmWorkspaceIntegrationTests",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "HarvestApiTests",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "ManagementIntegrationTests",
+      "tests": 9,
+      "failures": 9,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "RbacIntegrationTests",
+      "tests": 6,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "SalesAndOrderApiTests",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "SupplierAndPurchaseApiTests",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "browserSupplement": {
+    "status": "PASS",
+    "groups": 16,
+    "passed": 16,
+    "errors": []
+  },
+  "standardBrowser": "PASS",
+  "restartPersistence": true,
+  "backupRestore": true,
+  "onlineBackupRestore": "PASS",
+  "sourceStartup": {
+    "status": "PASS",
+    "configuration": "application.properties",
+    "database": "127.0.0.1:55433/farm_management",
+    "sourceHttps": true,
+    "profilesRequired": false,
+    "businessWrites": false,
+    "checkedAt": "2026-10-31T04:52:12.5592158+00:00"
+  },
+  "staticChecks": {
+    "javascriptFiles": 20,
+    "powershellScripts": 24,
+    "status": "PASS"
+  },
+  "runtimeSourceUnchanged": true,
+  "liveBusinessWrites": false,
+  "productionReleaseCreated": false
+}

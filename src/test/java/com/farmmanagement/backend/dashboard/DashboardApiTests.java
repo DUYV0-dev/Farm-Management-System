@@ -53,8 +53,10 @@ class DashboardApiTests {
         mvc.perform(get(base+"/dashboard/production"+query).header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data.sourceStatus").value("AVAILABLE")).andExpect(jsonPath("$.data.unitGroups").isEmpty());
     }
     @Test void missingSourcesDoNotBecomeZeroAndExpensesHaveSeparatePermission() throws Exception {
-        mvc.perform(get(base+"/statistics/tasks"+query).header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data.sourceStatus").value("UNAVAILABLE"));
-        mvc.perform(get(base+"/statistics/expenses"+query).header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data.sourceStatus").value("UNAVAILABLE")).andExpect(jsonPath("$.data.purchaseValue").isEmpty());
+        when(store.taskSummary(anyInt(),any())).thenReturn(List.of(Map.of("status","COMPLETED","count",2)));
+        when(store.expenseSummary(anyInt(),any(),any())).thenReturn(Map.of("purchaseValue",new BigDecimal("200"),"productionExpense",new BigDecimal("100")));
+        mvc.perform(get(base+"/statistics/tasks"+query).header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data.sourceStatus").value("AVAILABLE")).andExpect(jsonPath("$.data.byStatus[0].count").value(2));
+        mvc.perform(get(base+"/statistics/expenses"+query).header("Authorization","Bearer "+token)).andExpect(status().isOk()).andExpect(jsonPath("$.data.sourceStatus").value("AVAILABLE")).andExpect(jsonPath("$.data.purchaseValue").value(200));
         when(auth.permissions(1)).thenReturn(List.of("dashboard:read"));
         mvc.perform(get(base+"/statistics/expenses"+query).header("Authorization","Bearer "+token)).andExpect(status().isForbidden());
         mvc.perform(get(base+"/dashboard/production"+query).header("Authorization","Bearer "+token)).andExpect(status().isForbidden());

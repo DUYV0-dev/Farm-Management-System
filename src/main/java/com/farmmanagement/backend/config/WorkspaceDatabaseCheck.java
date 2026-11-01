@@ -15,7 +15,7 @@ public class WorkspaceDatabaseCheck implements ApplicationRunner {
     public WorkspaceDatabaseCheck(JdbcTemplate db,Environment environment) { this.db=db;this.environment=environment; }
     @Override public void run(ApplicationArguments arguments) {
         boolean installed=Boolean.TRUE.equals(db.queryForObject("SELECT to_regprocedure('public.workspace_memberships(integer)') IS NOT NULL",Boolean.class));
-        if(!installed) throw new IllegalStateException("Database chưa được nâng cấp luồng trang trại. Chạy scripts/Upgrade-Workspace.ps1 bằng tài khoản quản trị PostgreSQL; xem docs/WORKSPACE.md.");
+        if(!installed) throw new IllegalStateException("Database thiếu cấu trúc trang trại. Kiểm tra migration bằng DatabaseMigrations và quy trình trong docs/RUNBOOK.md; công cụ chuyển schema cũ nằm riêng ở scripts/legacy/.");
         boolean bypass=Boolean.TRUE.equals(db.queryForObject("""
             SELECT r.rolsuper OR r.rolbypassrls OR EXISTS (
               SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
@@ -31,6 +31,8 @@ public class WorkspaceDatabaseCheck implements ApplicationRunner {
             """,Boolean.class));
         if(!protectedTables) throw new IllegalStateException("Thiếu row security trên bảng nghiệp vụ. Chạy lại migration 12 bằng tài khoản chủ database.");
         if(environment.getProperty("app.production",Boolean.class,false)) {
+            boolean operational=Boolean.TRUE.equals(db.queryForObject("SELECT to_regclass('public.farming_task') IS NOT NULL AND to_regclass('public.inventory_movement') IS NOT NULL AND to_regclass('public.flyway_schema_history') IS NOT NULL",Boolean.class));
+            if(!operational) throw new IllegalStateException("Production requires the complete versioned database migration set");
             byte[] key=java.util.Base64.getDecoder().decode(environment.getRequiredProperty("auth.jwt.secret"));
             if(java.util.stream.IntStream.range(0,key.length).allMatch(i->key[i]==key[0]))
                 throw new IllegalStateException("JWT_SECRET production phải là khóa ngẫu nhiên, không sử dụng khóa mẫu kiểm thử.");

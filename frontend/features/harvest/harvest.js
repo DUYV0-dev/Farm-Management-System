@@ -16,7 +16,7 @@
     }
     function selectSeason() {
         const s = selected();
-        el('create').hidden = !s || !api.has('harvests:create');
+        el('create').hidden = !s || !api.has('harvests:create');el('addHarvest').disabled=!s||!api.has('harvests:create');el('addHarvest').title=s?'Ghi nhận cho mùa vụ đã chọn':'Chọn mùa vụ để ghi nhận thu hoạch';
         el('configuration').hidden = !s || !api.has('harvests:create') || !api.has('crops:update');
         if (!s) return;
         el('seasonInfo').textContent = `${s.plotName} · ${s.cropName} · ${s.unit || 'Chưa có đơn vị'} · ${s.start || 'Chưa có ngày bắt đầu'} → ${s.end || 'Chưa có ngày kết thúc'} · ${s.status}`;
@@ -48,6 +48,7 @@
         if (!data.items.length) { const row = document.createElement('tr'), cell = document.createElement('td'); cell.colSpan = 7; cell.textContent = 'Chưa có thu hoạch trong phạm vi đã chọn.'; row.append(cell); el('history').append(row); }
         el('previous').disabled = page === 0; el('next').disabled = (page + 1) * size >= total;
     }
+    el('addHarvest').onclick=()=>{el('create').elements.harvestDate.value=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Ho_Chi_Minh'}).format(new Date());el('harvestDialog').showModal();};el('closeHarvest').onclick=()=>el('harvestDialog').close();
     el('farm').addEventListener('change', () => run(async () => { page = 0; el('season').value = ''; await loadSeasons(); await history(); }));
     el('season').addEventListener('change', () => { selectSeason(); page = 0; run(history); });
     el('filters').addEventListener('submit', e => { e.preventDefault(); page = 0; run(history, e.submitter); });
@@ -56,7 +57,7 @@
         run(async () => {
             const data = Object.fromEntries(new FormData(e.target)); data.seasonId = Number(el('season').value);
             await api.json(base() + '/harvests', 'POST', data);
-            e.target.reset(); page = 0; el('notice').textContent = 'Đã lưu thu hoạch.';
+            el('harvestDialog').close();e.target.reset(); page = 0; el('notice').textContent = 'Đã lưu thu hoạch.';
             await history();
         }, e.submitter);
     });
@@ -74,6 +75,7 @@
         el('farm').replaceChildren(...farms.map(f => option(f.id, f.name)));
         el('unit').replaceChildren(option('', 'Chọn đơn vị'), ...units.map(u => option(u.id, u.name)));
         if (!farms.length) { el('notice').textContent = 'Bạn chưa được gán vai trò Chủ trại hoặc Quản lý ở trang trại nào.'; return; }
+        const active=api.profile().farm?.farmId;if(active){el('farm').value=String(active);el('farm').closest('label').hidden=true;}
         await loadSeasons(); await history();
     });
 })();

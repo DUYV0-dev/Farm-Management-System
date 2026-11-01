@@ -1,0 +1,16 @@
+{
+  "browser": true,
+  "sha256": "8F6D6A5032E24DBE02C873C3AFA5C4E6C0AA29F504BA30F3050AA8AFDA7B293C",
+  "backupRestore": true,
+  "verifiedAt": "2026-10-24T14:44:35.4592906Z",
+  "evidence": ".test-data/production-fe0b0caf4c55405688037465b1f865a0",
+  "tests": {
+    "tests": 144,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 15,
+    "passed": 129
+  },
+  "migrationVersions": 18,
+  "deploymentTarget": "Windows local HTTPS / isolated PostgreSQL; network Public unchanged"
+}

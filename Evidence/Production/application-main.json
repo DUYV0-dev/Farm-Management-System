@@ -1,0 +1,15 @@
+﻿{
+    "verifiedAt":  "2026-10-24T19:27:57.0025869Z",
+    "entryPoint":  "FarmManagementSystemN02Application.main, compiled source classes",
+    "customIdeConfiguration":  false,
+    "databaseArgumentsOrEnvironment":  false,
+    "health":  "UP",
+    "url":  "https://localhost:8443/",
+    "portal":  "PASS",
+    "publicStore":  "PASS",
+    "accountAuthentication":  "PASS",
+    "evidence":  "D:\\Project\\Do an quan ly du an\\Farm-Management-System\\.test-data\\application-main-0de675894dd343bb9be84441e4576e46",
+    "unitTestsPassed":  116,
+    "unitTestsSkipped":  28,
+    "webStoppedAfterTest":  true
+}

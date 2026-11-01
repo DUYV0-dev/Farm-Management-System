@@ -42,8 +42,7 @@ class ReportExportTests {
         }
     }
     @Test void pdfHasVietnameseAllRowsRepeatedHeadersAndPageNumbers() throws Exception {
-        String font=System.getProperty("reports.test.font","C:/Windows/Fonts/arial.ttf");
-        Assumptions.assumeTrue(Files.isRegularFile(Path.of(font)),"Pass -Dreports.test.font with a Vietnamese TTF on non-Windows machines");
+        String font=System.getProperty("reports.test.font","classpath:fonts/NotoSans-Regular.ttf");
         var bytes=new ReportExportService(null,font).pdf(snapshot);
         try(var pdf=Loader.loadPDF(bytes)) {
             assertTrue(pdf.getNumberOfPages()>2);

@@ -11,6 +11,15 @@ import org.springframework.stereotype.Repository;
 public class DashboardStore {
     private final JdbcTemplate db;
     public DashboardStore(JdbcTemplate db) { this.db=db; }
+    public List<Map<String,Object>> taskSummary(int farm,Filters f) {
+        List<Object> args=new ArrayList<>(List.of(farm,f.fromDate(),f.toDate()));
+        String where=" WHERE t.farm_id=? AND t.due_date BETWEEN ? AND ?"+scope(f,args);
+        return db.queryForList("SELECT t.status,count(*) AS count FROM public.farming_task t JOIN public.crop_season s USING(season_id)"+where+" GROUP BY t.status",args.toArray());
+    }
+    public Map<String,Object> expenseSummary(int farm,LocalDate from,LocalDate to) {
+        return Map.of("productionExpense",db.queryForObject("SELECT COALESCE(sum(amount),0) FROM public.farm_expense WHERE farm_id=? AND expense_date BETWEEN ? AND ?",java.math.BigDecimal.class,farm,from,to),
+            "purchaseValue",db.queryForObject("SELECT COALESCE(sum(total_amount),0) FROM public.purchase_order WHERE farm_id=? AND status='RECEIVED' AND actual_delivery_date BETWEEN ? AND ?",java.math.BigDecimal.class,farm,from,to));
+    }
     public String farmName(int id) { return db.queryForObject("SELECT farm_name FROM public.farm WHERE farm_id=?",String.class,id); }
     public boolean filterBelongs(int farm,String type,int id) {
         String sql=switch(type) {

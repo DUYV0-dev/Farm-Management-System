@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
+<head><script src="/ui/shared/charts.js" defer></script><script src="/ui/shared/embedded.js" defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FARM / N02 · Phân bón & Thuốc bảo vệ thực vật</title>
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/ui/features/material-usage/material-usage.css">
     <script src="/ui/shared/api-client.js" defer></script>
     <script src="/ui/features/material-usage/material-usage.js" defer></script>
-</head>
+<link rel="stylesheet" href="/ui/shared/workspace.css"></head>
 <body class="material-page">
 <div class="app-container">
     <nav class="top-nav shadow-sm" aria-label="Điều hướng trang trại"><div class="nav-container"><a class="nav-brand" href="/">FARM / N02</a><div class="nav-links"><a href="/#farm" class="nav-item">Trang trại & Cây trồng</a><a href="/#material" class="nav-item">Vật tư & Kho</a><a href="/#expenses" class="nav-item">Chi phí</a><a href="/#material-usage" class="nav-item active">Phân bón & Thuốc BVTV</a><a href="/#staff" class="nav-item">Nhân sự</a></div></div></nav>
@@ -59,6 +59,7 @@
             <label>Mùa vụ<select name="seasonId" id="usageSeason" required></select></label>
             <label>Loại sử dụng<select name="type" id="usageType" required></select></label>
             <label>Vật tư<select name="materialId" id="usageMaterial" required></select></label>
+            <label>Kho xuất vật tư<select name="warehouseId" id="usageWarehouse" required></select></label>
             <label>Số lượng sử dụng<input name="quantity" type="number" min="0.001" max="999999999999.999" step="0.001" required><span id="usageUnit" class="record-meta"></span></label>
             <label>Ngày sử dụng<input name="applicationDate" id="usageDate" type="date" min="0001-01-01" required></label>
             <label>Ghi chú<textarea name="notes" maxlength="1000" rows="3" placeholder="Vị trí bón, phun thuốc, mục đích sử dụng…"></textarea></label>

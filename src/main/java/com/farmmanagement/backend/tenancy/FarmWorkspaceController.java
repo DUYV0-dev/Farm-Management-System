@@ -19,6 +19,11 @@ public class FarmWorkspaceController {
     @PostMapping(value="/auth/register",consumes=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> register(@RequestBody JsonNode body,HttpServletRequest request) {
         AuthController.noQuery(request);
+        if(body!=null && body.size()==4) {
+            Input.fields(body,"username","password","fullName","email");
+            return ResponseEntity.status(201).body(Api.success(service.registerAccount(Input.text(body,"username",50),Input.password(body,"password"),
+                Input.text(body,"fullName",100),Input.email(body),Api.requestId(request)),request));
+        }
         Input.fields(body,"username","password","fullName","email","farmName","address","areaHa");
         return ResponseEntity.status(201).body(Api.success(service.register(Input.text(body,"username",50),Input.password(body,"password"),
             Input.text(body,"fullName",100),Input.email(body),Input.text(body,"farmName",100),Input.text(body,"address",255),Input.text(body,"areaHa",20),Api.requestId(request)),request));

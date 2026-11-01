@@ -6,7 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class FrontendEntryController {
-    @GetMapping({"/", "/index.html"})
+    @GetMapping({"/shop", "/shop/"})
+    public String shop() { return "forward:/shop/index.html"; }
+    @GetMapping({"/", "/index.html", "/admin", "/admin/"})
     public String home() { return "forward:/index-shell.html"; }
     @GetMapping({"/frontend/index.html","/frontend/login.html","/frontend/dashboard.html","/frontend/workers.html",
         "/frontend/activities.html","/frontend/schedule.html","/frontend/reports.html","/frontend/notifications.html"})

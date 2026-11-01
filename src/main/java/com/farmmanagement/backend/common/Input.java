@@ -23,6 +23,16 @@ public final class Input {
         if (result.isEmpty() || result.length() > 128) throw new IllegalArgumentException();
         return result;
     }
+    public static String optionalText(JsonNode body, String name, int max) {
+        var value=body.get(name);
+        if(value==null || !value.isTextual() || value.asText().trim().length()>max) throw new IllegalArgumentException();
+        return value.asText().trim();
+    }
+    public static int positiveInt(JsonNode body, String name) {
+        var value=body.get(name);
+        if(value==null || !value.isIntegralNumber() || !value.canConvertToInt() || value.asInt()<=0) throw new IllegalArgumentException();
+        return value.asInt();
+    }
     public static void strongPassword(String value) {
         if (value == null || value.length() < 12 || value.length() > 128
                 || !value.matches("(?s).*\\p{L}.*") || !value.matches("(?s).*\\d.*"))

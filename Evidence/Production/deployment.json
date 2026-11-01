@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-24",
+  "health": "UP",
+  "url": "https://localhost:8443/",
+  "sha256": "8F6D6A5032E24DBE02C873C3AFA5C4E6C0AA29F504BA30F3050AA8AFDA7B293C",
+  "httpsListeners": [
+    "127.0.0.1"
+  ],
+  "databasePort": 55433,
+  "databaseListeners": [
+    "127.0.0.1"
+  ],
+  "matchesVerifiedRelease": true,
+  "networkCategory": "Public",
+  "access": "Local only, selected by user",
+  "applicationTask": "Running",
+  "backupTask": "Ready, daily 02:00 while the installing Windows user is logged on",
+  "backupArchiveIntegrity": "PASS, 38 tables before V018 upgrade",
+  "testDatabaseRestoration": "PASS",
+  "remoteClientAccessTested": false,
+  "portal": "PASS",
+  "storefront": "PASS",
+  "publicCatalog": "PASS",
+  "publishedProducts": 0,
+  "migrationVersions": 18,
+  "beforeUpgradeBackup": "before-upgrade-20261024-220242",
+  "screenshots": "Isolated browser test data, not live data"
+}

@@ -26,6 +26,8 @@ import tools.jackson.databind.ObjectReader;
 public class MaterialUsageController {
     private final MaterialUsageService service;
     private final ObjectReader reader;
+    @org.springframework.beans.factory.annotation.Value("${app.production:false}")
+    private boolean production;
     public MaterialUsageController(MaterialUsageService service, ObjectMapper mapper) {
         this.service = service;
         reader = mapper.reader().with(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
@@ -62,6 +64,7 @@ public class MaterialUsageController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> record(@AuthenticationPrincipal Jwt jwt, @RequestBody String json, HttpServletRequest request) {
+        if(production) throw new DomainException(410,"USE_INVENTORY_USAGE","Ghi nhận sử dụng kèm kho xuất qua /api/v1/operations/usage.");
         AuthController.noQuery(request);
         JsonNode body;
         try { body = reader.readTree(json); }

@@ -34,6 +34,13 @@ public class FarmWorkspaceService {
         accounts.audit(uid,"FARM",farm,"CREATE",requestId);
         return Map.of("userId",uid,"farmId",farm,"nextStep","LOGIN");
     }
+    public Map<String,Object> registerAccount(String username,String password,String fullName,String email,String requestId) {
+        Input.strongPassword(password);
+        if(!username.matches("[a-z0-9._-]{3,50}")) throw new IllegalArgumentException();
+        int uid=accounts.createUser(username,passwords.encode(password),fullName,email);
+        accounts.assignRoles(uid,List.of(accounts.defaultRole()));accounts.audit(uid,"USER",uid,"CREATE",requestId);
+        return Map.of("userId",uid,"nextStep","ACCOUNT_HOME");
+    }
     public FarmWorkspaceStore.Membership selected(int uid,int farm) {
         return farms.memberships(uid).stream().filter(m->m.farmId()==farm && m.status().equals("ACTIVE") && m.farmStatus().equals("ACTIVE"))
             .findFirst().orElseThrow(()->new AccessDeniedException("Farm membership required"));

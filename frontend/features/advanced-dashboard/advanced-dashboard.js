@@ -25,18 +25,11 @@
     for (const values of rows) { const row = node('tr'); values.forEach(value => row.append(node('td', value ?? 'Chưa có'))); body.append(row); }
     t.append(body); container.append(t); target.append(container);
   }
-  function chart(target, rows, label) {
-    // Separate scales per unit; the table below keeps exact values available.
-    for (const unitId of new Set(rows.map(r => r.unitId))) {
-      const group = rows.filter(r => r.unitId === unitId), max = Math.max(...group.map(r => Number(r.quantity)), 1);
-      const figure = node('figure'); figure.append(node('figcaption', `Sản lượng (${group[0].unit})`));
-      for (const r of group) {
-        const p = node('p', `${label(r)}: ${r.quantity} ${r.unit} `), meter = node('meter');
-        meter.min = 0; meter.max = max; meter.value = Number(r.quantity); meter.setAttribute('aria-label', `${label(r)}: ${r.quantity} ${r.unit}`); p.append(meter); figure.append(p);
-      }
-      target.append(figure);
-    }
+  function chart(target,rows,label,type='bar') {
+    for(const unitId of new Set(rows.map(r=>r.unitId))){const group=rows.filter(r=>r.unitId===unitId),host=node('div');target.append(host);AgriCharts[type](host,{title:'Sản lượng',unit:group[0].unit,labels:group.map(label),series:[{name:'Thu hoạch',values:group.map(r=>r.quantity)}]});}
+    if(!rows.length)AgriCharts[type](target,{title:'Sản lượng',labels:[],series:[]});
   }
+  function exact(target,headers,rows){const details=node('details'),summary=node('summary','Xem số liệu chi tiết'),data=node('div');details.className='data-disclosure';table(data,headers,rows);details.append(summary,data);target.append(details);}
   async function part(id, path, permissions, keys, render, turn) {
     const target = el(id);
     if (!permissions.every(api.has)) { target.textContent = 'Bạn chưa có quyền xem mục này.'; return; }
@@ -54,21 +47,21 @@
     el('reportSection').hidden = !canReport();
     await Promise.all([
       part('production', '/dashboard/production', ['dashboard:read', 'harvests:read'], productionKeys, d => {
-        table(el('production'), ['Đơn vị', 'Sản lượng trong kỳ', 'Số lần thu'], d.unitGroups.map(r => [r.unit, r.quantity, r.count]));
-        table(el('monthly'), ['Tháng', 'Đơn vị', 'Sản lượng', 'Số lần'], d.byMonth.map(r => [r.period, r.unit, r.quantity, r.count])); chart(el('monthly'), d.byMonth, r => r.period);
-        table(el('crops'), ['Cây trồng', 'Đơn vị', 'Sản lượng', 'Số lần'], d.byCrop.map(r => [r.cropName, r.unit, r.quantity, r.count])); chart(el('crops'), d.byCrop, r => r.cropName);
-        el('production').append(node('p', `Dữ liệu lúc ${d.generatedAt}. ${d.rule}`));
+        const summary=el('production');summary.replaceChildren();const units=node('div');units.className='report-unit-summary';for(const r of d.unitGroups){const card=node('article');card.append(node('small','Sản lượng ('+r.unit+')'),node('strong',AgriCharts.number(r.quantity)+' '+r.unit),node('small',r.count+' lần thu hoạch'));units.append(card);}summary.append(units);if(!d.unitGroups.length)summary.append(node('p','Chưa có thu hoạch trong khoảng thời gian đã chọn.'));
+        chart(el('monthly'),d.byMonth,r=>r.period,'line');exact(el('monthly'),['Tháng','Đơn vị','Sản lượng','Số lần'],d.byMonth.map(r=>[r.period,r.unit,r.quantity,r.count]));
+        chart(el('crops'),d.byCrop,r=>r.cropName);exact(el('crops'),['Cây trồng','Đơn vị','Sản lượng','Số lần'],d.byCrop.map(r=>[r.cropName,r.unit,r.quantity,r.count]));
+        el('production').append(node('p', 'Chỉ tính thu hoạch đã xác nhận; tách riêng các đơn vị sản lượng.'));
       }, turn),
       part('seasons', '/statistics/seasons', ['dashboard:read', 'crops:read', 'harvests:read'], productionKeys, d => {
-        seasonTable(el('seasons'), d.items);
-        el('seasons').append(node('p', `${d.total} vụ giao kỳ — PLANNED: ${d.byStatus.PLANNED}, IN_PROGRESS: ${d.byStatus.IN_PROGRESS}, COMPLETED: ${d.byStatus.COMPLETED}. ${d.unconfiguredSeasons} vụ trong trang trại chưa đủ ngày. ${d.rule}`));
+        const target=el('seasons');AgriCharts.donut(target,{title:'Trạng thái mùa vụ',unit:'mùa vụ',items:[{label:'Dự kiến',value:d.byStatus.PLANNED},{label:'Đang canh tác',value:d.byStatus.IN_PROGRESS},{label:'Kết thúc',value:d.byStatus.COMPLETED}]});const detail=node('details'),summary=node('summary','Xem từng mùa vụ'),data=node('div');detail.className='data-disclosure';seasonTable(data,d.items);detail.append(summary,data);target.append(detail);
+        el('seasons').append(node('p', `${d.total} mùa vụ trong khoảng thời gian đã chọn. ${d.unconfiguredSeasons} mùa vụ chưa cấu hình đủ ngày bắt đầu/kết thúc.`));
       }, turn),
-      part('tasks', '/statistics/tasks', ['dashboard:read'], productionKeys, d => { el('tasks').textContent = `Chưa khả dụng: ${d.reason}`; }, turn),
+      part('tasks', '/statistics/tasks', ['dashboard:read'], productionKeys, d => { const names={TODO:'Chưa bắt đầu',IN_PROGRESS:'Đang thực hiện',COMPLETED:'Hoàn thành',CANCELLED:'Đã hủy'};AgriCharts.donut(el('tasks'),{title:'Tiến độ công việc',items:(d.byStatus||[]).map(r=>({label:names[r.status]||r.status,value:r.count}))}); }, turn),
       part('inventory', '/statistics/inventory', ['dashboard:read', 'warehouses:read'], stockKeys, d => {
-        table(el('inventory'), ['Kho', 'Vật tư', 'Đơn vị', 'Tồn hiện tại', 'Cập nhật cuối'], d.currentItems.map(r => [r.warehouse, r.material, r.unit, r.quantity, r.lastUpdated]));
+        const target=el('inventory');AgriCharts.donut(target,{title:'Số dòng vật tư theo số dư',unit:'dòng vật tư',items:[{label:'Còn tồn',value:d.currentItems.filter(r=>Number(r.quantity)>0).length},{label:'Hết tồn',value:d.currentItems.filter(r=>Number(r.quantity)===0).length}]});exact(target,['Kho','Vật tư','Đơn vị','Tồn hiện tại','Cập nhật cuối'],d.currentItems.map(r=>[r.warehouse,r.material,r.unit,r.quantity,r.lastUpdated]));
         el('inventory').append(node('p', d.reason));
       }, turn),
-      api.has('expenses:read') ? part('expenses', '/statistics/expenses', ['expenses:read'], stockKeys, d => { el('expenses').textContent = `Chưa khả dụng: ${d.reason}`; }, turn) : Promise.resolve()
+      api.has('expenses:read') ? part('expenses', '/statistics/expenses', ['expenses:read'], ['fromDate','toDate'], d => { AgriCharts.bar(el('expenses'),{title:'Chi phí & giá trị mua hàng',unit:'VND',labels:['Sản xuất','Mua hàng đã nhận'],series:[{name:'Giá trị',values:[d.productionExpense,d.purchaseValue]}]});exact(el('expenses'),['Khoản mục','Giá trị (VND)'],[['Chi phí sản xuất',d.productionExpense],['Giá trị mua hàng đã nhận',d.purchaseValue]]);el('expenses').append(node('p',d.rule)); }, turn) : Promise.resolve()
     ]);
   }
   function seasonTable(target, rows) {
@@ -98,6 +91,7 @@
     const farms = await api.request('/api/v1/dashboard-farms');
     el('farm').replaceChildren(...farms.map(f => { const o = node('option', f.name); o.value = f.id; return o; }));
     if (!farms.length) { el('notice').textContent = 'Bạn chưa có vai trò Chủ trại hoặc Quản lý trong trang trại nào.'; el('createReport').disabled = true; return; }
+    const active=api.profile().farm?.farmId;if(active){el('farm').value=String(active);el('farm').closest('label').hidden=true;}
     await dashboard();
   });
 })();

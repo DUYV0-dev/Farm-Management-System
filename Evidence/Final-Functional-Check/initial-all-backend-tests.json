@@ -1,0 +1,956 @@
+﻿[
+    {
+        "suite":  "com.farmmanagement.backend.auth.AuthSecurityTests",
+        "test":  "wrongIssuerRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.AuthSecurityTests",
+        "test":  "weakSigningKeyRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.AuthSecurityTests",
+        "test":  "passwordUsesArgon2idAndUniqueSalt",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.AuthSecurityTests",
+        "test":  "expiredTokenRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.AuthSecurityTests",
+        "test":  "wrongSignatureRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.AuthSecurityTests",
+        "test":  "noSystemRoleCannotLogin",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.AuthSecurityTests",
+        "test":  "inactiveUserCannotLoginEvenWithCorrectPassword",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.AuthSecurityTests",
+        "test":  "inconsistentSessionRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.AuthSecurityTests",
+        "test":  "valid24HourTokenAccepted",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.AuthSecurityTests",
+        "test":  "wrongAudienceRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.LoginThrottleTests",
+        "test":  "isolatesClientsAndDoesNotThrottleBusinessRequests",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.LoginThrottleTests",
+        "test":  "rejectsRepeatedAuthenticationButDoesNotTrustSpoofedForwardedAddresses",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "allMutationsDenyOrdinaryUsers(String, String, String)[1]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "allMutationsDenyOrdinaryUsers(String, String, String)[2]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "allMutationsDenyOrdinaryUsers(String, String, String)[3]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "allMutationsDenyOrdinaryUsers(String, String, String)[4]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "allMutationsDenyOrdinaryUsers(String, String, String)[5]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "allMutationsDenyOrdinaryUsers(String, String, String)[6]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "allMutationsDenyOrdinaryUsers(String, String, String)[7]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "allMutationsDenyOrdinaryUsers(String, String, String)[8]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "protectedReadsRequireAuthenticationAndExactPermission(String, String)[1]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "protectedReadsRequireAuthenticationAndExactPermission(String, String)[2]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "protectedReadsRequireAuthenticationAndExactPermission(String, String)[3]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "protectedReadsRequireAuthenticationAndExactPermission(String, String)[4]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "protectedReadsRequireAuthenticationAndExactPermission(String, String)[5]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "farmRoleIdsCannotBeAssignedAsSystemRoles",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "passwordChangeEndpointWorksWithoutAdministrativePermission",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "roleNameAloneDoesNotBypassPermissionValidation",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "accountDisabledWhileWaitingForAdministrationLockIsDenied",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "permissionRevokedWhileWaitingForAdministrationLockIsDenied",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "protectedFragmentsCannotBeFetchedAsStaticResources",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "createUserReturns201AndLocation",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "permissionsAreReadAgainForSameToken",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "databaseFailureDuringAuthenticationIs503",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "revokedSessionRejectedEvenWithPermission",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "duplicateDataIs409",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "logoutRevokesOnlyCurrentSession",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "invalidPaginationAndIdAre422",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "assigningRolesUsesAuthenticatedActorAndAuditId",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "missingUserIs404",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementApiTests",
+        "test":  "bodyCannotInjectRolesOrActor",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "activationDoesNotRestoreSessions",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "deactivationRevokesSessionsAndRecordsAudit",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "rejectsUnknownPermissions",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "cannotDeactivateSelf",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "cannotChangeAdminPermissions",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "weakPasswordDoesNotWrite",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "delegatedManagerCannotGrantHigherPermissions",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "resetHashesPasswordAndUsesRevokingStoreOperation",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "emptyRolesAndUnboundedPaginationRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "createHashesPasswordAndAssignsDefaultRoleOnly",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "cannotRemoveLastAdministratorRole",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "cannotDeactivateLastAdministrator",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "cannotElevateOwnRolePermissions",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "delegatedManagerCannotResetAdministratorPassword",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.ManagementServiceTests",
+        "test":  "delegatedManagerCannotAssignAdmin",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.PasswordHandlingTests",
+        "test":  "wrongCurrentPasswordCannotChangePassword",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.PasswordHandlingTests",
+        "test":  "publicUserNeverContainsPasswordHash",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.PasswordHandlingTests",
+        "test":  "reusedAndWeakPasswordsRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.auth.PasswordHandlingTests",
+        "test":  "changingPasswordChecksCurrentPasswordAndHashesNewOne",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.ArchitectureTests",
+        "test":  "shippedFrontendDoesNotUseBrowserStorageForBusinessData",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.ArchitectureTests",
+        "test":  "demoModulesAreOutsideRuntimeSourceTree",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.ArchitectureTests",
+        "test":  "controllersAndServicesDoNotExecuteSql",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.DatabaseStartupCheckTests",
+        "test":  "authenticationErrorsNeverExposeDriverSecrets",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.DatabaseStartupCheckTests",
+        "test":  "connectionCheckIsReadOnlyAndRequiresTheCurrentProductionMigration",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.DatabaseStartupCheckTests",
+        "test":  "missingDatabaseDoesNotChooseTheLegacyPort",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.DatabaseStartupCheckTests",
+        "test":  "connectionRefusedAndMissingDatabaseHaveActionableMessages",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.DatabaseStartupCheckTests",
+        "test":  "selectedDatabaseWinsAndEmptyTestPasswordIsAllowed",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.DatabaseStartupCheckTests",
+        "test":  "developmentDatabaseCanStillUseTheSupportedLegacySchema",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.DatabaseStartupCheckTests",
+        "test":  "connectionTargetHidesUrlCredentialsAndParameters",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.DatabaseStartupCheckTests",
+        "test":  "productionWithoutMigration018StopsBeforeApplicationStarts",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.WindowsUserEnvironmentTests",
+        "test":  "sourceRunRecoversJwtAndTlsFromAnUpdatedWindowsUserEnvironment",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.WindowsUserEnvironmentTests",
+        "test":  "packagedApplicationAndOtherPlatformsNeverReadThePersonalWindowsEnvironment",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.config.WindowsUserEnvironmentTests",
+        "test":  "explicitProcessJvmAndSpringSettingsRetainPrecedence",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.DashboardApiTests",
+        "test":  "snapshotCreationPersistencePaginationAndExportAllRows",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.DashboardApiTests",
+        "test":  "missingTokenRevokedSessionAndForeignFarmDenied",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.DashboardApiTests",
+        "test":  "currentInventoryDoesNotPretendToBeHistorical",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.DashboardApiTests",
+        "test":  "withdrawnMembershipAndExportPermissionBlockSavedFiles",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.DashboardApiTests",
+        "test":  "missingSourcesDoNotBecomeZeroAndExpensesHaveSeparatePermission",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.DashboardApiTests",
+        "test":  "oversizedSnapshotIsNotSilentlyTruncated",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.DashboardApiTests",
+        "test":  "filterIdsCheckedAgainstFarm",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.DashboardApiTests",
+        "test":  "emptyProductionIsAvailableAndHasNoInventedTotals",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.DashboardApiTests",
+        "test":  "sourceErrorsAreNotZeroSuccess",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.DashboardApiTests",
+        "test":  "invalidDatesRepeatedAndUnsupportedFiltersRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.DashboardApiTests",
+        "test":  "expiredAndDifferentOwnerReportsCannotBeReadOrExported",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.ReportExportTests",
+        "test":  "missingFontFailsExplicitly",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.ReportExportTests",
+        "test":  "spreadsheetKeepsNumbersDatesVietnameseAndUntrustedTextAsText",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.ReportExportTests",
+        "test":  "pdfHasVietnameseAllRowsRepeatedHeadersAndPageNumbers",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.dashboard.ReportExportTests",
+        "test":  "valuesBeyondExcelPrecisionAlsoHaveExactText",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.expense.FarmExpenseUiApiTests",
+        "test":  "optionsRequireExpensePermissionAndSupportCreateOnlyAccounts",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.expense.FarmExpenseUiApiTests",
+        "test":  "historyAndSummaryPreserveLargeDecimalAmountsAndPassSeasonFilter",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.expense.FarmExpenseUiApiTests",
+        "test":  "createPermissionDoesNotExposeExpenseHistory",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.farm.FarmSeasonApiTests",
+        "test":  "createSeasonLegacyPayloadSucceeds",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.farm.FarmSeasonApiTests",
+        "test":  "createSeasonInvalidDatesThrowsBadRequest",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.farm.FarmSeasonApiTests",
+        "test":  "createSeasonFullPayloadSucceeds",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.farm.FarmSeasonApiTests",
+        "test":  "updateSeasonFullPayloadSucceeds",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.farm.FarmSeasonApiTests",
+        "test":  "deleteSeasonSucceeds",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.farm.FarmSeasonApiTests",
+        "test":  "listSeasonsReturnsData",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmManagementSystemN02ApplicationTests",
+        "test":  "contextLoads",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "harvestCreatesSaleableLotAndTraceabilityUsesActualRecords",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "inventoryMovementsAreAtomicIdempotentAndTenantScoped",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "registrationIsAtomicAndCannotGrantAdministrativeRoles",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "operationalApisRejectAnonymousRequestsAndDemoWrites",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "publicStoreOrdersArePrivateTenantScopedAndStockDeductsOnlyOnceOnAcceptance",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "farmIsolationAndJobRevocationTakeEffectOnExistingTokens",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "currentFrontendIsAvailableAndHistoricalAssetsAreBlocked",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "registrationStaffSetupAndPersistence",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "operationalTasksPersistValidateRelationshipsAndKeepHistory",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "systemAdministratorHasSeparateAccountManagement",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "dataTransferValidatesBeforeWritingAndExportsOnlyTheSelectedFarm",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "accountRegistrationHasNoFarmAndOwnersCanManageMultipleFarmsWithoutStaff",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.FarmWorkspaceIntegrationTests",
+        "test":  "simultaneousStoreRetriesAndCompetingAcceptancesCannotOversell",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "boundariesAndMultipleHarvestsOnSameDayAreAllowed",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "crossFarmDoesNotDiscloseOrWrite",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "filteredPaginatedHistoryAndEmptyResults",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "ownerCannotCreateEvenWithGlobalPermission",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "unknownFieldsAndLongQualityRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "missingTokenAndPermissionDenied",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "outsideSeasonRejected(String)[1]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "outsideSeasonRejected(String)[2]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "metadataLockedOnceHistoryExists",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "createPersistsExactQuantityQualityActorAndAudit",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "invalidQuantitiesDoNotWrite(String)[1]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "invalidQuantitiesDoNotWrite(String)[2]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "invalidQuantitiesDoNotWrite(String)[3]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "invalidQuantitiesDoNotWrite(String)[4]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "invalidQuantitiesDoNotWrite(String)[5]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "closedUnconfiguredAndFutureSeasonRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.harvest.HarvestApiTests",
+        "test":  "seasonFromOtherFarmRejected",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.ManagementIntegrationTests",
+        "test":  "everyModuleRequiresExactPermissionsAndRevocationIsImmediate",
+        "status":  "FAIL",
+        "message":  "Response status expected:\u003c200\u003e but was:\u003c403\u003e"
+    },
+    {
+        "suite":  "com.farmmanagement.backend.ManagementIntegrationTests",
+        "test":  "concurrentInventoryUpsertsKeepOneRow",
+        "status":  "FAIL",
+        "message":  "Response status expected:\u003c201\u003e but was:\u003c403\u003e"
+    },
+    {
+        "suite":  "com.farmmanagement.backend.ManagementIntegrationTests",
+        "test":  "concurrentPlotWritesCannotOverbookFarm",
+        "status":  "FAIL",
+        "message":  "Response status expected:\u003c201\u003e but was:\u003c403\u003e"
+    },
+    {
+        "suite":  "com.farmmanagement.backend.ManagementIntegrationTests",
+        "test":  "packagedUiAndProtectedFarmRouteAreAvailable",
+        "status":  "FAIL",
+        "message":  "Status expected:\u003c200\u003e but was:\u003c404\u003e"
+    },
+    {
+        "suite":  "com.farmmanagement.backend.ManagementIntegrationTests",
+        "test":  "farmPlotCropLifecyclePersistsAndEnforcesRelationships",
+        "status":  "FAIL",
+        "message":  "Response status expected:\u003c201\u003e but was:\u003c403\u003e"
+    },
+    {
+        "suite":  "com.farmmanagement.backend.ManagementIntegrationTests",
+        "test":  "updatesDuplicatesAndInputValidation",
+        "status":  "FAIL",
+        "message":  "Response status expected:\u003c201\u003e but was:\u003c403\u003e"
+    },
+    {
+        "suite":  "com.farmmanagement.backend.ManagementIntegrationTests",
+        "test":  "dashboardAggregatesConfirmedUnitsAndExportsSameStoredSnapshot",
+        "status":  "FAIL",
+        "message":  "Response status expected:\u003c201\u003e but was:\u003c403\u003e"
+    },
+    {
+        "suite":  "com.farmmanagement.backend.ManagementIntegrationTests",
+        "test":  "inventoryLifecycleIsAtomicAndBlocksInvalidDeactivation",
+        "status":  "FAIL",
+        "message":  "Response status expected:\u003c201\u003e but was:\u003c403\u003e"
+    },
+    {
+        "suite":  "com.farmmanagement.backend.ManagementIntegrationTests",
+        "test":  "harvestPersistsAndLocksSeasonMetadata",
+        "status":  "FAIL",
+        "message":  "Response status expected:\u003c201\u003e but was:\u003c403\u003e"
+    },
+    {
+        "suite":  "com.farmmanagement.backend.RbacIntegrationTests",
+        "test":  "delegatedManagerCannotElevateOrModifyAdministrator",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.RbacIntegrationTests",
+        "test":  "roleLifecycleUpdatesExistingTokenAndRecordsAudit",
+        "status":  "FAIL",
+        "message":  "GET farms ==\u003e expected: \u003c200\u003e but was: \u003c403\u003e"
+    },
+    {
+        "suite":  "com.farmmanagement.backend.RbacIntegrationTests",
+        "test":  "farmScopeCannotSupplySystemPermissions",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.RbacIntegrationTests",
+        "test":  "queuedWriteRechecksAuthorizationAfterConcurrentRevocation(String)[1]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.RbacIntegrationTests",
+        "test":  "queuedWriteRechecksAuthorizationAfterConcurrentRevocation(String)[2]",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.RbacIntegrationTests",
+        "test":  "deactivationAndPasswordResetPermanentlyRevokeOldSessions",
+        "status":  "FAIL",
+        "message":  "GET farms ==\u003e expected: \u003c200\u003e but was: \u003c403\u003e"
+    },
+    {
+        "suite":  "com.farmmanagement.backend.sales.SalesAndOrderApiTests",
+        "test":  "cancelConfirmedSalesOrderRestoresProductStock",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.sales.SalesAndOrderApiTests",
+        "test":  "createSalesOrderConfirmedDeductsProductAvailability",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.sales.SalesAndOrderApiTests",
+        "test":  "createSalesOrderConfirmedWithInsufficientStockThrowsConflict",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.sales.SalesAndOrderApiTests",
+        "test":  "createCustomerSuccessAndAudit",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.sales.SalesAndOrderApiTests",
+        "test":  "listCustomersReturnsPagedItems",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.sales.SalesAndOrderApiTests",
+        "test":  "cannotChangeDeliveredOrderThrowsConflict",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.sales.SalesAndOrderApiTests",
+        "test":  "createSalesOrderPendingDoesNotDeductStock",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.supplier.SupplierAndPurchaseApiTests",
+        "test":  "deactivatingSupplierWithOpenOrdersThrowsConflict",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.supplier.SupplierAndPurchaseApiTests",
+        "test":  "unauthenticatedRequestReturns401",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.supplier.SupplierAndPurchaseApiTests",
+        "test":  "receiveAlreadyReceivedOrderThrowsConflict",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.supplier.SupplierAndPurchaseApiTests",
+        "test":  "createPurchaseOrderCalculatesTotalAmountAndSavesItems",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.supplier.SupplierAndPurchaseApiTests",
+        "test":  "createSupplierInvalidEmailThrows422",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.supplier.SupplierAndPurchaseApiTests",
+        "test":  "createSupplierSuccessAndAudit",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.supplier.SupplierAndPurchaseApiTests",
+        "test":  "listSuppliersReturnsPagedItems",
+        "status":  "PASS",
+        "message":  ""
+    },
+    {
+        "suite":  "com.farmmanagement.backend.supplier.SupplierAndPurchaseApiTests",
+        "test":  "receiveMaterialsUpdatesWarehouseInventoryAndMarksReceived",
+        "status":  "PASS",
+        "message":  ""
+    }
+]

@@ -191,7 +191,7 @@ public class SalesOrderService {
             case "CANCELLED" -> {
                 // If the order was confirmed or shipped, stock was deducted -> restore product availability!
                 if ("CONFIRMED".equals(currentStatus) || "SHIPPED".equals(currentStatus)) {
-                    for (var item : so.items()) {
+                    for (var item : so.items().stream().sorted(java.util.Comparator.comparingInt(SalesOrderStore.SalesOrderItem::productId)).toList()) {
                         store.restoreProductStock(item.productId(), item.quantity());
                         store.auditAction(actor, "HARVESTED_PRODUCT", item.productId(), "RESTORE_STOCK_CANCEL_SO_" + id, requestId);
                     }
@@ -205,12 +205,13 @@ public class SalesOrderService {
     }
 
     private void deductStockForItems(List<ItemInput> items) {
-        for (var item : items) {
+        for (var item : items.stream().sorted(java.util.Comparator.comparingInt(ItemInput::productId)).toList()) {
             var productOpt = store.lockProductForUpdate(item.productId());
             if (productOpt.isEmpty()) {
                 throw DomainException.conflict("Nông sản (ID " + item.productId() + ") không tồn tại.");
             }
             var product = productOpt.get();
+            if(!"AVAILABLE".equals(product.status())) throw DomainException.conflict("Sản phẩm chưa sẵn sàng để bán.");
             if (product.quantity().compareTo(item.quantity()) < 0) {
                 throw DomainException.conflict("Sản phẩm '" + product.productName() + "' không đủ số lượng tồn kho để bán. Hiện có: "
                     + product.quantity() + ", yêu cầu: " + item.quantity());
@@ -222,9 +223,9 @@ public class SalesOrderService {
     private void validateItem(ItemInput item) {
         if (item.productId() <= 0) throw new IllegalArgumentException("Mã nông sản không hợp lệ.");
         if (item.quantity() == null || item.quantity().compareTo(BigDecimal.ZERO) <= 0
-            || item.quantity().compareTo(new BigDecimal("999999999.99")) > 0
-            || item.quantity().stripTrailingZeros().scale() > 2) {
-            throw new IllegalArgumentException("Số lượng nông sản không hợp lệ (phải > 0, tối đa 2 chữ số thập phân).");
+            || item.quantity().compareTo(new BigDecimal("999999999.999")) > 0
+            || item.quantity().stripTrailingZeros().scale() > 3) {
+            throw new IllegalArgumentException("Số lượng nông sản không hợp lệ (phải > 0, tối đa 3 chữ số thập phân).");
         }
         if (item.unitPrice() == null || item.unitPrice().compareTo(BigDecimal.ZERO) < 0
             || item.unitPrice().compareTo(new BigDecimal("999999999999.99")) > 0
@@ -235,7 +236,7 @@ public class SalesOrderService {
 
     private String generateSoNumber(LocalDate date) {
         String dateStr = date.format(DateTimeFormatter.BASIC_ISO_DATE);
-        String rand = UUID.randomUUID().toString().replace("-", "").substring(0, 4).toUpperCase(Locale.ROOT);
+        String rand = UUID.randomUUID().toString().replace("-", "").substring(0, 12).toUpperCase(Locale.ROOT);
         return "SO-" + dateStr + "-" + rand;
     }
 }

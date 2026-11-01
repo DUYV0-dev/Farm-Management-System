@@ -13,6 +13,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class MaterialUsageStore {
     private final JdbcTemplate db;
+    public void consumeStock(int usageId,int warehouse,int material,java.math.BigDecimal quantity) {
+        if(db.queryForList("SELECT warehouse_id FROM public.warehouse WHERE warehouse_id=? AND status='ACTIVE'",Integer.class,warehouse).isEmpty())
+            throw com.farmmanagement.backend.common.DomainException.missing();
+        db.update("UPDATE public.material_usage SET warehouse_id=? WHERE usage_id=?",warehouse,usageId);
+        db.queryForObject("SELECT set_config('app.stock_reason',?,true)",String.class,"USAGE-"+usageId);
+        if(db.update("UPDATE public.warehouse_inventory SET quantity=quantity-?,last_updated=now() WHERE warehouse_id=? AND material_id=? AND quantity>=?",quantity,warehouse,material,quantity)!=1)
+            throw com.farmmanagement.backend.common.DomainException.conflict("Kho không đủ vật tư. Nhật ký và tồn kho chưa thay đổi.");
+    }
+    public java.util.List<java.util.Map<String,Object>> warehouses() {
+        return db.queryForList("SELECT warehouse_id AS id,warehouse_name AS name FROM public.warehouse WHERE status='ACTIVE' ORDER BY warehouse_name");
+    }
     public MaterialUsageStore(JdbcTemplate db) { this.db = db; }
 
     private static final String FROM = """

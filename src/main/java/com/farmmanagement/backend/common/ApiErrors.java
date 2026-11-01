@@ -22,7 +22,7 @@ public class ApiErrors {
     }
     @ExceptionHandler(BadCredentialsException.class)
     ResponseEntity<?> credentials(HttpServletRequest r) { return err(r,401,"INVALID_CREDENTIALS","Tên đăng nhập hoặc mật khẩu không đúng, hoặc tài khoản không khả dụng."); }
-    @ExceptionHandler({IllegalArgumentException.class, MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler({IllegalArgumentException.class, MethodArgumentTypeMismatchException.class,java.time.DateTimeException.class})
     ResponseEntity<?> validation(HttpServletRequest r) { return err(r,422,"VALIDATION_ERROR","Dữ liệu không hợp lệ. Kiểm tra các trường yêu cầu."); }
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ResponseEntity<?> malformed(HttpServletRequest r) { return err(r,400,"MALFORMED_REQUEST","JSON không hợp lệ."); }
@@ -37,6 +37,10 @@ public class ApiErrors {
         // Translate only known database guard messages; never expose raw SQL or exception details.
         String detail = String.valueOf(ex.getMostSpecificCause().getMessage());
         var messages = Map.ofEntries(
+            Map.entry("Store request key reused", "Mã gửi đơn đã dùng cho nội dung khác. Hãy tạo yêu cầu mới."),
+            Map.entry("Store insufficient stock", "Sản phẩm hết hàng hoặc số lượng không còn đủ. Hãy tải lại cửa hàng."),
+            Map.entry("Store price changed", "Giá sản phẩm đã thay đổi. Hãy tải lại cửa hàng trước khi đặt."),
+            Map.entry("Store mixed farms", "Mỗi đơn chỉ đặt sản phẩm của một trang trại."),
             Map.entry("Farm area is smaller than its plots", "Diện tích trang trại không được nhỏ hơn tổng diện tích các khu đất."),
             Map.entry("Plot areas exceed farm area", "Tổng diện tích khu đất vượt quá diện tích trang trại."),
             Map.entry("Deactivate active plots and warehouses first", "Hãy ngừng hoạt động các khu đất và kho trước khi ngừng trang trại."),

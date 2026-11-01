@@ -1,0 +1,92 @@
+[
+  {
+    "version": 1,
+    "source": "database/00_Identity_Schema.sql",
+    "migration": "src/main/resources/db/migration/V001__Identity_Schema.sql"
+  },
+  {
+    "version": 2,
+    "source": "database/05_Authentication_Sessions.sql",
+    "migration": "src/main/resources/db/migration/V002__Authentication_Sessions.sql"
+  },
+  {
+    "version": 3,
+    "source": "database/06_User_Role_Management.sql",
+    "migration": "src/main/resources/db/migration/V003__User_Role_Management.sql"
+  },
+  {
+    "version": 4,
+    "source": "database/07_Farm_Plot_Crop.sql",
+    "migration": "src/main/resources/db/migration/V004__Farm_Plot_Crop.sql"
+  },
+  {
+    "version": 5,
+    "source": "database/08_Material_Warehouse.sql",
+    "migration": "src/main/resources/db/migration/V005__Material_Warehouse.sql"
+  },
+  {
+    "version": 6,
+    "source": "database/09_Management_Integrity.sql",
+    "migration": "src/main/resources/db/migration/V006__Management_Integrity.sql"
+  },
+  {
+    "version": 7,
+    "source": "database/10_Farm_Expense_Management.sql",
+    "migration": "src/main/resources/db/migration/V007__Farm_Expense_Management.sql"
+  },
+  {
+    "version": 8,
+    "source": "database/11a_Material_Usage_Warehouse.sql",
+    "migration": "src/main/resources/db/migration/V008__Material_Usage_Warehouse.sql"
+  },
+  {
+    "version": 9,
+    "source": "database/13_Crop_Season_Enhancement.sql",
+    "migration": "src/main/resources/db/migration/V009__Crop_Season_Enhancement.sql"
+  },
+  {
+    "version": 10,
+    "source": "database/07_Crop_And_Product_Management.sql",
+    "migration": "src/main/resources/db/migration/V010__Crop_And_Product_Management.sql"
+  },
+  {
+    "version": 11,
+    "source": "database/10_Harvest_Management.sql",
+    "migration": "src/main/resources/db/migration/V011__Harvest_Management.sql"
+  },
+  {
+    "version": 12,
+    "source": "database/11_Advanced_Dashboard_Reports.sql",
+    "migration": "src/main/resources/db/migration/V012__Advanced_Dashboard_Reports.sql"
+  },
+  {
+    "version": 13,
+    "source": "database/12_Supplier_Purchase_Management.sql",
+    "migration": "src/main/resources/db/migration/V013__Supplier_Purchase_Management.sql"
+  },
+  {
+    "version": 14,
+    "source": "database/13_Sales_Order_Management.sql",
+    "migration": "src/main/resources/db/migration/V014__Sales_Order_Management.sql"
+  },
+  {
+    "version": 15,
+    "source": "database/12_Farm_Tenancy.sql",
+    "migration": "src/main/resources/db/migration/V015__Farm_Tenancy.sql"
+  },
+  {
+    "version": 16,
+    "source": "database/11b_Material_Usage_Shared_Catalog.sql",
+    "migration": "src/main/resources/db/migration/V016__Material_Usage_Shared_Catalog.sql"
+  },
+  {
+    "version": 17,
+    "source": "database/14_Production_Operations.sql",
+    "migration": "src/main/resources/db/migration/V017__Production_Operations.sql"
+  },
+  {
+    "version": 18,
+    "source": "database/15_Account_Portal_And_Store.sql",
+    "migration": "src/main/resources/db/migration/V018__Account_Portal_And_Store.sql"
+  }
+]

@@ -11,6 +11,7 @@ import java.util.concurrent.Semaphore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.pdfbox.pdmodel.*;
@@ -22,7 +23,7 @@ public class ReportExportService {
     private final DashboardService reports;
     private final String fontPath;
     private final Semaphore slot=new Semaphore(1);
-    public ReportExportService(DashboardService reports,@Value("${reports.pdf.font:C:/Windows/Fonts/arial.ttf}") String fontPath) { this.reports=reports;this.fontPath=fontPath; }
+    public ReportExportService(DashboardService reports,@Value("${reports.pdf.font:classpath:fonts/NotoSans-Regular.ttf}") String fontPath) { this.reports=reports;this.fontPath=fontPath; }
     @PreAuthorize("hasAuthority('reports:read') and hasAuthority('harvests:read') and hasAuthority('crops:read') and ((#format == 'pdf' and hasAuthority('reports:export:pdf')) or (#format == 'xlsx' and hasAuthority('reports:export:xlsx')))")
     public byte[] export(int actor,int farm,UUID id,String format) {
         var s=reports.snapshot(actor,farm,id);
@@ -77,9 +78,13 @@ public class ReportExportService {
         } }
     }
     byte[] pdf(Snapshot s) throws IOException {
-        if(!Files.isRegularFile(Path.of(fontPath))) throw new IOException("PDF font unavailable");
         try(var doc=new PDDocument();var out=new ByteArrayOutputStream()) {
-            var font=PDType0Font.load(doc,new File(fontPath));
+            PDType0Font font;
+            try(var input=fontPath.startsWith("classpath:") || fontPath.startsWith("file:")
+                    ? new DefaultResourceLoader().getResource(fontPath).getInputStream()
+                    : Files.newInputStream(Path.of(fontPath))) {
+                font=PDType0Font.load(doc,input);
+            }
             pdfTable(doc,font,s,"PR01 Chi tiết thu hoạch",DETAIL,detailRows(s));
             pdfTable(doc,font,s,"PR02 Tổng hợp sản lượng",SUMMARY,summaryRows(s));
             int total=doc.getNumberOfPages();

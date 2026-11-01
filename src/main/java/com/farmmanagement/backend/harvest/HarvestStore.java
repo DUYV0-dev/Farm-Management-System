@@ -20,11 +20,10 @@ public class HarvestStore {
     public boolean allowed(int actor,int farmId,boolean write) {
         return Boolean.TRUE.equals(db.queryForObject("""
             SELECT EXISTS(SELECT 1 FROM public.farm_member fm
-            JOIN public.farm_member_role mr ON mr.farm_id=fm.farm_id AND mr.user_id=fm.user_id
-            JOIN public.role r USING(role_id) JOIN public.app_user u ON u.user_id=fm.user_id
+            JOIN public.app_user u ON u.user_id=fm.user_id
             WHERE fm.user_id=? AND fm.farm_id=? AND fm.status='ACTIVE' AND u.status='ACTIVE'
-            AND r.scope='FARM' AND (r.role_name='MANAGER' OR (NOT ? AND r.role_name='OWNER')))
-            """,Boolean.class,actor,farmId,write));
+            AND public.can_access_farm(fm.farm_id))
+            """,Boolean.class,actor,farmId));
     }
     public List<Map<String,Object>> farms(int actor) {
         return db.query("""

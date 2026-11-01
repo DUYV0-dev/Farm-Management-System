@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@org.springframework.context.annotation.Profile("!production")
 @RequestMapping("/api/v1/products")
 public class HarvestedProductController {
     private final HarvestedProductService service;

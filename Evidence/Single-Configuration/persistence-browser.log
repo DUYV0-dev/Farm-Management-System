@@ -1,0 +1,1 @@
+﻿PASS: after backend and PostgreSQL restart, a fresh login loads the UI-created task from PostgreSQL
