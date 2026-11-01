@@ -11,9 +11,23 @@ echo "=========================================="
 
 # ----------------------------------------------------------
 # 1. Convert postgres:// URL to JDBC format
+#    Render format: postgres://USER:PASS@HOST/DB  (no port)
+#    JDBC format:   jdbc:postgresql://HOST:5432/DB  (no credentials in URL)
 # ----------------------------------------------------------
 if [ -z "$DB_URL" ] && [ -n "$DATABASE_URL" ]; then
-  DB_URL=$(echo "$DATABASE_URL" | sed 's|^postgres://|jdbc:postgresql://|' | sed 's|^postgresql://|jdbc:postgresql://|')
+  # Strip "postgres://" or "postgresql://" prefix
+  # Strip embedded user:password@  (everything before @)
+  # Add :5432 port if not present
+  RAW=$(echo "$DATABASE_URL" | sed -E 's|^postgres(ql)?://||')
+  # Remove user:password@ prefix (up to and including @)
+  HOST_DB=$(echo "$RAW" | sed -E 's|^[^@]+@||')
+  # Add :5432 if no port present (host/db pattern without colon in host part)
+  HOST=$(echo "$HOST_DB" | cut -d'/' -f1)
+  DBNAME=$(echo "$HOST_DB" | cut -d'/' -f2-)
+  if echo "$HOST" | grep -qv ':'; then
+    HOST="${HOST}:5432"
+  fi
+  DB_URL="jdbc:postgresql://${HOST}/${DBNAME}"
   export DB_URL
   echo "[INFO] Converted DATABASE_URL to JDBC: $DB_URL"
 fi
